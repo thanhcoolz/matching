@@ -1,0 +1,9 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+create_table "clubs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+  t.integer :country_id, null: false
+  t.integer :city_id, null: false
+  t.integer :district_id, null: false
+  t.integer :street_id, null: false
+end

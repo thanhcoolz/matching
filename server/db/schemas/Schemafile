@@ -1,0 +1,12 @@
+require "admins.schema"
+require "clubs.schema"
+require "players.schema"
+require "cities.schema"
+require "club_managers.schema"
+require "countries.schema"
+require "districts.schema"
+require "nearby_parties.schema"
+require "parties.schema"
+require "streets.schema"
+require "party_participants.schema"
+
