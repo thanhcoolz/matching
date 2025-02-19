@@ -1,7 +1,7 @@
 <template>
-  <div class="admin-layout" :class="{ 'with-sidebar': isAuthenticated }">
-    <!-- Sidebar - Only show when authenticated -->
-    <div v-if="isAuthenticated" class="sidebar" :class="{ 'sidebar-collapsed': isSidebarCollapsed }">
+  <div class="admin-auth-layout">
+    <!-- Sidebar -->
+    <div class="sidebar" :class="{ 'sidebar-collapsed': isSidebarCollapsed }">
       <div class="sidebar-header">
         <h2 class="logo">🎮 Admin</h2>
         <button class="collapse-btn" @click="toggleSidebar">
@@ -38,12 +38,9 @@
       </div>
     </div>
 
-    <!-- Main Content - Full width when not authenticated -->
-    <div class="main-content" :class="{
-      'content-expanded': isSidebarCollapsed && isAuthenticated,
-      'full-width': !isAuthenticated
-    }">
-      <header v-if="isAuthenticated" class="top-header">
+    <!-- Main Content -->
+    <div class="main-content" :class="{ 'content-expanded': isSidebarCollapsed }">
+      <header class="top-header">
         <div class="header-content">
           <h1>{{ currentPageTitle }}</h1>
           <div class="user-menu">
@@ -65,11 +62,12 @@ import { useRoute, useRouter } from 'vue-router';
 import { useAuth } from '../store/auth.js';
 
 export default {
+  name: 'AdminAuthLayout',
   setup() {
     const route = useRoute();
     const router = useRouter();
     const auth = useAuth();
-    const { isAuthenticated, clearAuth } = auth;
+    const { clearAuth } = auth;
     const isSidebarCollapsed = ref(false);
 
     const currentPageTitle = computed(() => {
@@ -87,7 +85,6 @@ export default {
     };
 
     return {
-      isAuthenticated,
       isSidebarCollapsed,
       currentPageTitle,
       toggleSidebar,
@@ -98,15 +95,11 @@ export default {
 </script>
 
 <style scoped>
-.admin-layout {
+.admin-auth-layout {
   display: flex;
   min-height: 100vh;
   background-color: #f5f7fb;
   width: 100%;
-}
-
-.with-sidebar {
-  position: relative;
 }
 
 .sidebar {
@@ -198,20 +191,16 @@ export default {
 
 .main-content {
   flex: 1;
-  transition: margin-left 0.3s ease;
-  min-width: 0; /* Prevent content from overflowing */
-}
-
-.with-sidebar .main-content {
   margin-left: 250px;
+  transition: margin-left 0.3s ease;
+  min-width: 0;
+  max-width: calc(100% - 250px);
+  overflow-x: hidden;
 }
 
-.with-sidebar .main-content.content-expanded {
+.main-content.content-expanded {
   margin-left: 60px;
-}
-
-.full-width {
-  margin-left: 0;
+  max-width: calc(100% - 60px);
 }
 
 .top-header {
@@ -224,7 +213,6 @@ export default {
 }
 
 .header-content {
-  width: 100%;
   padding: 0 20px;
   display: flex;
   justify-content: space-between;
@@ -252,7 +240,8 @@ export default {
 }
 
 .content-area {
-  width: 100%;
+  padding: 20px;
+  padding-right: 30px;
 }
 
 /* Router link active state */
@@ -272,15 +261,11 @@ export default {
     transform: translateX(-100%);
   }
 
-  .with-sidebar .main-content {
+  .main-content {
     margin-left: 0;
   }
 
-  .with-sidebar .sidebar {
-    transform: translateX(0);
-  }
-
-  .with-sidebar .main-content.content-expanded {
+  .main-content.content-expanded {
     margin-left: 0;
   }
 

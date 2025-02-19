@@ -261,7 +261,6 @@ export default {
 
 .dashboard-content {
   padding: 32px;
-  width: 100%;
   animation: fadeIn 0.5s ease-out;
 }
 
