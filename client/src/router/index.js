@@ -4,7 +4,7 @@ import { useAuth } from '../store/auth';
 const routes = [
   {
     path: '/admin',
-    component: () => import('../components/AdminLayout.vue'),
+    component: () => import('../layouts/AdminLayout.vue'),
     children: [
       {
         path: '',
@@ -12,28 +12,28 @@ const routes = [
       },
       {
         path: 'signIn',
-        component: () => import('../components/AdminSignIn.vue'),
+        component: () => import('../pages/admins/SignIn.vue'),
         meta: { public: true }
       },
       {
         path: 'dashboard',
-        component: () => import('../components/AdminDashboard.vue'),
+        component: () => import('../pages/admins/DashBoard.vue'),
       },
       {
         path: 'players',
-        component: () => import('../components/AdminDashboard.vue'), // Placeholder for future implementation
+        component: () => import('../pages/admins/DashBoard.vue'), // Placeholder for future implementation
       },
       {
         path: 'clubs',
-        component: () => import('../components/AdminDashboard.vue'), // Placeholder for future implementation
+        component: () => import('../pages/admins/DashBoard.vue'), // Placeholder for future implementation
       },
       {
         path: 'parties',
-        component: () => import('../components/AdminDashboard.vue'), // Placeholder for future implementation
+        component: () => import('../pages/admins/DashBoard.vue'), // Placeholder for future implementation
       },
       {
         path: 'managers',
-        component: () => import('../components/AdminDashboard.vue'), // Placeholder for future implementation
+        component: () => import('../pages/admins/DashBoard.vue'), // Placeholder for future implementation
       }
     ],
   },

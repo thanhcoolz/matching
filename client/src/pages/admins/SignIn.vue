@@ -13,8 +13,8 @@
 <script>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useAuth } from '../store/auth';
-import apiClient from '../axios.js';
+import { useAuth } from '../../store/auth.js';
+import apiClient from '../../axios.js';
 
 export default {
   name: 'AdminSignIn',

@@ -53,7 +53,7 @@
 <script>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import apiClient from '../axios.js';
+import apiClient from '../../axios.js';
 
 export default {
   name: 'AdminDashboard',
