@@ -12,5 +12,5 @@ RUN npm install
 # Copy the rest of the application
 COPY . .
 
-# Start the development server
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+# Ensure dependencies are installed before running the dev server
+ENTRYPOINT ["sh", "-c", "npm install && npm run dev -- --host 0.0.0.0"]
