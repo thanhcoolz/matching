@@ -15,9 +15,10 @@ RUN bundle install
 COPY . .
 
 # Add a script to be executed every time the container starts
-COPY entrypoint.sh /usr/bin/
-RUN chmod +x /usr/bin/entrypoint.sh
-ENTRYPOINT ["entrypoint.sh"]
+RUN mkdir -p /usr/bin
+COPY entrypoint.sh /app/
+RUN chmod +x /app/entrypoint.sh
+ENTRYPOINT ["/app/entrypoint.sh"]
 
 # Start the main process
 CMD ["rails", "server", "-b", "0.0.0.0"]
