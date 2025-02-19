@@ -1,12 +1,56 @@
 <template>
-  <div class="signin-container">
-    <h2>Admin Sign In</h2>
-    <form @submit.prevent="handleSignIn">
-      <input type="email" v-model="email" placeholder="Email" required />
-      <input type="password" v-model="password" placeholder="Password" required />
-      <button type="submit">Sign In</button>
-    </form>
-    <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+  <div class="signin-page">
+    <div class="signin-container">
+      <div class="signin-box">
+        <div class="signin-header">
+          <div class="logo">🎮</div>
+          <h2>Welcome Back</h2>
+          <p class="subtitle">Sign in to your admin account</p>
+        </div>
+
+        <form @submit.prevent="handleSignIn" class="signin-form">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <div class="input-wrapper">
+              <span class="input-icon">📧</span>
+              <input
+                id="email"
+                type="email"
+                v-model="email"
+                placeholder="Enter your email"
+                :disabled="loading"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="input-wrapper">
+              <span class="input-icon">🔒</span>
+              <input
+                id="password"
+                type="password"
+                v-model="password"
+                placeholder="Enter your password"
+                :disabled="loading"
+                required
+              />
+            </div>
+          </div>
+
+          <button type="submit" :disabled="loading" class="signin-button">
+            <span v-if="loading" class="loading-spinner">⌛</span>
+            <span v-else>Sign In</span>
+          </button>
+        </form>
+
+        <div v-if="errorMessage" class="error-container">
+          <span class="error-icon">⚠️</span>
+          <p class="error-message">{{ errorMessage }}</p>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -61,32 +105,151 @@ export default {
 </script>
 
 <style scoped>
+.signin-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+  padding: 20px;
+}
+
 .signin-container {
-  max-width: 300px;
+  width: 100%;
+  max-width: 400px;
   margin: auto;
+}
+
+.signin-box {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  padding: 40px;
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.signin-header {
   text-align: center;
+  margin-bottom: 30px;
+}
+
+.logo {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  animation: bounce 1s ease infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.subtitle {
+  color: #666;
+  margin-top: 10px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+.input-wrapper {
   position: relative;
-  z-index: 10;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 12px;
+  font-size: 1.2rem;
 }
 
 input {
-  display: block;
   width: 100%;
-  margin: 10px 0;
-  padding: 8px;
+  padding: 12px 12px 12px 40px;
+  border: 2px solid #e1e1e1;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-button {
+input:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.signin-button {
   width: 100%;
-  padding: 10px;
-  background-color: #007bff;
+  padding: 12px;
+  background-color: #3498db;
   color: white;
   border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
   cursor: pointer;
+  transition: background-color 0.3s, transform 0.1s;
 }
 
-.error {
-  color: red;
-  margin-top: 10px;
+.signin-button:hover {
+  background-color: #2980b9;
+}
+
+.signin-button:active {
+  transform: scale(0.98);
+}
+
+.signin-button:disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
+}
+
+.loading-spinner {
+  animation: spin 1s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+
+.error-container {
+  margin-top: 20px;
+  padding: 12px;
+  background-color: #fee;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.error-icon {
+  font-size: 1.2rem;
+}
+
+.error-message {
+  color: #e74c3c;
+  margin: 0;
+  font-size: 0.9rem;
 }
 </style>
