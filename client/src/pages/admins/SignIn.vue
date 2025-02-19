@@ -64,7 +64,7 @@ export default {
   name: 'AdminSignIn',
   setup() {
     const router = useRouter();
-    const { setAuth } = useAuth();
+    const { setAuth, isAuthenticated } = useAuth();
     const email = ref('');
     const password = ref('');
     const errorMessage = ref('');

@@ -1,71 +1,82 @@
 <template>
   <div class="dashboard">
-    <!-- Stats Grid -->
-    <div class="stats-grid">
-      <div class="stat-card" v-for="(value, key) in stats" :key="key">
-        <div class="stat-icon">
-          {{ getStatIcon(key) }}
-        </div>
-        <div class="stat-info">
-          <h3>{{ formatStatName(key) }}</h3>
-          <div class="stat-value" v-animate-number="value">{{ value }}</div>
-        </div>
-        <div class="stat-trend">
-          <span class="trend-icon">↗</span>
-          <span class="trend-value">+5%</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Quick Actions -->
-    <div class="management-section">
-      <div class="section-header">
-        <h2>Quick Actions</h2>
-        <p class="section-subtitle">Manage your platform resources</p>
-      </div>
-      <div class="action-buttons">
-        <button
-          v-for="action in quickActions"
-          :key="action.name"
-          @click="navigateTo(action.route)"
-          class="action-button"
-        >
-          <span class="action-icon">{{ action.icon }}</span>
-          <span class="action-text">
-            <span class="action-title">{{ action.title }}</span>
-            <span class="action-description">{{ action.description }}</span>
-          </span>
-          <span class="action-arrow">→</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- Recent Activity -->
-    <div class="recent-activity">
-      <div class="section-header">
-        <h2>Recent Activity</h2>
-        <p class="section-subtitle">Latest actions across the platform</p>
+    <div class="dashboard-content">
+      <!-- Welcome Section -->
+      <div class="welcome-section">
+        <h1>Welcome back, Admin! 👋</h1>
+        <p class="welcome-subtitle">Here's what's happening in your platform</p>
       </div>
 
-      <div v-if="loading" class="loading-state">
-        <div class="loading-spinner">⌛</div>
-        <p>Loading recent activities...</p>
-      </div>
-
-      <div v-else class="activity-list">
-        <div
-          v-for="activity in recentActivities"
-          :key="activity.id"
-          class="activity-item"
-        >
-          <div class="activity-icon">{{ getActivityIcon(activity.type) }}</div>
-          <div class="activity-content">
-            <div class="activity-header">
-              <span class="activity-title">{{ activity.description }}</span>
-              <span class="activity-time">{{ formatTime(activity.timestamp) }}</span>
+      <!-- Stats Grid -->
+      <div class="stats-container">
+        <div class="stats-grid">
+          <div class="stat-card" v-for="(value, key) in stats" :key="key" :class="'stat-' + key.toLowerCase()">
+            <div class="stat-header">
+              <div class="stat-icon">{{ getStatIcon(key) }}</div>
+              <div class="stat-trend">
+                <span class="trend-icon">↗</span>
+                <span class="trend-value">+5%</span>
+              </div>
             </div>
-            <div class="activity-details" v-if="activity.details">
-              {{ activity.details }}
+            <div class="stat-info">
+              <h3>{{ formatStatName(key) }}</h3>
+              <div class="stat-value" v-animate-number="value">{{ value }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content Grid -->
+      <div class="main-grid">
+        <!-- Quick Actions -->
+        <div class="quick-actions-section">
+          <div class="section-header">
+            <div>
+              <h2>Quick Actions</h2>
+              <p class="section-subtitle">Manage your platform resources</p>
+            </div>
+          </div>
+          <div class="action-buttons">
+            <button v-for="action in quickActions" :key="action.name" @click="navigateTo(action.route)"
+              class="action-button">
+              <div class="action-content">
+                <span class="action-icon">{{ action.icon }}</span>
+                <span class="action-text">
+                  <span class="action-title">{{ action.title }}</span>
+                  <span class="action-description">{{ action.description }}</span>
+                </span>
+              </div>
+              <span class="action-arrow">→</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="activity-section">
+          <div class="section-header">
+            <div>
+              <h2>Recent Activity</h2>
+              <p class="section-subtitle">Latest actions across the platform</p>
+            </div>
+          </div>
+
+          <div v-if="loading" class="loading-state">
+            <div class="loading-spinner">⌛</div>
+            <p>Loading recent activities...</p>
+          </div>
+
+          <div v-else class="activity-list">
+            <div v-for="activity in recentActivities" :key="activity.id" class="activity-item">
+              <div class="activity-icon">{{ getActivityIcon(activity.type) }}</div>
+              <div class="activity-content">
+                <div class="activity-header">
+                  <span class="activity-title">{{ activity.description }}</span>
+                  <span class="activity-time">{{ formatTime(activity.timestamp) }}</span>
+                </div>
+                <div class="activity-details" v-if="activity.details">
+                  {{ activity.details }}
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -104,7 +115,6 @@ const animateNumber = {
 };
 
 export default {
-  name: 'AdminDashboard',
   directives: {
     animateNumber
   },
@@ -245,247 +255,284 @@ export default {
 <style scoped>
 .dashboard {
   width: 100%;
+  min-height: 100vh;
+  background-color: #f8fafc;
+}
+
+.dashboard-content {
+  padding: 32px;
+  width: 100%;
   animation: fadeIn 0.5s ease-out;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Stats Grid */
+/* Welcome Section */
+.welcome-section {
+  margin-bottom: 32px;
+}
+
+.welcome-section h1 {
+  font-size: 2rem;
+  color: #1e293b;
+  margin: 0;
+  font-weight: 600;
+}
+
+.welcome-subtitle {
+  color: #64748b;
+  margin: 8px 0 0;
+  font-size: 1.1rem;
+}
+
+/* Stats Container */
+.stats-container {
+  margin-bottom: 40px;
+}
+
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
-  margin-bottom: 40px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
 }
 
 .stat-card {
   background: white;
   padding: 24px;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  display: flex;
-  align-items: center;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
   transition: transform 0.3s, box-shadow 0.3s;
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid #e2e8f0;
 }
 
 .stat-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.05);
 }
 
-.stat-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #3498db, #2ecc71);
+.stat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
 }
 
 .stat-icon {
-  font-size: 2rem;
-  margin-right: 20px;
-  background: #f8f9fa;
+  font-size: 2.2rem;
   padding: 12px;
   border-radius: 12px;
+  background: #f1f5f9;
 }
 
-.stat-info {
-  flex: 1;
+.stat-players .stat-icon {
+  background: #e0f2fe;
 }
 
-.stat-info h3 {
-  margin: 0;
-  color: #6c757d;
-  font-size: 0.9rem;
-  font-weight: 500;
+.stat-clubs .stat-icon {
+  background: #fef3c7;
 }
 
-.stat-value {
-  font-size: 1.8rem;
-  font-weight: bold;
-  color: #2c3e50;
-  margin-top: 5px;
+.stat-parties .stat-icon {
+  background: #fce7f3;
+}
+
+.stat-clubmanagers .stat-icon {
+  background: #dcfce7;
 }
 
 .stat-trend {
   display: flex;
   align-items: center;
-  color: #2ecc71;
   font-size: 0.9rem;
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: #f1f5f9;
+  color: #059669;
 }
 
 .trend-icon {
   margin-right: 4px;
 }
 
+.stat-info h3 {
+  color: #64748b;
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0 0 8px 0;
+}
+
+.stat-value {
+  font-size: 2.2rem;
+  font-weight: 600;
+  color: #1e293b;
+  line-height: 1;
+}
+
+/* Main Grid */
+.main-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
 /* Quick Actions */
+.quick-actions-section {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+  border: 1px solid #e2e8f0;
+}
+
 .section-header {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .section-header h2 {
-  color: #2c3e50;
+  color: #1e293b;
   margin: 0;
   font-size: 1.5rem;
+  font-weight: 600;
 }
 
 .section-subtitle {
-  color: #6c757d;
-  margin: 5px 0 0;
-  font-size: 0.9rem;
+  color: #64748b;
+  margin: 4px 0 0;
+  font-size: 0.95rem;
 }
 
 .action-buttons {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
-  margin-bottom: 40px;
-  padding: 0 20px;
-}
-
-@media (max-width: 768px) {
-  .action-buttons {
-    grid-template-columns: 1fr;
-    padding: 0 10px;
-  }
-
-  .stats-grid {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    padding: 0 10px;
-  }
-
-  .stat-card {
-    padding: 16px;
-  }
-
-  .stat-icon {
-    font-size: 1.5rem;
-    padding: 8px;
-  }
-
-  .stat-value {
-    font-size: 1.5rem;
-  }
-
-  .activity-item {
-    padding: 12px;
-  }
-
-  .activity-icon {
-    font-size: 1rem;
-    padding: 6px;
-  }
+  gap: 16px;
 }
 
 .action-button {
-  background: white;
-  border: none;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   padding: 16px;
   border-radius: 12px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   cursor: pointer;
-  transition: transform 0.3s, box-shadow 0.3s;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  text-align: left;
+  transition: all 0.3s ease;
+  width: 100%;
 }
 
 .action-button:hover {
+  background: white;
+  border-color: #cbd5e1;
   transform: translateY(-2px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.action-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
 .action-icon {
   font-size: 1.5rem;
-  margin-right: 15px;
-  background: #f8f9fa;
-  padding: 10px;
+  padding: 12px;
   border-radius: 10px;
+  background: white;
 }
 
 .action-text {
-  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .action-title {
-  display: block;
-  color: #2c3e50;
+  color: #1e293b;
   font-weight: 500;
-  margin-bottom: 4px;
+  font-size: 1.1rem;
 }
 
 .action-description {
-  display: block;
-  color: #6c757d;
-  font-size: 0.85rem;
+  color: #64748b;
+  font-size: 0.9rem;
+  margin-top: 4px;
 }
 
 .action-arrow {
-  color: #3498db;
+  color: #64748b;
   font-size: 1.2rem;
-  opacity: 0;
-  transform: translateX(-10px);
-  transition: opacity 0.3s, transform 0.3s;
+  transition: transform 0.3s;
 }
 
 .action-button:hover .action-arrow {
-  opacity: 1;
-  transform: translateX(0);
+  transform: translateX(4px);
+  color: #3b82f6;
 }
 
-/* Recent Activity */
-.recent-activity {
+/* Activity Section */
+.activity-section {
   background: white;
+  border-radius: 16px;
   padding: 24px;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+  border: 1px solid #e2e8f0;
 }
 
 .loading-state {
   text-align: center;
   padding: 40px;
-  color: #6c757d;
+  color: #64748b;
 }
 
 .loading-spinner {
   font-size: 2rem;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-  100% { transform: rotate(360deg); }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .activity-list {
-  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .activity-item {
   display: flex;
   align-items: flex-start;
+  gap: 16px;
   padding: 16px;
-  border-bottom: 1px solid #f1f1f1;
+  border-radius: 12px;
   transition: background-color 0.3s;
 }
 
 .activity-item:hover {
-  background-color: #f8f9fa;
+  background-color: #f8fafc;
 }
 
 .activity-icon {
   font-size: 1.2rem;
-  margin-right: 15px;
-  background: #f8f9fa;
-  padding: 8px;
-  border-radius: 8px;
+  padding: 10px;
+  border-radius: 10px;
+  background: #f1f5f9;
 }
 
 .activity-content {
@@ -500,18 +547,69 @@ export default {
 }
 
 .activity-title {
-  color: #2c3e50;
+  color: #1e293b;
   font-weight: 500;
+  font-size: 0.95rem;
 }
 
 .activity-time {
-  color: #6c757d;
+  color: #64748b;
   font-size: 0.85rem;
 }
 
 .activity-details {
-  color: #6c757d;
+  color: #64748b;
   font-size: 0.9rem;
   margin-top: 4px;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .main-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-content {
+    padding: 20px;
+  }
+
+  .welcome-section h1 {
+    font-size: 1.8rem;
+  }
+
+  .welcome-subtitle {
+    font-size: 1rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+
+  .stat-card {
+    padding: 20px;
+  }
+
+  .stat-icon {
+    font-size: 1.8rem;
+    padding: 10px;
+  }
+
+  .stat-value {
+    font-size: 1.8rem;
+  }
+
+  .action-button {
+    padding: 14px;
+  }
+
+  .action-icon {
+    padding: 8px;
+  }
+
+  .activity-item {
+    padding: 12px;
+  }
 }
 </style>

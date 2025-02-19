@@ -65,11 +65,11 @@ import { useRoute, useRouter } from 'vue-router';
 import { useAuth } from '../store/auth.js';
 
 export default {
-  name: 'AdminLayout',
   setup() {
     const route = useRoute();
     const router = useRouter();
-    const { clearAuth, isAuthenticated } = useAuth();
+    const auth = useAuth();
+    const { isAuthenticated, clearAuth } = auth;
     const isSidebarCollapsed = ref(false);
 
     const currentPageTitle = computed(() => {
@@ -199,8 +199,7 @@ export default {
 .main-content {
   flex: 1;
   transition: margin-left 0.3s ease;
-  min-width: 0;
-  /* Prevent content from overflowing */
+  min-width: 0; /* Prevent content from overflowing */
 }
 
 .with-sidebar .main-content {
