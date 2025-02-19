@@ -12,28 +12,50 @@
 
 <script>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useAuth } from '../store/auth';
 import apiClient from '../axios.js';
 
 export default {
   name: 'AdminSignIn',
   setup() {
+    const router = useRouter();
+    const { setAuth } = useAuth();
     const email = ref('');
     const password = ref('');
     const errorMessage = ref('');
+    const loading = ref(false);
 
     const handleSignIn = async () => {
+      loading.value = true;
+      errorMessage.value = '';
+
       try {
         const response = await apiClient.post('/api/admin/signin', {
           email: email.value,
           password: password.value,
         });
-        console.log('Sign-in successful:', response.data);
+
+        if (response.data.message === 'Sign-in successful') {
+          setAuth();
+          router.push('/admin/dashboard');
+        } else {
+          errorMessage.value = 'Authentication failed. Please try again.';
+        }
       } catch (error) {
-        errorMessage.value = 'Invalid credentials. Please try again.';
+        errorMessage.value = error.response?.data?.message || 'Invalid credentials. Please try again.';
+      } finally {
+        loading.value = false;
       }
     };
 
-    return { email, password, errorMessage, handleSignIn };
+    return {
+      email,
+      password,
+      errorMessage,
+      loading,
+      handleSignIn
+    };
   },
 };
 </script>
