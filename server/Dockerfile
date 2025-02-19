@@ -15,10 +15,13 @@ RUN bundle install
 COPY . .
 
 # Add a script to be executed every time the container starts
-RUN mkdir -p /usr/bin
-COPY entrypoint.sh /app/
-RUN chmod +x /app/entrypoint.sh
-ENTRYPOINT ["/app/entrypoint.sh"]
+RUN apt-get install -y dos2unix && \
+    mkdir -p /app/bin
+
+# Copy entrypoint script and set permissions
+COPY --chmod=0755 bin/entrypoint /app/bin/
+RUN dos2unix /app/bin/entrypoint
+ENTRYPOINT ["/app/bin/entrypoint"]
 
 # Start the main process
 CMD ["rails", "server", "-b", "0.0.0.0"]
