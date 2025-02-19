@@ -1,4 +1,4 @@
-unless Admin.first.present?
+if Admin.blank?
   Admin.create!(
     email: "admin@example.com",
     password: "12341234",
