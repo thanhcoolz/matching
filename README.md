@@ -1,8 +1,7 @@
 # Install and run docker
 
 ```bash
-docker-compose build
-docker-compose up
+docker-compose up --build
 ```
 
 # Install server dependencies
