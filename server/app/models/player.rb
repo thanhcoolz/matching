@@ -1,4 +1,6 @@
 class Player < ApplicationRecord
+  has_secure_password
+
   # Associations
   belongs_to :country
   belongs_to :city
