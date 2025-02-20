@@ -5,21 +5,25 @@
       <button class="create-btn" @click="navigateToCreate">Create New Club</button>
     </div>
 
-    <div class="filters">
-      <input v-model="searchQuery" type="text" placeholder="Search by name..." class="search-input" />
-      <select v-model="selectedDistrict" class="filter-select">
-        <option value="">All Districts</option>
-        <option v-for="district in districts" :key="district.id" :value="district.id">
-          {{ district.name }}
-        </option>
-      </select>
-      <select v-model="selectedStreet" class="filter-select">
-        <option value="">All Streets</option>
-        <option v-for="street in streets" :key="street.id" :value="street.id">
-          {{ street.name }}
-        </option>
-      </select>
-      <button class="search-btn" @click="fetchClubs">Search</button>
+    <div class="search-container">
+      <div class="search-box">
+        <input v-model="searchQuery" type="text" placeholder="Search by name..." class="search-input" />
+      </div>
+      <div class="filter-group">
+        <select v-model="selectedDistrict" class="filter-select">
+          <option value="">All Districts</option>
+          <option v-for="district in districts" :key="district.id" :value="district.id">
+            {{ district.name }}
+          </option>
+        </select>
+        <select v-model="selectedStreet" class="filter-select">
+          <option value="">All Streets</option>
+          <option v-for="street in streets" :key="street.id" :value="street.id">
+            {{ street.name }}
+          </option>
+        </select>
+        <button class="search-btn" @click="fetchClubs">Search</button>
+      </div>
     </div>
 
     <table class="clubs-table">
@@ -49,9 +53,9 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import apiClient from '../../axios.js'
+import axios from '../../axios.js'
 
 const router = useRouter()
 const clubs = ref([])
@@ -68,7 +72,7 @@ const fetchClubs = async () => {
       district_id: selectedDistrict.value,
       street_id: selectedStreet.value
     }
-    const response = await apiClient.get('/api/admin/clubs', { params })
+    const response = await axios.get('/api/admin/clubs', { params })
     clubs.value = response.data
   } catch (error) {
     console.error('Error fetching clubs:', error)
@@ -77,7 +81,7 @@ const fetchClubs = async () => {
 
 const fetchDistricts = async () => {
   try {
-    const response = await apiClient.get('/api/admin/districts')
+    const response = await axios.get('/api/admin/districts')
     districts.value = response.data
   } catch (error) {
     console.error('Error fetching districts:', error)
@@ -86,7 +90,7 @@ const fetchDistricts = async () => {
 
 const fetchStreets = async () => {
   try {
-    const response = await apiClient.get('/api/admin/streets')
+    const response = await axios.get('/api/admin/streets')
     streets.value = response.data
   } catch (error) {
     console.error('Error fetching streets:', error)
@@ -105,71 +109,5 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.clubs-list {
-  padding: 20px;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.create-btn {
-  background-color: #4CAF50;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.filters {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.search-input {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  flex: 1;
-}
-
-.filter-select {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.clubs-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.clubs-table th,
-.clubs-table td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-.clubs-table th {
-  background-color: #f5f5f5;
-}
-
-.action-btn {
-  padding: 6px 12px;
-  margin-right: 5px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.action-btn.delete {
-  background-color: #f44336;
-  color: white;
-}
+@import '../../assets/styles/admins/clubs-list.css';
 </style>
