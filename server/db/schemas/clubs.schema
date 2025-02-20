@@ -7,6 +7,8 @@ create_table "clubs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :
   t.integer :city_id, null: false
   t.integer :district_id, null: false
   t.integer :street_id, null: false
+  t.string :address, null: false
+  t.string :description, null: false
 
   t.timestamps
 

@@ -54,4 +54,5 @@ if Country.first.blank?
     ],
   )
 
+  puts "City, streets and districts created successfully."
 end

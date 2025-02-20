@@ -8,6 +8,8 @@
 #  city_id     :integer          not null
 #  district_id :integer          not null
 #  street_id   :integer          not null
+#  address     :string(255)      not null
+#  description :string(255)      not null
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #
