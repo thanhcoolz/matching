@@ -1,11 +1,10 @@
 require "jwt"
 class Api::Admin::AdminSessionsController < ApplicationController
   include ActionController::Cookies
-  JWT_SECRET = Rails.application.credentials.jwt_secret
   JWT_EXPIRATION = 24.hours
 
   def create
-    admin = Admin.find_by(email: params[:email])
+    admin = ::Admin.find_by(email: params[:email])
 
     if admin&.authenticate(params[:password])
       token = generate_token(admin)
@@ -24,11 +23,14 @@ class Api::Admin::AdminSessionsController < ApplicationController
   private
 
   def generate_token(admin)
+    secret = ENV["JWT_SECRET"]
+    raise JWT::EncodeError, "JWT_SECRET environment variable is not configured" unless secret
+
     payload = {
       admin_id: admin.id,
       exp: JWT_EXPIRATION.from_now.to_i
     }
-    JWT.encode(payload, JWT_SECRET, "HS256")
+    JWT.encode(payload, secret, "HS256")
   end
 
   def set_jwt_cookie(token)

@@ -25,4 +25,7 @@ class Club < ApplicationRecord
   validates :city_id, presence: true
   validates :district_id, presence: true
   validates :street_id, presence: true
+  validates :name, presence: true
+  validates :address, presence: true
+  validates :description, presence: true
 end

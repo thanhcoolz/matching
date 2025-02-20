@@ -10,7 +10,8 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :admin do
-      post "signin", to: "admin_sessions#create"
+      resource :admin_sessions, only: [:create, :destroy]
+      resources :clubs, only: [:new, :create]
     end
   end
 end
