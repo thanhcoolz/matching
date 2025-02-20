@@ -2,6 +2,12 @@
 # vi: set ft=ruby :
 
 create_table "club_managers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
-t.integer :club_id, null: false
-t.string :role, null: false
+  t.integer :club_id, null: false
+  t.string :username, null: false
+  t.string :password_digest, null: false
+
+  t.timestamps
+
+  t.index [ "club_id" ], name: "index_club_managers_on_club_id", using: :btree
+  t.index [ "username" ], name: "index_club_managers_on_username", unique: true, using: :btree
 end

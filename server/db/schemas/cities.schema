@@ -2,4 +2,9 @@
 # vi: set ft=ruby :
 
 create_table "cities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+  t.bigint :country_id, null: false
+  t.string :name, null: false
+
+  t.timestamps
+  t.index [ "country_id" ], name: "index_cities_on_country_id", using: :btree
 end
