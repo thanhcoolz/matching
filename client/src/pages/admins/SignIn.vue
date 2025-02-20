@@ -51,7 +51,7 @@ const handleSignIn = async () => {
   errorMessage.value = '';
 
   try {
-    const response = await apiClient.post('/api/admin/signin', {
+    const response = await apiClient.post('/api/admin/admin_sessions', {
       email: email.value,
       password: password.value,
     });

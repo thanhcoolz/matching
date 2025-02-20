@@ -76,8 +76,8 @@ const toggleSidebar = () => {
 };
 
 const handleLogout = async () => {
-  clearAuth();
-  router.push('/admin/signin');
+  await clearAuth();
+  router.push('/admin/signIn');
 };
 </script>
 

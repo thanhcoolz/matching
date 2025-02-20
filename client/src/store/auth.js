@@ -1,4 +1,5 @@
 import { ref } from 'vue';
+import apiClient from '../axios';
 
 // Initialize from localStorage
 const isAuthenticated = ref(localStorage.getItem('isAuthenticated') === 'true');
@@ -9,9 +10,17 @@ export const useAuth = () => {
     localStorage.setItem('isAuthenticated', 'true');
   };
 
-  const clearAuth = () => {
-    isAuthenticated.value = false;
-    localStorage.setItem('isAuthenticated', 'false');
+  const clearAuth = async () => {
+    try {
+      await apiClient.delete('/api/admin/admin_sessions');
+      isAuthenticated.value = false;
+      localStorage.setItem('isAuthenticated', 'false');
+    } catch (error) {
+      console.error('Error during sign out:', error);
+      // Still clear local auth state even if API call fails
+      isAuthenticated.value = false;
+      localStorage.setItem('isAuthenticated', 'false');
+    }
   };
 
   const checkAuth = () => {

@@ -43,6 +43,10 @@ const routes = [
           {
             path: 'managers',
             component: () => import('../pages/admins/DashBoard.vue'), // Placeholder for future implementation
+          },
+          {
+            path: 'clubs/new',
+            component: () => import('../pages/admins/CreateClub.vue')
           }
         ]
       }
