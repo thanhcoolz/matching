@@ -10,10 +10,10 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :admin do
-      resources :admin_sessions, only: [:create]
-      resources :clubs, only: [:index, :new, :create]
-      get 'districts', to: 'clubs#districts'
-      get 'streets', to: 'clubs#streets'
+      resources :admin_sessions, only: [ :create ]
+      resources :clubs, only: [ :index, :new, :create ]
+      get "districts", to: "clubs#districts"
+      get "streets", to: "clubs#streets"
     end
   end
 end

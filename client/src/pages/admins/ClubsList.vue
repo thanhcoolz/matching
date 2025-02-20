@@ -40,8 +40,8 @@
         <tr v-for="club in clubs" :key="club.id">
           <td>{{ club.name }}</td>
           <td>{{ club.address }}</td>
-          <td>{{ club.district?.name }}</td>
-          <td>{{ club.street?.name }}</td>
+          <td>{{ club.district_name }}</td>
+          <td>{{ club.street_name }}</td>
           <td>
             <button class="action-btn">Edit</button>
             <button class="action-btn delete">Delete</button>

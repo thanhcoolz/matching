@@ -7,9 +7,11 @@ module Api
 
       def index
         clubs = Club.includes(:district, :street)
+          .select("clubs.*, districts.name as district_name, streets.name as street_name")
+          .joins(:district, :street)
 
         if params[:name].present?
-          clubs = clubs.where('name ILIKE ?', "%#{params[:name]}%")
+          clubs = clubs.where("clubs.name LIKE ?", "%#{params[:name]}%")
         end
 
         if params[:district_id].present?
@@ -20,7 +22,10 @@ module Api
           clubs = clubs.where(street_id: params[:street_id])
         end
 
-        render json: clubs
+        render json: clubs.as_json(
+          only: [ :id, :name, :address, :district_id, :street_id ],
+          methods: [ :district_name, :street_name ]
+        )
       end
 
       def new
