@@ -47,3 +47,4 @@ end
 
 gem "ridgepole"
 gem "jwt"
+gem "annotate"

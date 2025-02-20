@@ -1,3 +1,16 @@
+# == Schema Information
+#
+# Table name: clubs
+#
+#  id          :bigint           not null, primary key
+#  name        :string(255)      not null
+#  country_id  :integer          not null
+#  city_id     :integer          not null
+#  district_id :integer          not null
+#  street_id   :integer          not null
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#
 class Club < ApplicationRecord
   # Associations
   belongs_to :country
