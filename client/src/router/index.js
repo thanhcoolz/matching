@@ -34,7 +34,7 @@ const routes = [
           },
           {
             path: 'clubs',
-            component: () => import('../pages/admins/DashBoard.vue'), // Placeholder for future implementation
+            component: () => import('../pages/admins/ClubsList.vue'),
           },
           {
             path: 'parties',

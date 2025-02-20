@@ -5,10 +5,38 @@ module Api
     class ClubsController < ApplicationController
       before_action :authenticate_admin!
 
+      def index
+        clubs = Club.includes(:district, :street)
+
+        if params[:name].present?
+          clubs = clubs.where('name ILIKE ?', "%#{params[:name]}%")
+        end
+
+        if params[:district_id].present?
+          clubs = clubs.where(district_id: params[:district_id])
+        end
+
+        if params[:street_id].present?
+          clubs = clubs.where(street_id: params[:street_id])
+        end
+
+        render json: clubs
+      end
+
       def new
         @districts = District.all
         @streets = Street.all
         render json: { districts: @districts, streets: @streets }
+      end
+
+      def districts
+        districts = District.all
+        render json: districts
+      end
+
+      def streets
+        streets = Street.all
+        render json: streets
       end
 
       def create
