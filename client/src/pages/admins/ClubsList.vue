@@ -43,7 +43,7 @@
           <td>{{ club.district_name }}</td>
           <td>{{ club.street_name }}</td>
           <td>
-            <button class="action-btn">Edit</button>
+            <button class="action-btn" @click="navigateToEdit(club.id)">Edit</button>
             <button class="action-btn delete">Delete</button>
           </td>
         </tr>
@@ -99,6 +99,10 @@ const fetchStreets = async () => {
 
 const navigateToCreate = () => {
   router.push('/admin/clubs/new')
+}
+
+const navigateToEdit = (clubId) => {
+  router.push(`/admin/clubs/${clubId}/edit`)
 }
 
 onMounted(() => {

@@ -1,6 +1,6 @@
 <template>
   <div class="create-club">
-    <h1>Create New Club</h1>
+    <h1>Edit Club</h1>
     <form @submit.prevent="handleSubmit">
       <div class="form-group">
         <label for="name">Club Name</label>
@@ -38,18 +38,19 @@
       </div>
 
       <button type="submit" class="submit-btn" :disabled="isSubmitting">
-        {{ isSubmitting ? 'Creating...' : 'Create Club' }}
+        {{ isSubmitting ? 'Updating...' : 'Update Club' }}
       </button>
     </form>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, reactive, onMounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import apiClient from '../../axios';
 
 const router = useRouter();
+const route = useRoute();
 const districts = ref([]);
 const streets = ref([]);
 const isSubmitting = ref(false);
@@ -64,10 +65,16 @@ const form = reactive({
 
 const fetchData = async () => {
   try {
-    const response = await apiClient.get('/api/admin/clubs/new');
-    console.log(response.data)
-    districts.value = response.data.districts;
-    streets.value = response.data.streets;
+    const [clubResponse, optionsResponse] = await Promise.all([
+      apiClient.get(`/api/admin/clubs/${route.params.id}/edit`),
+      apiClient.get('/api/admin/clubs/new')
+    ]);
+
+    districts.value = optionsResponse.data.districts;
+    streets.value = optionsResponse.data.streets;
+
+    // Populate form with existing club data
+    Object.assign(form, clubResponse.data.club);
   } catch (error) {
     console.error('Error fetching data:', error);
     // You might want to show an error message to the user here
@@ -79,10 +86,10 @@ const handleSubmit = async () => {
 
   try {
     isSubmitting.value = true;
-    await apiClient.post('/api/admin/clubs', { club: form });
+    await apiClient.put(`/api/admin/clubs/${route.params.id}`, { club: form });
     router.push('/admin/clubs');
   } catch (error) {
-    console.error('Error creating club:', error);
+    console.error('Error updating club:', error);
     // You might want to show an error message to the user here
   } finally {
     isSubmitting.value = false;
@@ -90,7 +97,7 @@ const handleSubmit = async () => {
 };
 
 // Fetch data when component is mounted
-fetchData();
+onMounted(fetchData);
 </script>
 
 <style scoped>

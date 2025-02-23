@@ -47,6 +47,10 @@ const routes = [
           {
             path: 'clubs/new',
             component: () => import('../pages/admins/CreateClub.vue')
+          },
+          {
+            path: 'clubs/:id/edit',
+            component: () => import('../pages/admins/EditClub.vue')
           }
         ]
       }

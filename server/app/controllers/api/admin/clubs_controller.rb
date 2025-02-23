@@ -56,6 +56,28 @@ module Api
         end
       end
 
+      def edit
+        club = Club.find(params[:id])
+        districts = District.all
+        streets = Street.all
+
+        render json: {
+          club: club.as_json(only: [:id, :name, :address, :description, :district_id, :street_id]),
+          districts: districts,
+          streets: streets
+        }
+      end
+
+      def update
+        club = Club.find(params[:id])
+
+        if club.update(club_params)
+          render json: club
+        else
+          render json: { errors: club.errors.full_messages }, status: :unprocessable_entity
+        end
+      end
+
       private
 
       def club_params
