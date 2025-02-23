@@ -22,10 +22,20 @@ module Api
           clubs = clubs.where(street_id: params[:street_id])
         end
 
-        render json: clubs.as_json(
-          only: [ :id, :name, :address, :district_id, :street_id ],
-          methods: [ :district_name, :street_name ]
-        )
+        pagy, paginated_clubs = pagy(clubs, page: params[:page], limit: params[:per_page] || 10)
+
+        render json: {
+          clubs: paginated_clubs.as_json(
+            only: [ :id, :name, :address, :district_id, :street_id ],
+            methods: [ :district_name, :street_name ]
+          ),
+          pagination: {
+            current_page: pagy.page,
+            total_pages: pagy.pages,
+            total_count: pagy.count,
+            per_page: pagy.vars[:items]
+          }
+        }
       end
 
       def new

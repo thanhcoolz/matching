@@ -50,6 +50,36 @@
         </tr>
       </tbody>
     </table>
+
+    <div class="pagination">
+      <button
+        class="pagination-btn"
+        :disabled="currentPage === 1"
+        @click="changePage(currentPage - 1)"
+      >
+        Previous
+      </button>
+      <span class="page-info">
+        Page {{ currentPage }} of {{ totalPages }}
+      </span>
+      <button
+        class="pagination-btn"
+        :disabled="currentPage === totalPages"
+        @click="changePage(currentPage + 1)"
+      >
+        Next
+      </button>
+      <select
+        class="per-page-select"
+        :value="perPage"
+        @change="(e) => changePerPage(Number(e.target.value))"
+      >
+        <option value="10">10 per page</option>
+        <option value="20">20 per page</option>
+        <option value="50">50 per page</option>
+        <option value="100">100 per page</option>
+      </select>
+    </div>
   </div>
 </template>
 
@@ -65,19 +95,40 @@ const streets = ref([])
 const searchQuery = ref('')
 const selectedDistrict = ref('')
 const selectedStreet = ref('')
+const currentPage = ref(1)
+const totalPages = ref(1)
+const perPage = ref(10)
+const totalCount = ref(0)
 
 const fetchClubs = async () => {
   try {
     const params = {
       name: searchQuery.value,
       district_id: selectedDistrict.value,
-      street_id: selectedStreet.value
+      street_id: selectedStreet.value,
+      page: currentPage.value,
+      per_page: perPage.value || 10
     }
     const response = await axios.get('/api/admin/clubs', { params })
-    clubs.value = response.data
+    clubs.value = response.data.clubs
+    currentPage.value = response.data.pagination.current_page
+    totalPages.value = response.data.pagination.total_pages
+    totalCount.value = response.data.pagination.total_count
   } catch (error) {
     console.error('Error fetching clubs:', error)
   }
+}
+
+const changePage = (page) => {
+  if (page < 1 || page > totalPages.value) return
+  currentPage.value = page
+  fetchClubs()
+}
+
+const changePerPage = (newPerPage) => {
+  perPage.value = newPerPage
+  currentPage.value = 1
+  fetchClubs()
 }
 
 const fetchDistricts = async () => {
