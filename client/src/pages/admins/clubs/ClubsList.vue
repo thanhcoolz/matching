@@ -51,8 +51,7 @@
       </tbody>
     </table>
 
-    <PaginationControls :current-page="currentPage" :total-pages="totalPages" :per-page="perPage"
-      @page-change="handlePageChange" @per-page-change="handlePerPageChange" />
+    <PaginationControls :current-page="currentPage" :total-pages="totalPages" @page-change="handlePageChange" />
   </div>
 </template>
 
@@ -78,7 +77,6 @@ const fetchClubs = async () => {
       district_id: selectedDistrict.value,
       street_id: selectedStreet.value,
       page: currentPage.value,
-      per_page: perPage.value
     }
     const response = await axios.get('/api/admin/clubs', { params })
     clubs.value = response.data.clubs
@@ -91,13 +89,9 @@ const fetchClubs = async () => {
 const {
   currentPage,
   totalPages,
-  perPage,
   handlePageChange,
-  handlePerPageChange,
   updatePagination
-} = usePaging(fetchClubs)
-
-
+} = usePaging(fetchClubs, 1, 10)
 
 const fetchDistricts = async () => {
   try {
