@@ -8,11 +8,6 @@
       </div>
 
       <div class="form-group">
-        <label for="address">Address</label>
-        <input type="text" id="address" v-model="form.address" required placeholder="Enter club address">
-      </div>
-
-      <div class="form-group">
         <label for="description">Description</label>
         <textarea id="description" v-model="form.description" required placeholder="Enter club description"></textarea>
       </div>
@@ -35,6 +30,11 @@
             {{ street.name }}
           </option>
         </select>
+      </div>
+
+      <div class="form-group">
+        <label for="address">Address</label>
+        <input type="text" id="address" v-model="form.address" required placeholder="Enter club address">
       </div>
 
       <button type="submit" class="submit-btn" :disabled="isSubmitting">
