@@ -1,30 +1,50 @@
 <template>
-  <div class="club-managers">
-    <div class="header">
-      <h1>Club Managers</h1>
-      <button class="create-btn" @click="navigateToCreate">Add Manager</button>
+  <div class="p-5">
+    <div class="flex justify-between items-center mb-5">
+      <h1 class="text-xl font-semibold text-gray-800">Club Managers</h1>
+      <button
+        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        @click="navigateToCreate"
+      >
+        Add Manager
+      </button>
     </div>
 
-    <div class="search-container">
-      <div class="search-box">
-        <input v-model="search.username" class="search-input" type="text" placeholder="Search by manager name..."
-          @input="fetchManagers" />
+    <div class="mb-6">
+      <div class="mb-4">
+        <input
+          v-model="search.username"
+          type="text"
+          placeholder="Search by manager name..."
+          @input="fetchManagers"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
       </div>
     </div>
 
-    <table class="managers-table">
-      <thead>
+    <table class="w-full border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-50">
         <tr>
-          <th>Username</th>
-          <th>Actions</th>
+          <th class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Username</th>
+          <th class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Actions</th>
         </tr>
       </thead>
-      <tbody>
-        <tr v-for="manager in managers" :key="manager.id">
-          <td>{{ manager.username }}</td>
-          <td>
-            <button class="action-btn" @click="navigateToEdit(manager.id)">Edit</button>
-            <button class="action-btn delete" @click="confirmDelete(manager)">Delete</button>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <tr v-for="manager in managers" :key="manager.id" class="hover:bg-gray-50 transition-colors">
+          <td class="px-6 py-4 text-sm text-gray-900">{{ manager.username }}</td>
+          <td class="px-6 py-4 text-sm text-gray-900 space-x-2">
+            <button
+              class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              @click="navigateToEdit(manager.id)"
+            >
+              Edit
+            </button>
+            <button
+              class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+              @click="confirmDelete(manager)"
+            >
+              Delete
+            </button>
           </td>
         </tr>
       </tbody>
@@ -83,7 +103,3 @@ onMounted(() => {
   fetchManagers()
 })
 </script>
-
-<style scoped>
-@import '../../../assets/styles/admins/club-managers.css';
-</style>

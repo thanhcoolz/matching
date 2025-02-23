@@ -1,80 +1,98 @@
 <template>
-  <div class="dashboard">
-    <div class="dashboard-content">
+  <div class="min-h-screen w-full bg-gray-50">
+    <div class="p-8 animate-fade-in">
       <!-- Welcome Section -->
-      <div class="welcome-section">
-        <h1>Welcome back, Admin! 👋</h1>
-        <p class="welcome-subtitle">Here's what's happening in your platform</p>
+      <div class="mb-8">
+        <h1 class="text-3xl font-semibold text-gray-800">Welcome back, Admin! 👋</h1>
+        <p class="mt-2 text-gray-600">Here's what's happening in your platform</p>
       </div>
 
       <!-- Stats Grid -->
-      <div class="stats-container">
-        <div class="stats-grid">
-          <div class="stat-card" v-for="(value, key) in stats" :key="key" :class="'stat-' + key.toLowerCase()">
-            <div class="stat-header">
-              <div class="stat-icon">{{ getStatIcon(key) }}</div>
-              <div class="stat-trend">
-                <span class="trend-icon">↗</span>
-                <span class="trend-value">+5%</span>
+      <div class="mb-10">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div
+            v-for="(value, key) in stats"
+            :key="key"
+            class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+          >
+            <div class="flex justify-between items-start mb-5">
+              <div class="p-3 rounded-lg bg-gray-50 text-xl">
+                {{ getStatIcon(key) }}
+              </div>
+              <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-green-50 text-green-600 text-sm">
+                <span>↗</span>
+                <span>+5%</span>
               </div>
             </div>
-            <div class="stat-info">
-              <h3>{{ formatStatName(key) }}</h3>
-              <div class="stat-value" v-animate-number="value">{{ value }}</div>
+            <div>
+              <h3 class="text-gray-500 text-sm font-medium mb-2">
+                {{ formatStatName(key) }}
+              </h3>
+              <div class="text-3xl font-semibold text-gray-800" v-animate-number="value">
+                {{ value }}
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       <!-- Main Content Grid -->
-      <div class="main-grid">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Quick Actions -->
-        <div class="quick-actions-section">
-          <div class="section-header">
-            <div>
-              <h2>Quick Actions</h2>
-              <p class="section-subtitle">Manage your platform resources</p>
-            </div>
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <div class="mb-6">
+            <h2 class="text-xl font-semibold text-gray-800">Quick Actions</h2>
+            <p class="mt-1 text-gray-500">Manage your platform resources</p>
           </div>
-          <div class="action-buttons">
-            <button v-for="action in quickActions" :key="action.name" @click="navigateTo(action.route)"
-              class="action-button">
-              <div class="action-content">
-                <span class="action-icon">{{ action.icon }}</span>
-                <span class="action-text">
-                  <span class="action-title">{{ action.title }}</span>
-                  <span class="action-description">{{ action.description }}</span>
-                </span>
+          <div class="grid grid-cols-1 gap-4">
+            <button
+              v-for="action in quickActions"
+              :key="action.name"
+              @click="navigateTo(action.route)"
+              class="w-full p-4 bg-gray-50 hover:bg-white border border-gray-200 rounded-lg transition-all hover:shadow-md flex items-center justify-between"
+            >
+              <div class="flex items-center gap-4">
+                <span class="p-2 bg-white rounded-lg text-xl">{{ action.icon }}</span>
+                <div class="text-left">
+                  <div class="font-medium text-gray-800">{{ action.title }}</div>
+                  <div class="text-sm text-gray-500">{{ action.description }}</div>
+                </div>
               </div>
-              <span class="action-arrow">→</span>
+              <span class="text-gray-400 text-xl transition-transform">→</span>
             </button>
           </div>
         </div>
 
         <!-- Recent Activity -->
-        <div class="activity-section">
-          <div class="section-header">
-            <div>
-              <h2>Recent Activity</h2>
-              <p class="section-subtitle">Latest actions across the platform</p>
-            </div>
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <div class="mb-6">
+            <h2 class="text-xl font-semibold text-gray-800">Recent Activity</h2>
+            <p class="mt-1 text-gray-500">Latest actions across the platform</p>
           </div>
 
-          <div v-if="loading" class="loading-state">
-            <div class="loading-spinner">⌛</div>
-            <p>Loading recent activities...</p>
+          <div v-if="loading" class="py-8 text-center">
+            <div class="animate-spin text-3xl mb-2">⌛</div>
+            <p class="text-gray-500">Loading recent activities...</p>
           </div>
 
-          <div v-else class="activity-list">
-            <div v-for="activity in recentActivities" :key="activity.id" class="activity-item">
-              <div class="activity-icon">{{ getActivityIcon(activity.type) }}</div>
-              <div class="activity-content">
-                <div class="activity-header">
-                  <span class="activity-title">{{ activity.description }}</span>
-                  <span class="activity-time">{{ formatTime(activity.timestamp) }}</span>
+          <div v-else class="space-y-4">
+            <div
+              v-for="activity in recentActivities"
+              :key="activity.id"
+              class="p-4 hover:bg-gray-50 rounded-lg transition-colors"
+            >
+              <div class="flex items-start gap-4">
+                <div class="p-2 bg-gray-50 rounded-lg text-xl">
+                  {{ getActivityIcon(activity.type) }}
                 </div>
-                <div class="activity-details" v-if="activity.details">
-                  {{ activity.details }}
+                <div class="flex-1">
+                  <div class="flex justify-between items-start">
+                    <div class="font-medium text-gray-800">{{ activity.description }}</div>
+                    <div class="text-sm text-gray-400">{{ formatTime(activity.timestamp) }}</div>
+                  </div>
+                  <div v-if="activity.details" class="text-sm text-gray-500 mt-1">
+                    {{ activity.details }}
+                  </div>
                 </div>
               </div>
             </div>
@@ -232,7 +250,3 @@ onMounted(() => {
   fetchRecentActivities();
 });
 </script>
-
-<style scoped>
-@import '../../assets/styles/admins/dashboard.css';
-</style>

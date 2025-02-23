@@ -1,30 +1,51 @@
 <template>
-  <div class="create-club">
-    <h1>Edit Manager</h1>
-    <form @submit.prevent="submitForm">
-      <div v-if="errors.length" class="error-block">
-        <ul>
+  <div class="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
+    <h1 class="text-2xl font-bold mb-6 text-gray-800">Edit Manager</h1>
+    <form @submit.prevent="submitForm" class="space-y-6">
+      <div v-if="errors.length" class="bg-red-50 p-4 rounded-md">
+        <ul class="text-sm text-red-600 space-y-1">
           <li v-for="error in errors" :key="error">{{ error }}</li>
         </ul>
       </div>
 
-      <div class="form-group">
-        <label for="username">Username</label>
-        <input v-model="form.username" type="text" id="username" placeholder="Enter username">
+      <div class="space-y-2">
+        <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+        <input
+          v-model="form.username"
+          type="text"
+          id="username"
+          placeholder="Enter username"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        >
       </div>
 
-      <div class="form-group">
-        <label for="password">New Password (optional)</label>
-        <input v-model="form.password" type="password" id="password" placeholder="Enter new password">
+      <div class="space-y-2">
+        <label for="password" class="block text-sm font-medium text-gray-700">New Password (optional)</label>
+        <input
+          v-model="form.password"
+          type="password"
+          id="password"
+          placeholder="Enter new password"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        >
       </div>
 
-      <div class="form-group">
-        <label for="passwordConfirmation">Verify New Password</label>
-        <input v-model="form.passwordConfirmation" type="password" id="passwordConfirmation"
-          placeholder="Confirm new password">
+      <div class="space-y-2">
+        <label for="passwordConfirmation" class="block text-sm font-medium text-gray-700">Verify New Password</label>
+        <input
+          v-model="form.passwordConfirmation"
+          type="password"
+          id="passwordConfirmation"
+          placeholder="Confirm new password"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        >
       </div>
 
-      <button type="submit" class="submit-btn" :disabled="isSubmitting">
+      <button
+        type="submit"
+        class="w-full px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+        :disabled="isSubmitting"
+      >
         {{ isSubmitting ? 'Updating...' : 'Update Manager' }}
       </button>
     </form>
@@ -93,7 +114,3 @@ onMounted(() => {
   fetchManager()
 })
 </script>
-
-<style scoped>
-@import '../../../assets/styles/admins/create-club.css';
-</style>

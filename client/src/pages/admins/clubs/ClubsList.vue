@@ -1,51 +1,87 @@
 <template>
-  <div class="clubs-list">
-    <div class="header">
-      <h1>Clubs List</h1>
-      <button class="create-btn" @click="navigateToCreate">Create New Club</button>
+  <div class="p-5">
+    <div class="flex justify-between items-center mb-5">
+      <h1 class="text-xl font-medium text-gray-900">Clubs List</h1>
+      <button
+        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        @click="navigateToCreate"
+      >
+        Create New Club
+      </button>
     </div>
 
-    <div class="search-container">
-      <div class="search-box">
-        <input v-model="searchQuery" type="text" placeholder="Search by name..." class="search-input" />
+    <div class="mb-6">
+      <div class="mb-4">
+        <input
+          v-model="searchQuery"
+          type="text"
+          placeholder="Search by name..."
+          class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
       </div>
-      <div class="filter-group">
-        <select v-model="selectedDistrict" class="filter-select">
+      <div class="flex gap-3 items-center">
+        <select
+          v-model="selectedDistrict"
+          class="px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-[160px]"
+        >
           <option value="">All Districts</option>
           <option v-for="district in districts" :key="district.id" :value="district.id">
             {{ district.name }}
           </option>
         </select>
-        <select v-model="selectedStreet" class="filter-select">
+        <select
+          v-model="selectedStreet"
+          class="px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-[160px]"
+        >
           <option value="">All Streets</option>
           <option v-for="street in streets" :key="street.id" :value="street.id">
             {{ street.name }}
           </option>
         </select>
-        <button class="search-btn" @click="fetchClubs">Search</button>
+        <button
+          class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          @click="fetchClubs"
+        >
+          Search
+        </button>
       </div>
     </div>
 
-    <table class="clubs-table">
-      <thead>
+    <table class="w-full border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-50">
         <tr>
-          <th>Name</th>
-          <th>Address</th>
-          <th>District</th>
-          <th>Street</th>
-          <th>Actions</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">District</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Street</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
         </tr>
       </thead>
-      <tbody>
-        <tr v-for="club in clubs" :key="club.id">
-          <td>{{ club.name }}</td>
-          <td>{{ club.address }}</td>
-          <td>{{ club.district_name }}</td>
-          <td>{{ club.street_name }}</td>
-          <td>
-            <button class="action-btn" @click="navigateToEdit(club.id)">Edit</button>
-            <button class="action-btn managers" @click="navigateToManagers(club.id)">Managers</button>
-            <button class="action-btn delete" @click="confirmDelete(club)">Delete</button>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <tr v-for="club in clubs" :key="club.id" class="hover:bg-gray-50 transition-colors">
+          <td class="px-6 py-4 text-sm text-gray-900">{{ club.name }}</td>
+          <td class="px-6 py-4 text-sm text-gray-900">{{ club.address }}</td>
+          <td class="px-6 py-4 text-sm text-gray-900">{{ club.district_name }}</td>
+          <td class="px-6 py-4 text-sm text-gray-900">{{ club.street_name }}</td>
+          <td class="px-6 py-4 text-sm text-gray-900 space-x-2">
+            <button
+              class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              @click="navigateToEdit(club.id)"
+            >
+              Edit
+            </button>
+            <button
+              class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+              @click="navigateToManagers(club.id)"
+            >
+              Managers
+            </button>
+            <button
+              class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+              @click="confirmDelete(club)"
+            >
+              Delete
+            </button>
           </td>
         </tr>
       </tbody>
@@ -145,7 +181,3 @@ onMounted(() => {
   fetchStreets()
 })
 </script>
-
-<style scoped>
-@import '../../../assets/styles/admins/clubs-list.css';
-</style>
