@@ -11,7 +11,6 @@
 #
 class ClubManager < ApplicationRecord
   has_secure_password
-  attr_accessor :password_verify
 
   # Associations
   belongs_to :club

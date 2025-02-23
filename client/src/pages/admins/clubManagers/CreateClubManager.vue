@@ -61,6 +61,7 @@ const submitForm = async () => {
     }
 
     await axios.post(`/api/admin/clubs/${clubId}/managers`, { club_manager: payload })
+    alert("Manager created successfully")
     router.push(`/admin/clubs/${clubId}/managers`)
   } catch (error) {
     if (error.response && error.response.data.errors) {

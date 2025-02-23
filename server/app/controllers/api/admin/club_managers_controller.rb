@@ -6,6 +6,11 @@ module Api
 
       def index
         managers = @club.club_managers
+
+        if params[:username].present?
+          managers = managers.where("username LIKE ?", "%#{params[:username]}%")
+        end
+
         render json: managers
       end
 

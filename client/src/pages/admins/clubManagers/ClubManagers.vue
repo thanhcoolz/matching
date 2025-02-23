@@ -7,12 +7,8 @@
 
     <div class="search-container">
       <div class="search-box">
-        <input
-          v-model="searchTerm"
-          class="search-input"
-          type="text"
-          placeholder="Search by manager name..."
-        />
+        <input v-model="search.username" class="search-input" type="text" placeholder="Search by manager name..."
+          @input="fetchManagers" />
       </div>
     </div>
 
@@ -24,7 +20,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="manager in filteredManagers" :key="manager.id">
+        <tr v-for="manager in managers" :key="manager.id">
           <td>{{ manager.username }}</td>
           <td>
             <button class="action-btn" @click="navigateToEdit(manager.id)">Edit</button>
@@ -37,7 +33,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from '../../../axios.js'
 
@@ -45,18 +41,14 @@ const route = useRoute()
 const router = useRouter()
 const clubId = route.params.id
 const managers = ref([])
-const searchTerm = ref('')
-
-const filteredManagers = computed(() => {
-  if (!searchTerm.value) return managers.value
-  return managers.value.filter(manager =>
-    manager.name.toLowerCase().includes(searchTerm.value.toLowerCase())
-  )
+const search = ref({
+  username: null
 })
 
 const fetchManagers = async () => {
   try {
-    const response = await axios.get(`/api/admin/clubs/${clubId}/managers`)
+
+    const response = await axios.get(`/api/admin/clubs/${clubId}/managers`, { params: { ...search.value } })
     managers.value = response.data
   } catch (error) {
     console.error('Error fetching managers:', error)

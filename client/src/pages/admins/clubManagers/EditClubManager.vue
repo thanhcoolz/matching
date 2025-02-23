@@ -37,7 +37,6 @@ import { useRoute, useRouter } from 'vue-router'
 import axios from '../../../axios.js'
 
 const route = useRoute()
-const router = useRouter()
 const clubId = route.params.id
 const managerId = route.params.managerId
 
@@ -53,7 +52,7 @@ const errors = ref([])
 const fetchManager = async () => {
   try {
     const response = await axios.get(`/api/admin/clubs/${clubId}/managers/${managerId}`)
-    form.value = response.data
+    form.value = { ...form.value, ...response.data }
   } catch (error) {
     console.error('Error fetching manager:', error)
     errors.value = ['Failed to load manager data']
@@ -72,10 +71,12 @@ const submitForm = async () => {
     if (form.value.password) {
       payload.password = form.value.password
       payload.password_confirmation = form.value.passwordConfirmation
+
+      console.log(payload)
     }
 
     await axios.put(`/api/admin/clubs/${clubId}/managers/${managerId}`, { club_manager: payload })
-    router.push(`/admin/clubs/${clubId}/managers`)
+    alert("Manager updated successfully")
   } catch (error) {
     if (error.response && error.response.data.errors) {
       errors.value = error.response.data.errors
@@ -86,10 +87,6 @@ const submitForm = async () => {
   } finally {
     isSubmitting.value = false
   }
-}
-
-const cancel = () => {
-  router.push(`/admin/clubs/${clubId}/managers`)
 }
 
 onMounted(() => {

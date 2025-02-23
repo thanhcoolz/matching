@@ -25,10 +25,6 @@
           <span class="nav-icon">🎉</span>
           <span class="nav-text" v-show="!isSidebarCollapsed">Parties</span>
         </router-link>
-        <router-link to="/admin/managers" class="nav-item">
-          <span class="nav-icon">👔</span>
-          <span class="nav-text" v-show="!isSidebarCollapsed">Managers</span>
-        </router-link>
       </nav>
       <div class="sidebar-footer">
         <button class="logout-btn" @click="handleLogout">
