@@ -27,6 +27,7 @@ module Api
 
       def update
         manager = @club.club_managers.find(params[:id])
+
         if manager.update(manager_params)
           render json: manager
         else
@@ -50,7 +51,7 @@ module Api
       end
 
       def manager_params
-        params.require(:club_manager).permit(:username, :password)
+        params.require(:club_manager).permit(:username, :password, :password_confirmation)
       end
     end
   end

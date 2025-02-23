@@ -11,10 +11,13 @@
 #
 class ClubManager < ApplicationRecord
   has_secure_password
+  attr_accessor :password_verify
 
   # Associations
   belongs_to :club
 
   # Validations
   validates :club_id, presence: true
+  validates :username, presence: true
+  validates :username, uniqueness: { scope: :club_id }
 end

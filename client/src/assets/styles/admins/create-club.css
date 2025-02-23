@@ -51,6 +51,29 @@
   background-color: white;
 }
 
+.error-block {
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.error-block ul {
+  margin: 0;
+  padding-left: 1rem;
+}
+
+.error-block li {
+  color: #721c24;
+  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
+}
+
+.error-block li:last-child {
+  margin-bottom: 0;
+}
+
 .form-group textarea {
   min-height: 120px;
   resize: vertical;
