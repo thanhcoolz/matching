@@ -3,6 +3,8 @@ require "jwt"
 module Api
   module Admin
     class BaseController < ApplicationController
+      include Pagy::Backend
+
       private
 
       def authenticate_admin!

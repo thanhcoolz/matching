@@ -56,3 +56,26 @@ if Country.first.blank?
 
   puts "City, streets and districts created successfully."
 end
+
+if Club.first.blank?
+  20.times do
+    puts "Creating club..."
+
+    club = Club.create!(
+      name: Faker::Company.name,
+      country_id: Country.all.sample.id,
+      city_id: Country.all.sample.cities.sample.id,
+      district_id: Country.all.sample.cities.sample.districts.sample.id,
+      street_id: Country.all.sample.cities.sample.districts.sample.streets.sample.id,
+      address: Faker::Address.street_address,
+      description: Faker::Lorem.paragraph,
+    )
+
+    10.times do
+      club.club_managers.create!(
+        username: Faker::Name.unique.name,
+        password: Faker::Internet.password,
+      )
+    end
+  end
+end
