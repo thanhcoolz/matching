@@ -44,7 +44,7 @@
           <td>{{ club.street_name }}</td>
           <td>
             <button class="action-btn" @click="navigateToEdit(club.id)">Edit</button>
-            <button class="action-btn delete">Delete</button>
+            <button class="action-btn delete" @click="confirmDelete(club)">Delete</button>
           </td>
         </tr>
       </tbody>
@@ -103,6 +103,22 @@ const navigateToCreate = () => {
 
 const navigateToEdit = (clubId) => {
   router.push(`/admin/clubs/${clubId}/edit`)
+}
+
+const confirmDelete = (club) => {
+  if (confirm(`Are you sure you want to delete ${club.name}?`)) {
+    deleteClub(club.id)
+  }
+}
+
+const deleteClub = async (clubId) => {
+  try {
+    await axios.delete(`/api/admin/clubs/${clubId}`)
+    await fetchClubs() // Refresh the list after deletion
+  } catch (error) {
+    console.error('Error deleting club:', error)
+    alert('Failed to delete club')
+  }
 }
 
 onMounted(() => {

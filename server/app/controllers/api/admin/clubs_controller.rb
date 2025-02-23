@@ -62,7 +62,7 @@ module Api
         streets = Street.all
 
         render json: {
-          club: club.as_json(only: [:id, :name, :address, :description, :district_id, :street_id]),
+          club: club.as_json(only: [ :id, :name, :address, :description, :district_id, :street_id ]),
           districts: districts,
           streets: streets
         }
@@ -70,9 +70,17 @@ module Api
 
       def update
         club = Club.find(params[:id])
-
         if club.update(club_params)
           render json: club
+        else
+          render json: { errors: club.errors.full_messages }, status: :unprocessable_entity
+        end
+      end
+
+      def destroy
+        club = Club.find(params[:id])
+        if club.destroy
+          head :no_content
         else
           render json: { errors: club.errors.full_messages }, status: :unprocessable_entity
         end

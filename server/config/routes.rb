@@ -11,7 +11,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :admin do
       resources :admin_sessions, only: [ :create ]
-      resources :clubs, only: [ :index, :new, :create, :edit, :update ]
+      resources :clubs, only: [ :index, :new, :create, :edit, :update, :destroy ]
       get "districts", to: "clubs#districts"
       get "streets", to: "clubs#streets"
     end
