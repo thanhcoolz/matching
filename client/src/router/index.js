@@ -34,7 +34,7 @@ const routes = [
           },
           {
             path: 'clubs',
-            component: () => import('../pages/admins/ClubsList.vue'),
+            component: () => import('../pages/admins/clubs/ClubsList.vue'),
           },
           {
             path: 'parties',
@@ -46,11 +46,23 @@ const routes = [
           },
           {
             path: 'clubs/new',
-            component: () => import('../pages/admins/CreateClub.vue')
+            component: () => import('../pages/admins/clubs/CreateClub.vue')
           },
           {
             path: 'clubs/:id/edit',
-            component: () => import('../pages/admins/EditClub.vue')
+            component: () => import('../pages/admins/clubs/EditClub.vue')
+          },
+          {
+            path: 'clubs/:id/managers',
+            component: () => import('../pages/admins/clubManagers/ClubManagers.vue')
+          },
+          {
+            path: 'clubs/:id/managers/new',
+            component: () => import('../pages/admins/clubManagers/CreateClubManager.vue')
+          },
+          {
+            path: 'clubs/:id/managers/:managerId/edit',
+            component: () => import('../pages/admins/clubManagers/EditClubManager.vue')
           }
         ]
       }

@@ -19,6 +19,7 @@ class Club < ApplicationRecord
   belongs_to :city
   belongs_to :district
   belongs_to :street
+  has_many :club_managers
 
   # Validations
   validates :country_id, presence: true

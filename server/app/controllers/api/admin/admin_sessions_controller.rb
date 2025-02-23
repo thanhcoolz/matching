@@ -1,4 +1,5 @@
 require "jwt"
+
 class Api::Admin::AdminSessionsController < ApplicationController
   include ActionController::Cookies
   JWT_EXPIRATION = 24.hours

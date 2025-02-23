@@ -44,6 +44,7 @@
           <td>{{ club.street_name }}</td>
           <td>
             <button class="action-btn" @click="navigateToEdit(club.id)">Edit</button>
+            <button class="action-btn managers" @click="navigateToManagers(club.id)">Managers</button>
             <button class="action-btn delete" @click="confirmDelete(club)">Delete</button>
           </td>
         </tr>
@@ -55,7 +56,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from '../../axios.js'
+import axios from '../../../axios.js'
 
 const router = useRouter()
 const clubs = ref([])
@@ -105,6 +106,10 @@ const navigateToEdit = (clubId) => {
   router.push(`/admin/clubs/${clubId}/edit`)
 }
 
+const navigateToManagers = (clubId) => {
+  router.push(`/admin/clubs/${clubId}/managers`)
+}
+
 const confirmDelete = (club) => {
   if (confirm(`Are you sure you want to delete ${club.name}?`)) {
     deleteClub(club.id)
@@ -129,5 +134,5 @@ onMounted(() => {
 </script>
 
 <style scoped>
-@import '../../assets/styles/admins/clubs-list.css';
+@import '../../../assets/styles/admins/clubs-list.css';
 </style>

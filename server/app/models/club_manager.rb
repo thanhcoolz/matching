@@ -10,10 +10,11 @@
 #  updated_at      :datetime         not null
 #
 class ClubManager < ApplicationRecord
+  has_secure_password
+
   # Associations
   belongs_to :club
 
   # Validations
   validates :club_id, presence: true
-  validates :role, presence: true
 end
