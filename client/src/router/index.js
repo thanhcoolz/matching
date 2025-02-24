@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { useAuth } from '../store/auth';
+import { useClubAuth } from '../store/clubAuth';
 
 const routes = [
   {
@@ -68,6 +69,36 @@ const routes = [
       }
     ],
   },
+  {
+    path: '/club',
+    children: [
+      {
+        path: 'signIn',
+        component: () => import('../layouts/ClubGuestLayout.vue'),
+        children: [
+          {
+            path: '',
+            component: () => import('../pages/clubs/SignIn.vue'),
+            meta: { public: true }
+          }
+        ]
+      },
+      {
+        path: '',
+        component: () => import('../layouts/ClubAuthLayout.vue'),
+        children: [
+          {
+            path: '',
+            redirect: '/club/dashboard'
+          },
+          {
+            path: 'dashboard',
+            component: () => import('../pages/clubs/DashBoard.vue'),
+          }
+        ]
+      }
+    ]
+  }
 ];
 
 const router = createRouter({
@@ -77,11 +108,24 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const { checkAuth } = useAuth();
-  const isAuthenticated = checkAuth();
+  const { checkAuth: checkClubAuth } = useClubAuth();
+  const isAdminAuthenticated = checkAuth();
+  const isClubAuthenticated = checkClubAuth();
   const isPublicRoute = to.matched.some(record => record.meta.public);
 
-  if (!isPublicRoute && !isAuthenticated && to.path !== '/admin/signIn') {
-    next('/admin/signIn');
+  // Check if the route is in the admin section
+  const isAdminRoute = to.path.startsWith('/admin');
+  // Check if the route is in the club section
+  const isClubRoute = to.path.startsWith('/club');
+
+  if (!isPublicRoute) {
+    if (isAdminRoute && !isAdminAuthenticated) {
+      next('/admin/signIn');
+    } else if (isClubRoute && !isClubAuthenticated) {
+      next('/club/signIn');
+    } else {
+      next();
+    }
   } else {
     next();
   }

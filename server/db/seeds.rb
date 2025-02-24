@@ -73,9 +73,14 @@ if Club.first.blank?
 
     10.times do
       club.club_managers.create!(
-        username: Faker::Name.unique.name,
-        password: Faker::Internet.password,
+        username: Faker::Alphanumeric.unique.alpha(number: 10),
+        password: "12341234",
       )
     end
   end
+end
+
+ClubManager.all.each do |club_manager|
+  club_manager.password = "12341234"
+  club_manager.save
 end
