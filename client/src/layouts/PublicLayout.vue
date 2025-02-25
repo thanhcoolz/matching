@@ -6,7 +6,7 @@
         <nav class="nav">
           <router-link to="/" class="nav-link">Home</router-link>
           <router-link to="/" class="nav-link">Our Partner Clubs</router-link>
-          <router-link to="/" class="nav-link">Sign Up</router-link>
+          <router-link to="/signUp" class="nav-link">Sign Up</router-link>
         </nav>
       </div>
     </header>

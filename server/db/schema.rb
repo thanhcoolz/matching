@@ -81,13 +81,19 @@ ActiveRecord::Schema[7.1].define(version: 0) do
   end
 
   create_table "players", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.string "email", null: false
+    t.string "phone_number", null: false
     t.string "password_digest", null: false
     t.integer "age", null: false
+    t.integer "gender", null: false
     t.integer "country_id", null: false
     t.integer "city_id", null: false
     t.integer "district_id", null: false
     t.integer "street_id", null: false
+    t.index ["city_id"], name: "index_players_on_city_id"
+    t.index ["country_id"], name: "index_players_on_country_id"
+    t.index ["district_id"], name: "index_players_on_district_id"
+    t.index ["phone_number"], name: "index_players_on_phone_number", unique: true
+    t.index ["street_id"], name: "index_players_on_street_id"
   end
 
   create_table "streets", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|

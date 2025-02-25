@@ -1,0 +1,247 @@
+<template>
+  <div class="signup-page">
+    <section class="form-section">
+      <div class="form-container">
+        <h1 class="form-title">Join Our Community</h1>
+        <p class="form-subtitle">Create your account to start matching</p>
+
+        <form @submit.prevent="handleSubmit" class="signup-form">
+          <!-- Phone Number -->
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" v-model="formData.phone" class="form-input"
+              placeholder="Enter your phone number" required>
+          </div>
+
+          <!-- Password -->
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" v-model="formData.password" class="form-input"
+              placeholder="Create a password" required>
+          </div>
+
+          <!-- Password Confirmation -->
+          <div class="form-group">
+            <label for="passwordConfirmation">Confirm Password</label>
+            <input type="password" id="passwordConfirmation" v-model="formData.passwordConfirmation" class="form-input"
+              placeholder="Confirm your password" required>
+          </div>
+
+          <!-- Age -->
+          <div class="form-group">
+            <label for="age">Age</label>
+            <select id="age" v-model="formData.age" class="form-input" required>
+              <option value="" disabled selected>Select your age</option>
+              <option v-for="age in ageRange" :key="age" :value="age">{{ age }}</option>
+            </select>
+          </div>
+
+          <!-- Gender -->
+          <div class="form-group">
+            <label>Gender</label>
+            <div class="gender-options">
+              <label class="radio-label">
+                <input type="radio" v-model="formData.gender" value="male" required>
+                Male
+              </label>
+              <label class="radio-label">
+                <input type="radio" v-model="formData.gender" value="female" required>
+                Female
+              </label>
+            </div>
+          </div>
+
+          <!-- District -->
+          <div class="form-group">
+            <label for="district">District</label>
+            <select id="district" v-model="formData.districtId" class="form-input" required
+              @change="handleDistrictChange">
+              <option value="" disabled selected>Select your district</option>
+              <option v-for="district in districts" :key="district.id" :value="district.id">
+                {{ district.name }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Street -->
+          <div class="form-group">
+            <label for="street">Street</label>
+            <select id="street" v-model="formData.streetId" class="form-input" required>
+              <option value="" disabled selected>Select your street</option>
+              <option v-for="street in streets" :key="street.id" :value="street.id">
+                {{ street.name }}
+              </option>
+            </select>
+          </div>
+
+          <button type="submit" class="submit-btn">Create Account</button>
+        </form>
+
+        <p class="login-link">
+          Already have an account?
+          <router-link to="/login" class="text-blue-600 hover:underline">Sign in</router-link>
+        </p>
+      </div>
+    </section>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const formData = ref({
+  phone: '',
+  password: '',
+  passwordConfirmation: '',
+  age: '',
+  gender: '',
+  districtId: '',
+  streetId: ''
+})
+
+// Generate age range from 18 to 80
+const ageRange = computed(() => {
+  return Array.from({ length: 63 }, (_, i) => i + 18)
+})
+
+// Dummy data for districts
+const districts = ref([
+  { id: 1, name: 'District 1' },
+  { id: 2, name: 'District 2' },
+  { id: 3, name: 'District 3' },
+  { id: 4, name: 'District 4' },
+])
+
+// Dummy data for streets
+const streets = ref([
+  { id: 1, name: 'Street A', districtId: 1 },
+  { id: 2, name: 'Street B', districtId: 1 },
+  { id: 3, name: 'Street C', districtId: 2 },
+  { id: 4, name: 'Street D', districtId: 2 },
+])
+
+const handleDistrictChange = () => {
+  formData.value.streetId = '' // Reset street selection when district changes
+}
+
+const handleSubmit = async () => {
+  try {
+    // Add your API call here
+    console.log('Form submitted:', formData.value)
+    // Redirect to success page or login
+    router.push('/login')
+  } catch (error) {
+    console.error('Signup failed:', error)
+  }
+}
+</script>
+
+<style scoped>
+.signup-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a2a6c, #b21f1f);
+  padding: 2rem;
+}
+
+.form-section {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.form-container {
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form-title {
+  font-size: 2rem;
+  color: #1a2a6c;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.form-subtitle {
+  text-align: center;
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #1a2a6c;
+  font-weight: 500;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #1a2a6c;
+}
+
+.gender-options {
+  display: flex;
+  gap: 2rem;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 1rem;
+  background: #1a2a6c;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+  background: #283c8e;
+}
+
+.login-link {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .form-section {
+    padding: 1rem;
+  }
+
+  .form-container {
+    padding: 1.5rem;
+  }
+
+  .form-title {
+    font-size: 1.75rem;
+  }
+}
+</style>
