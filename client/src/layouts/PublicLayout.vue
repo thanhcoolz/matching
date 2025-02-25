@@ -5,7 +5,7 @@
         <h1 class="logo">Billiard Matching</h1>
         <nav class="nav">
           <router-link to="/" class="nav-link">Home</router-link>
-          <router-link to="/" class="nav-link">Our Partner Clubs</router-link>
+          <router-link to="/clubs" class="nav-link">Our Partner Clubs</router-link>
           <router-link to="/signUp" class="nav-link">Sign Up</router-link>
         </nav>
       </div>

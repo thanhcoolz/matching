@@ -79,7 +79,7 @@
 
         <p class="login-link">
           Already have an account?
-          <router-link to="/login" class="text-blue-600 hover:underline">Sign in</router-link>
+          <router-link to="/signIn" class="text-blue-600 hover:underline">Sign in</router-link>
         </p>
       </div>
     </section>
