@@ -1,274 +1,178 @@
 <template>
-  <div class="clubs-page">
+  <div class="min-h-screen bg-gray-50">
     <!-- Hero Section -->
-    <section class="hero">
-      <div class="hero-content">
-        <h1 class="hero-title">Our Partner Clubs</h1>
-        <p class="hero-subtitle">Discover premium billiards venues in your area</p>
+    <section class="bg-gradient-to-r from-indigo-900 to-red-700 py-16 px-8 text-center text-white">
+      <div class="max-w-4xl mx-auto">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4 drop-shadow-lg">Our Partner Clubs</h1>
+        <p class="text-xl opacity-90">Discover premium billiards venues in your area</p>
       </div>
     </section>
 
     <!-- Search and Filter Section -->
-    <section class="search-section">
-      <div class="search-container">
-        <div class="search-box">
-          <input type="text" v-model="searchQuery" placeholder="Search clubs by name or location..."
-            class="search-input">
-          <span class="search-icon">🔍</span>
+    <section class="bg-white py-6 px-4 shadow-md">
+      <div class="max-w-3xl mx-auto">
+        <div class="relative">
+          <input type="text" v-model="filters.name" placeholder="Search clubs by name..."
+            class="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-900 transition-colors"
+            @input="debouncedFetchClubs">
+          <span class="absolute left-4 top-1/2 -translate-y-1/2">🔍</span>
+        </div>
+        <div class="mt-4 flex gap-4">
+          <select v-model="filters.district_id" @change="handleDistrictChange"
+            class="w-full py-4 px-4 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-900 transition-colors">
+            <option value="">All Districts</option>
+            <option v-for="district in districts" :key="district.id" :value="district.id">
+              {{ district.name }}
+            </option>
+          </select>
+          <select v-if="filters.district_id" v-model="filters.street_id" @change="fetchClubs"
+            class="w-full py-4 px-4 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-indigo-900 transition-colors">
+            <option value="">All Streets</option>
+            <option v-for="street in streets" :key="street.id" :value="street.id">
+              {{ street.name }}
+            </option>
+          </select>
         </div>
       </div>
     </section>
 
     <!-- Clubs Grid -->
-    <section class="clubs-section">
-      <div class="clubs-grid">
-        <div v-for="club in clubs" :key="club.id" class="club-card">
-          <div class="club-image">
-            <img :src="club.image" :alt="club.name" class="w-full h-full object-cover">
-            <div class="club-badge">Partner</div>
+    <section class="max-w-7xl mx-auto px-4 py-8">
+      <div v-if="loading" class="text-center py-8">
+        <div class="animate-spin h-8 w-8 border-4 border-indigo-900 border-t-transparent rounded-full mx-auto"></div>
+      </div>
+      <div v-else-if="clubs.length === 0" class="text-center py-8 text-gray-500">
+        No clubs found
+      </div>
+      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 p-4">
+        <div v-for="club in clubs" :key="club.id"
+          class="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-2 flex flex-col h-[500px]">
+          <div class="relative h-[250px] overflow-hidden group">
+            <img :src="club.main_image_url || 'https://placehold.co/600x400'" :alt="club.name"
+              class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
           </div>
-          <div class="club-content">
-            <h3 class="club-name">{{ club.name }}</h3>
-            <p class="club-address">
-              <span class="icon">📍</span>
-              {{ club.address }}
+          <div class="p-6 flex flex-col flex-1">
+            <h3 class="text-xl font-semibold text-indigo-900 mb-3 line-clamp-1">{{ club.name }}</h3>
+            <p class="flex items-start gap-2 text-gray-600 mb-4 text-sm">
+              <span>📍</span>
+              <span class="line-clamp-2">{{ club.address }} </span>
             </p>
-            <p class="club-description">{{ club.description }}</p>
-            <div class="club-footer">
-              <button class="view-btn">View Details</button>
-              <button class="book-btn">Book Now</button>
+            <p class="text-gray-600 mb-6 line-clamp-3 flex-1">{{ club.description }}</p>
+            <div class="flex gap-4 mt-auto">
+              <router-link :to="`/clubs/${club.id}`"
+                class="flex-1 py-3 px-4 rounded-lg bg-gray-200 text-indigo-900 font-medium text-center hover:bg-gray-300 transition-colors">
+                View Details
+              </router-link>
+              <button
+                class="flex-1 py-3 px-4 rounded-lg bg-indigo-900 text-white font-medium hover:bg-indigo-800 transition-colors">
+                Book Now
+              </button>
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- Pagination -->
+      <div v-if="pagination.total_pages > 1" class="flex justify-center gap-2 mt-8">
+        <button v-for="page in pagination.total_pages" :key="page" @click="changePage(page)" :class="[
+            'px-4 py-2 rounded-lg transition-colors',
+            page === pagination.current_page
+              ? 'bg-indigo-900 text-white'
+              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+          ]">
+          {{ page }}
+        </button>
       </div>
     </section>
   </div>
 </template>
 
+
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import apiClient from '../../axios';
+import { debounce } from 'lodash'
 
-const searchQuery = ref('')
+const clubs = ref([])
+const loading = ref(false)
+const filters = ref({
+  name: '',
+  district_id: '',
+  street_id: '',
+  page: 1,
+  per_page: 10
+})
+const pagination = ref({
+  current_page: 1,
+  total_pages: 0,
+  total_count: 0
+})
 
-// Dummy data for clubs
-const clubs = ref([
-  {
-    id: 1,
-    name: 'Elite Billiards Club',
-    address: '123 Main Street, District 1',
-    description: 'Premium billiards venue with professional tables and elegant atmosphere.',
-    image: 'https://placehold.co/600x400'
-  },
-  {
-    id: 2,
-    name: 'Champions Pool Hall',
-    address: '456 Park Avenue, District 2',
-    description: 'Modern facility featuring tournament-grade equipment and training programs.',
-    image: 'https://placehold.co/600x400'
-  },
-  {
-    id: 3,
-    name: 'Champions Pool Hall',
-    address: '456 Park Avenue, District 2',
-    description: 'Modern facility featuring tournament-grade equipment and training programs.',
-    image: 'https://placehold.co/600x400'
-  },
-  {
-    id: 4,
-    name: 'Champions Pool Hall',
-    address: '456 Park Avenue, District 2',
-    description: 'Modern facility featuring tournament-grade equipment and training programs.',
-    image: 'https://placehold.co/600x400'
-  },
-  {
-    id: 5,
-    name: 'Champions Pool Hall',
-    address: '456 Park Avenue, District 2',
-    description: 'Modern facility featuring tournament-grade equipment and training programs.',
-    image: 'https://placehold.co/600x400'
-  },
-  {
-    id: 6,
-    name: 'Champions Pool Hall',
-    address: '456 Park Avenue, District 2',
-    description: 'Modern facility featuring tournament-grade equipment and training programs.',
-    image: 'https://placehold.co/600x400'
-  },
-  // Add more dummy clubs as needed
-])
+const districts = ref([])
+const streets = ref([])
+
+const fetchDistricts = async () => {
+  try {
+    const response = await apiClient.get('/api/public/districts')
+    districts.value = response.data
+  } catch (error) {
+    console.error('Error fetching districts:', error)
+  }
+}
+
+const fetchStreets = async (districtId) => {
+  try {
+    const response = await apiClient.get('/api/public/streets', {
+      params: { district_id: districtId }
+    })
+    streets.value = response.data
+  } catch (error) {
+    console.error('Error fetching streets:', error)
+  }
+}
+
+const fetchClubs = async () => {
+  try {
+    loading.value = true
+    const params = {
+      ...filters.value,
+      page: pagination.value.current_page
+    }
+
+    const response = await apiClient.get('/api/public/clubs', { params })
+    clubs.value = response.data.clubs
+    pagination.value = response.data.pagination
+  } catch (error) {
+    console.error('Error fetching clubs:', error)
+  } finally {
+    loading.value = false
+  }
+}
+
+const debouncedFetchClubs = debounce(() => {
+  pagination.value.current_page = 1
+  fetchClubs()
+}, 300)
+
+const changePage = (page) => {
+  pagination.value.current_page = page
+  fetchClubs()
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+const handleDistrictChange = async () => {
+  filters.value.street_id = ''
+  streets.value = []
+
+  if (filters.value.district_id) {
+    await fetchStreets(filters.value.district_id)
+  }
+
+  fetchClubs()
+}
+
+onMounted(async () => {
+  await fetchDistricts()
+  fetchClubs()
+})
 </script>
-
-<style scoped>
-.clubs-page {
-  min-height: 100vh;
-  background-color: #f8f9fa;
-}
-
-.hero {
-  background: linear-gradient(135deg, #1a2a6c, #b21f1f);
-  padding: 4rem 2rem;
-  text-align: center;
-  color: white;
-}
-
-.hero-title {
-  font-size: 2.5rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.hero-subtitle {
-  font-size: 1.2rem;
-  opacity: 0.9;
-}
-
-.search-section {
-  background: white;
-  padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.search-container {
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.search-box {
-  position: relative;
-}
-
-.search-input {
-  width: 100%;
-  padding: 1rem 1rem 1rem 3rem;
-  border: 2px solid #e2e8f0;
-  border-radius: 0.5rem;
-  font-size: 1rem;
-  transition: border-color 0.3s;
-}
-
-.search-input:focus {
-  outline: none;
-  border-color: #1a2a6c;
-}
-
-.search-icon {
-  position: absolute;
-  left: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.clubs-section {
-  padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.clubs-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem;
-}
-
-.club-card {
-  background: white;
-  border-radius: 1rem;
-  overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s;
-}
-
-.club-card:hover {
-  transform: translateY(-5px);
-}
-
-.club-image {
-  position: relative;
-  height: 200px;
-  overflow: hidden;
-}
-
-.club-badge {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: rgba(26, 42, 108, 0.9);
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 2rem;
-  font-size: 0.875rem;
-}
-
-.club-content {
-  padding: 1.5rem;
-}
-
-.club-name {
-  font-size: 1.25rem;
-  font-weight: bold;
-  color: #1a2a6c;
-  margin-bottom: 0.5rem;
-}
-
-.club-address {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #666;
-  margin-bottom: 1rem;
-  font-size: 0.875rem;
-}
-
-.club-description {
-  color: #4a5568;
-  margin-bottom: 1.5rem;
-  line-height: 1.5;
-}
-
-.club-footer {
-  display: flex;
-  gap: 1rem;
-}
-
-.view-btn,
-.book-btn {
-  flex: 1;
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  font-weight: 500;
-  transition: all 0.3s;
-}
-
-.view-btn {
-  background: #e2e8f0;
-  color: #1a2a6c;
-}
-
-.book-btn {
-  background: #1a2a6c;
-  color: white;
-}
-
-.view-btn:hover {
-  background: #cbd5e0;
-}
-
-.book-btn:hover {
-  background: #283c8e;
-}
-
-@media (max-width: 768px) {
-  .hero-title {
-    font-size: 2rem;
-  }
-
-  .clubs-section {
-    padding: 1rem;
-  }
-
-  .clubs-grid {
-    grid-template-columns: 1fr;
-  }
-}
-</style>

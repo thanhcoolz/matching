@@ -6,9 +6,9 @@ import clubRoutes from './clubRoutes';
 import publicRoutes from './publicRoutes';
 
 const routes = [
+  publicRoutes,
   adminRoutes,
   clubRoutes,
-  publicRoutes,
 ];
 
 const router = createRouter({

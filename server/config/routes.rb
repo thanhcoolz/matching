@@ -23,5 +23,12 @@ Rails.application.routes.draw do
     end
 
     get "clubs", to: "clubs#index"
+
+    namespace :public do
+      resources :clubs, only: [ :index, :show ]
+
+      resources :districts, only: [ :index ]
+      resources :streets, only: [ :index ]
+    end
   end
 end

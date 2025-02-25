@@ -1,61 +1,70 @@
 <template>
-  <div class="signup-page">
-    <section class="form-section">
-      <div class="form-container">
-        <h1 class="form-title">Join Our Community</h1>
-        <p class="form-subtitle">Create your account to start matching</p>
+  <div class="min-h-screen bg-gradient-to-r from-indigo-900 to-red-800 py-8 px-4">
+    <div class="max-w-2xl mx-auto">
+      <div class="bg-white rounded-2xl shadow-lg p-8">
+        <h1 class="text-3xl font-bold text-indigo-900 text-center mb-2">Join Our Community</h1>
+        <p class="text-gray-600 text-center mb-8">Create your account to start matching</p>
 
-        <form @submit.prevent="handleSubmit" class="signup-form">
+        <form @submit.prevent="handleSubmit" class="space-y-6">
           <!-- Phone Number -->
-          <div class="form-group">
-            <label for="phone">Phone Number</label>
-            <input type="tel" id="phone" v-model="formData.phone" class="form-input"
+          <div>
+            <label for="phone" class="block text-sm font-medium text-indigo-900 mb-2">Phone Number</label>
+            <input type="tel" id="phone" v-model="formData.phone"
+              class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-indigo-900 focus:outline-none transition-colors"
               placeholder="Enter your phone number" required>
           </div>
 
           <!-- Password -->
-          <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" v-model="formData.password" class="form-input"
+          <div>
+            <label for="password" class="block text-sm font-medium text-indigo-900 mb-2">Password</label>
+            <input type="password" id="password" v-model="formData.password"
+              class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-indigo-900 focus:outline-none transition-colors"
               placeholder="Create a password" required>
           </div>
 
           <!-- Password Confirmation -->
-          <div class="form-group">
-            <label for="passwordConfirmation">Confirm Password</label>
-            <input type="password" id="passwordConfirmation" v-model="formData.passwordConfirmation" class="form-input"
+          <div>
+            <label for="passwordConfirmation" class="block text-sm font-medium text-indigo-900 mb-2">Confirm
+              Password</label>
+            <input type="password" id="passwordConfirmation" v-model="formData.passwordConfirmation"
+              class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-indigo-900 focus:outline-none transition-colors"
               placeholder="Confirm your password" required>
           </div>
 
           <!-- Age -->
-          <div class="form-group">
-            <label for="age">Age</label>
-            <select id="age" v-model="formData.age" class="form-input" required>
+          <div>
+            <label for="age" class="block text-sm font-medium text-indigo-900 mb-2">Age</label>
+            <select id="age" v-model="formData.age"
+              class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-indigo-900 focus:outline-none transition-colors"
+              required>
               <option value="" disabled selected>Select your age</option>
               <option v-for="age in ageRange" :key="age" :value="age">{{ age }}</option>
             </select>
           </div>
 
           <!-- Gender -->
-          <div class="form-group">
-            <label>Gender</label>
-            <div class="gender-options">
-              <label class="radio-label">
-                <input type="radio" v-model="formData.gender" value="male" required>
-                Male
+          <div>
+            <label class="block text-sm font-medium text-indigo-900 mb-2">Gender</label>
+            <div class="flex gap-8">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="radio" v-model="formData.gender" value="male"
+                  class="w-4 h-4 text-indigo-900 focus:ring-indigo-900" required>
+                <span class="text-gray-700">Male</span>
               </label>
-              <label class="radio-label">
-                <input type="radio" v-model="formData.gender" value="female" required>
-                Female
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="radio" v-model="formData.gender" value="female"
+                  class="w-4 h-4 text-indigo-900 focus:ring-indigo-900" required>
+                <span class="text-gray-700">Female</span>
               </label>
             </div>
           </div>
 
           <!-- District -->
-          <div class="form-group">
-            <label for="district">District</label>
-            <select id="district" v-model="formData.districtId" class="form-input" required
-              @change="handleDistrictChange">
+          <div>
+            <label for="district" class="block text-sm font-medium text-indigo-900 mb-2">District</label>
+            <select id="district" v-model="formData.districtId"
+              class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-indigo-900 focus:outline-none transition-colors"
+              @change="handleDistrictChange" required>
               <option value="" disabled selected>Select your district</option>
               <option v-for="district in districts" :key="district.id" :value="district.id">
                 {{ district.name }}
@@ -64,9 +73,11 @@
           </div>
 
           <!-- Street -->
-          <div class="form-group">
-            <label for="street">Street</label>
-            <select id="street" v-model="formData.streetId" class="form-input" required>
+          <div>
+            <label for="street" class="block text-sm font-medium text-indigo-900 mb-2">Street</label>
+            <select id="street" v-model="formData.streetId"
+              class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-indigo-900 focus:outline-none transition-colors"
+              required>
               <option value="" disabled selected>Select your street</option>
               <option v-for="street in streets" :key="street.id" :value="street.id">
                 {{ street.name }}
@@ -74,15 +85,18 @@
             </select>
           </div>
 
-          <button type="submit" class="submit-btn">Create Account</button>
+          <button type="submit"
+            class="w-full py-4 bg-indigo-900 text-white text-lg font-medium rounded-lg hover:bg-indigo-800 transition-colors">
+            Create Account
+          </button>
         </form>
 
-        <p class="login-link">
+        <p class="text-center text-gray-600 mt-6">
           Already have an account?
-          <router-link to="/signIn" class="text-blue-600 hover:underline">Sign in</router-link>
+          <router-link to="/signIn" class="text-indigo-600 hover:underline">Sign in</router-link>
         </p>
       </div>
-    </section>
+    </div>
   </div>
 </template>
 

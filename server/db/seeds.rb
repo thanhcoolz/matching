@@ -61,7 +61,7 @@ if Club.first.blank?
   20.times do
     puts "Creating club..."
 
-    club = Club.create!(
+    club = Club.new(
       name: Faker::Company.name,
       country_id: Country.all.sample.id,
       city_id: Country.all.sample.cities.sample.id,
@@ -70,6 +70,24 @@ if Club.first.blank?
       address: Faker::Address.street_address,
       description: Faker::Lorem.paragraph,
     )
+
+    # Attach main image
+    club.main_image.attach(
+      io: File.open(Rails.root.join('db', 'fixtures', 'sample_club.jpg')),
+      filename: 'main_image.jpg',
+      content_type: 'image/jpeg'
+    )
+
+    # Attach 3 sub images
+    3.times do |i|
+      club.sub_images.attach(
+        io: File.open(Rails.root.join('db', 'fixtures', 'sample_club.jpg')),
+        filename: "sub_image_#{i + 1}.jpg",
+        content_type: 'image/jpeg'
+      )
+    end
+
+    club.save!
 
     10.times do
       club.club_managers.create!(
