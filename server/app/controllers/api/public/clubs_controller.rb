@@ -44,7 +44,7 @@ module Api
         render json: {
           id: @club.id,
           name: @club.name,
-          address: @club.address,
+          address: @club.full_address,
           description: @club.description,
           district_name: @club.district.name,
           street_name: @club.street.name,
