@@ -16,3 +16,7 @@ docker-compose run api bundle install
 ```bash
 docker-compose down --volumes --remove-orphans && docker-compose build --no-cache && docker-compose up
 ```
+
+# Documents
+
+## DB ERD: using <https://dbdiagram.io/>
