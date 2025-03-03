@@ -52,7 +52,7 @@ module Api
       private
 
       def fetch_club
-        @club = Club.find(params[:club_id])
+        @club = ::Club.find(params[:club_id])
       end
 
       def manager_params

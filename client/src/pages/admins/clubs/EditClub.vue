@@ -42,6 +42,14 @@
           focus:ring-blue-500 focus:border-blue-500">
       </div>
 
+      <div class="space-y-1">
+        <label class="flex items-center space-x-2">
+          <input type="checkbox" v-model="form.active"
+            class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+          <span class="text-sm font-medium text-gray-700">Active</span>
+        </label>
+      </div>
+
       <button type="submit"
         class="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
         :disabled="isSubmitting">
@@ -67,7 +75,8 @@ const form = reactive({
   address: '',
   description: '',
   district_id: '',
-  street_id: ''
+  street_id: '',
+  active: false
 });
 
 const fetchData = async () => {

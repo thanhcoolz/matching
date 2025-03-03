@@ -50,12 +50,19 @@ module Api
       end
 
       def streets
-        streets = ::Street.all
+        streets = ::Street.where(district_id: params[:district_id])
         render json: streets
       end
 
       def create
         club = ::Club.new(club_params)
+
+        club.assign_attributes(
+          country_id: 1,
+          city_id: 1,
+          club_managers_attributes: [ { username: "admin", password: "12341234" } ]
+        )
+
         club.country_id = 1
         club.city_id = 1
 
@@ -72,7 +79,7 @@ module Api
         streets = ::Street.all
 
         render json: {
-          club: club.as_json(only: [ :id, :name, :address, :description, :district_id, :street_id ]),
+          club: club.as_json(),
           districts: districts,
           streets: streets
         }
@@ -111,7 +118,7 @@ module Api
       private
 
       def club_params
-        params.require(:club).permit(:district_id, :street_id, :name, :address, :description)
+        params.require(:club).permit(:district_id, :street_id, :name, :address, :description, :email, :active)
       end
     end
   end
