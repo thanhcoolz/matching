@@ -52,7 +52,7 @@
               </select>
             </div>
 
-            <div>
+            <div v-if="formData.district_id">
               <label class="block text-sm font-medium text-gray-700 mb-1">Street</label>
               <select v-model="formData.street_id"
                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
@@ -103,7 +103,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import apiClient from '../../axios'
 
@@ -131,9 +131,9 @@ const fetchDistricts = async () => {
   }
 }
 
-const fetchStreets = async () => {
+const fetchStreets = async (districtId) => {
   try {
-    const response = await apiClient.get('/api/public/streets')
+    const response = await apiClient.get('/api/public/streets?district_id=' + districtId)
     streets.value = response.data
   } catch (error) {
     console.error('Error fetching streets:', error)
@@ -160,8 +160,11 @@ const closePopup = () => {
   router.push('/clubs') // Redirect to clubs listing page
 }
 
+watch(() => formData.value.district_id, () => {
+  fetchStreets(formData.value.district_id)
+})
+
 onMounted(() => {
   fetchDistricts()
-  fetchStreets()
 })
 </script>
