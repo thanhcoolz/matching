@@ -3,6 +3,8 @@
 # Table name: clubs
 #
 #  id          :bigint           not null, primary key
+#  active      :boolean          default(FALSE)
+#  email       :string(255)      not null
 #  name        :string(255)      not null
 #  country_id  :integer          not null
 #  city_id     :integer          not null
@@ -19,7 +21,9 @@ class Club < ApplicationRecord
   belongs_to :city
   belongs_to :district
   belongs_to :street
-  has_many :club_managers
+
+  has_many :club_managers, dependent: :destroy
+  accepts_nested_attributes_for :club_managers, allow_destroy: true
 
   # active storage
   has_one_attached :main_image
@@ -33,10 +37,15 @@ class Club < ApplicationRecord
   validates :name, presence: true
   validates :address, presence: true
   validates :description, presence: true
+  validates :email, presence: true
+  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, uniqueness: true, if: :presence
+
 
   # Image validations
   validate :acceptable_main_image
   validate :acceptable_sub_images
+
+  scope :is_active, -> { where(active: true) }
 
   def full_address
     "#{district.name}, #{street.name}, #{address}"
@@ -69,6 +78,4 @@ class Club < ApplicationRecord
       end
     end
   end
-
-
 end

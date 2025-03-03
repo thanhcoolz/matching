@@ -2,6 +2,8 @@
 # vi: set ft=ruby :
 
 create_table "clubs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+  t.boolean :active, default: false
+  t.string :email, null: false
   t.string :name, null: false
   t.integer :country_id, null: false
   t.integer :city_id, null: false
@@ -12,6 +14,7 @@ create_table "clubs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :
 
   t.timestamps
 
+  t.index [ "email" ], name: "index_clubs_on_email", unique: true, using: :btree
   t.index [ "country_id" ], name: "index_clubs_on_country_id", using: :btree
   t.index [ "city_id" ], name: "index_clubs_on_city_id", using: :btree
   t.index [ "district_id" ], name: "index_clubs_on_district_id", using: :btree

@@ -5,6 +5,10 @@
       <div class="max-w-4xl mx-auto">
         <h1 class="text-4xl md:text-5xl font-bold mb-4 drop-shadow-lg">Our Partner Clubs</h1>
         <p class="text-xl opacity-90">Discover premium billiards venues in your area</p>
+        <router-link to="/clubs/register"
+          class="inline-block mt-6 px-8 py-3 bg-white text-indigo-900 font-semibold rounded-lg hover:bg-opacity-90 transition-colors">
+          Become our partner
+        </router-link>
       </div>
     </section>
 

@@ -26,6 +26,11 @@ export default {
       path: '/clubs/:id',
       meta: { public: true },
       component: () => import('../pages/publics/ClubDetail.vue'),
+    },
+    {
+      path: '/clubs/register',
+      meta: { public: true },
+      component: () => import('../pages/publics/ClubRegister.vue'),
     }
   ]
 };

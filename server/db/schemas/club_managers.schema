@@ -9,5 +9,5 @@ create_table "club_managers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", 
   t.timestamps
 
   t.index [ "club_id" ], name: "index_club_managers_on_club_id", using: :btree
-  t.index [ "username" ], name: "index_club_managers_on_username", unique: true, using: :btree
+  t.index [ "club_id", "username" ], name: "index_club_managers_on_id_username", unique: true, using: :btree
 end

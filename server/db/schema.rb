@@ -60,11 +60,13 @@ ActiveRecord::Schema[7.1].define(version: 0) do
     t.string "password_digest", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["club_id", "username"], name: "index_club_managers_on_id_username", unique: true
     t.index ["club_id"], name: "index_club_managers_on_club_id"
-    t.index ["username"], name: "index_club_managers_on_username", unique: true
   end
 
   create_table "clubs", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.boolean "active", default: false
+    t.string "email", null: false
     t.string "name", null: false
     t.integer "country_id", null: false
     t.integer "city_id", null: false

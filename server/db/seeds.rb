@@ -62,6 +62,7 @@ if Club.first.blank?
     puts "Creating club..."
 
     club = Club.new(
+      email: Faker::Internet.email,
       name: Faker::Company.name,
       country_id: Country.all.sample.id,
       city_id: Country.all.sample.cities.sample.id,

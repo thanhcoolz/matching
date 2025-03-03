@@ -6,7 +6,7 @@ module Api
       Pagy::DEFAULT[:items] = 12
 
       def index
-        clubs = ::Club.includes(:district, :street)
+        clubs = ::Club.is_active.includes(:district, :street)
                     .with_attached_main_image
                     .order(created_at: :desc)
 
@@ -36,7 +36,7 @@ module Api
       end
 
       def show
-        @club = ::Club.includes(:district, :street)
+        @club = ::Club.is_active.includes(:district, :street)
                    .with_attached_main_image
                    .with_attached_sub_images
                    .find(params[:id])
@@ -53,6 +53,28 @@ module Api
         }
       rescue ActiveRecord::RecordNotFound
         render json: { error: "Club not found" }, status: :not_found
+      end
+
+      def register
+        club = ::Club.new(club_register_params)
+
+        club.assign_attributes(
+          country_id: 1,
+          city_id: 1,
+          club_managers_attributes: [ { username: "admin", password: "12341234" } ]
+        )
+
+        if club.save
+          render json: { message: "Club registered successfully" }, status: :created
+        else
+          render json: { errors: club.errors.full_messages }, status: :unprocessable_entity
+        end
+      end
+
+      private
+
+      def club_register_params
+        params.require(:club).permit(:name, :address, :description, :district_id, :street_id, :email)
       end
     end
   end

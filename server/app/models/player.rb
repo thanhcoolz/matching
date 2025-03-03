@@ -3,9 +3,10 @@
 # Table name: players
 #
 #  id              :bigint           not null, primary key
-#  email           :string(255)      not null
+#  phone_number    :string(255)      not null
 #  password_digest :string(255)      not null
 #  age             :integer          not null
+#  gender          :integer          not null
 #  country_id      :integer          not null
 #  city_id         :integer          not null
 #  district_id     :integer          not null
