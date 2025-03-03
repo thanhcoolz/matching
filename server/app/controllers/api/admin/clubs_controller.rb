@@ -6,9 +6,10 @@ module Api
       before_action :authenticate_admin!
 
       def index
-        clubs = Club.includes(:district, :street)
+        clubs = ::Club.includes(:district, :street)
           .select("clubs.*, districts.name as district_name, streets.name as street_name")
           .joins(:district, :street)
+          .order(created_at: :desc)
 
         if params[:name].present?
           clubs = clubs.where("clubs.name LIKE ?", "%#{params[:name]}%")
@@ -26,7 +27,6 @@ module Api
 
         render json: {
           clubs: paginated_clubs.as_json(
-            only: [ :id, :name, :address, :district_id, :street_id ],
             methods: [ :district_name, :street_name ]
           ),
           pagination: {
@@ -39,23 +39,23 @@ module Api
       end
 
       def new
-        @districts = District.all
-        @streets = Street.all
+        @districts = ::District.all
+        @streets = ::Street.all
         render json: { districts: @districts, streets: @streets }
       end
 
       def districts
-        districts = District.all
+        districts = ::District.all
         render json: districts
       end
 
       def streets
-        streets = Street.all
+        streets = ::Street.all
         render json: streets
       end
 
       def create
-        club = Club.new(club_params)
+        club = ::Club.new(club_params)
         club.country_id = 1
         club.city_id = 1
 
@@ -67,9 +67,9 @@ module Api
       end
 
       def edit
-        club = Club.find(params[:id])
-        districts = District.all
-        streets = Street.all
+        club = ::Club.find(params[:id])
+        districts = ::District.all
+        streets = ::Street.all
 
         render json: {
           club: club.as_json(only: [ :id, :name, :address, :description, :district_id, :street_id ]),
@@ -79,7 +79,8 @@ module Api
       end
 
       def update
-        club = Club.find(params[:id])
+        club = ::Club.find(params[:id])
+
         if club.update(club_params)
           render json: club
         else
@@ -88,9 +89,20 @@ module Api
       end
 
       def destroy
-        club = Club.find(params[:id])
+        club = ::Club.find(params[:id])
+
         if club.destroy
           head :no_content
+        else
+          render json: { errors: club.errors.full_messages }, status: :unprocessable_entity
+        end
+      end
+
+      def activate
+        club = ::Club.find(params[:id])
+
+        if club.update(active: true)
+          render json: club
         else
           render json: { errors: club.errors.full_messages }, status: :unprocessable_entity
         end

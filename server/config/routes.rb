@@ -13,6 +13,10 @@ Rails.application.routes.draw do
       resources :admin_sessions, only: [ :create, :destroy ]
       resources :clubs, only: [ :index, :new, :create, :edit, :update, :destroy ] do
         resources :managers, only: [ :index, :show, :create, :edit, :update, :destroy ], controller: "club_managers"
+
+        member do
+          patch :activate
+        end
       end
       get "districts", to: "clubs#districts"
       get "streets", to: "clubs#streets"
