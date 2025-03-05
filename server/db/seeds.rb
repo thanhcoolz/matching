@@ -99,7 +99,3 @@ if Club.first.blank?
   end
 end
 
-ClubManager.all.each do |club_manager|
-  club_manager.password = "12341234"
-  club_manager.save
-end
