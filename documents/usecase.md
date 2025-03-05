@@ -25,18 +25,17 @@
 
 | ID | User Story | Priority | Estimation (Hours) | Status |
 |----|------------|----------|-------------------|--------|
-| 3.1 | As a club manager, I want to set up available time slots | High | 12 | To Do |
+| 3.1 | As a club manager, I want to set up available time slots and booking fees | High | 12 | To Do |
 | 3.2 | As a user, I want to register an account | High | 8 | To Do |
-| 3.3 | As a user, I want to book a time slot at a club | High | 14 | To Do |
+| 3.3 | As a user, I want to book a time slot at a club and pay via QR code | High | 14 | To Do |
 | 3.4 | As a club manager, I want to view all bookings for my club | Medium | 10 | To Do |
-| 3.5 | As a user, I want to view my booking history | Medium | 8 | To Do |
+| 3.5 | As a club manager, I want to approve or reject booking requests | High | 10 | To Do |
+| 3.6 | As a user, I want to view my booking history | Medium | 8 | To Do |
 
 ### Sprint 4: Advanced Features
 
 | ID | User Story | Priority | Estimation (Hours) | Status |
 |----|------------|----------|-------------------|--------|
-| 4.1 | As a user, I want to receive email confirmations for my bookings | Medium | 10 | To Do |
 | 4.2 | As a club manager, I want to set special pricing for different time slots | Medium | 12 | To Do |
 | 4.3 | As a user, I want to cancel my booking | High | 8 | To Do |
-| 4.4 | As a club manager, I want to approve or reject booking requests | High | 10 | To Do |
 | 4.5 | As an administrator, I want to view system-wide statistics | Low | 14 | To Do |

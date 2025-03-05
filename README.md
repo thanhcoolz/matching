@@ -20,3 +20,9 @@ docker-compose down --volumes --remove-orphans && docker-compose build --no-cach
 # Documents
 
 ## DB ERD: using <https://dbdiagram.io/>
+
+# Annotation
+
+```bash
+bundle exec annotate --models
+```
