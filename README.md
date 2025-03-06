@@ -14,7 +14,7 @@ docker-compose run api bundle install
 # force rebuild gems
 
 ```bash
-docker-compose down --volumes --remove-orphans 
+docker-compose down --volumes --remove-orphans
 docker-compose build --no-cache
 docker-compose up
 ```
