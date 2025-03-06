@@ -38,12 +38,10 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
 import { useAuthStore } from '../../store/auth.js';
-import apiClient from '../../axios.js';
 
-const router = useRouter();
-const { setAuth } = useAuthStore();
+const authStore = useAuthStore();
+
 const email = ref('');
 const password = ref('');
 const errorMessage = ref('');
@@ -54,14 +52,12 @@ const handleSignIn = async () => {
   errorMessage.value = '';
 
   try {
-    const response = await apiClient.post('/api/admin/admin_sessions', {
-      email: email.value,
-      password: password.value,
-    });
+    // Use the login function from authStore
+    const success = await authStore.login(email.value, password.value);
 
-    if (response.data.message === 'Sign-in successful') {
-      setAuth();
-      router.push('/admin/dashboard');
+    if (success) {
+      // Use window.location for a hard navigation to ensure a full page reload
+      window.location.href = '/admin/dashboard';
     } else {
       errorMessage.value = 'Authentication failed. Please try again.';
     }
