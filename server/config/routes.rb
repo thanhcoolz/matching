@@ -10,7 +10,11 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :admin do
-      resources :admin_sessions, only: [ :create, :destroy ]
+      resources :admin_sessions, only: [ :create, :destroy ] do
+        collection do
+          get "verify_token"
+        end
+      end
       resources :clubs, only: [ :index, :new, :create, :edit, :update, :destroy ] do
         resources :managers, only: [ :index, :show, :create, :edit, :update, :destroy ], controller: "club_managers"
 

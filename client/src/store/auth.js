@@ -1,43 +1,53 @@
-import { ref } from 'vue';
-import apiClient from '../axios';
+import { defineStore } from 'pinia';
+import apiClient from '../axios.js';
 
-// Initialize from localStorage
-const isAuthenticated = ref(localStorage.getItem('isAuthenticated') === 'true');
+export const useAuthStore = defineStore('auth', {
+  state: () => ({
+    isAuthenticated: false,
+    user: null
+  }),
 
+  actions: {
+    async setAuth() {
+      this.isAuthenticated = true;
+      return true;
+    },
+
+    async logout() {
+      try {
+        // Call logout endpoint to clear HTTP-only cookie
+        await apiClient.post('/api/admin/logout');
+      } catch (error) {
+        console.error('Logout error:', error);
+      } finally {
+        // Clear local state
+        this.isAuthenticated = false;
+        this.user = null;
+      }
+    },
+
+    async checkAuth() {
+      try {
+        // With HTTP-only cookies, the cookie is automatically sent with the request
+        const response = await apiClient.get('/api/admin/admin_sessions/verify_token');
+        this.isAuthenticated = response.status === 200;
+        return this.isAuthenticated;
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        this.isAuthenticated = false;
+        return false;
+      }
+    }
+  }
+});
+
+// For backward compatibility
 export const useAuth = () => {
-  const setAuth = () => {
-    isAuthenticated.value = true;
-    localStorage.setItem('isAuthenticated', 'true');
-  };
-
-  const clearAuth = async () => {
-    try {
-      await apiClient.delete('/api/admin/admin_sessions');
-      isAuthenticated.value = false;
-      localStorage.setItem('isAuthenticated', 'false');
-    } catch (error) {
-      console.error('Error during sign out:', error);
-      // Still clear local auth state even if API call fails
-      isAuthenticated.value = false;
-      localStorage.setItem('isAuthenticated', 'false');
-    }
-  };
-
-  const checkAuth = () => {
-    const storedAuth = localStorage.getItem('isAuthenticated');
-    if (storedAuth !== null) {
-      isAuthenticated.value = storedAuth === 'true';
-    }
-    return isAuthenticated.value;
-  };
-
-  // Initialize auth state from localStorage
-  checkAuth();
-
+  const store = useAuthStore();
   return {
-    isAuthenticated,
-    setAuth,
-    clearAuth,
-    checkAuth
+    isAuthenticated: store.isAuthenticated,
+    setAuth: store.setAuth,
+    clearAuth: store.logout,
+    checkAuth: store.checkAuth
   };
 };

@@ -6,16 +6,9 @@
         <label for="email" class="text-sm font-medium text-gray-700">Email</label>
         <div class="relative">
           <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">📧</span>
-          <input
-            id="email"
-            type="email"
-            v-model="email"
-            placeholder="Enter your email"
-            :disabled="loading"
-            required
+          <input id="email" type="email" v-model="email" placeholder="Enter your email" :disabled="loading" required
             autocomplete="email"
-            class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:bg-gray-100"
-          />
+            class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:bg-gray-100" />
         </div>
       </div>
 
@@ -23,24 +16,14 @@
         <label for="password" class="text-sm font-medium text-gray-700">Password</label>
         <div class="relative">
           <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">🔒</span>
-          <input
-            id="password"
-            type="password"
-            v-model="password"
-            placeholder="Enter your password"
-            :disabled="loading"
-            required
-            autocomplete="current-password"
-            class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:bg-gray-100"
-          />
+          <input id="password" type="password" v-model="password" placeholder="Enter your password" :disabled="loading"
+            required autocomplete="current-password"
+            class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:bg-gray-100" />
         </div>
       </div>
 
-      <button
-        type="submit"
-        :disabled="loading"
-        class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all disabled:bg-blue-400 disabled:cursor-not-allowed"
-      >
+      <button type="submit" :disabled="loading"
+        class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all disabled:bg-blue-400 disabled:cursor-not-allowed">
         <span v-if="loading" class="animate-spin">⌛</span>
         <span v-else>Sign In</span>
       </button>
@@ -56,11 +39,11 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useAuth } from '../../store/auth.js';
+import { useAuthStore } from '../../store/auth.js';
 import apiClient from '../../axios.js';
 
 const router = useRouter();
-const { setAuth } = useAuth();
+const { setAuth } = useAuthStore();
 const email = ref('');
 const password = ref('');
 const errorMessage = ref('');

@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import { useAuth } from '../store/auth';
+import { useAuthStore } from '../store/auth';
 import { useClubAuth } from '../store/clubAuth';
 import adminRoutes from './adminRoutes';
 import clubRoutes from './clubRoutes';
@@ -16,10 +16,13 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
-  const { checkAuth } = useAuth();
+router.beforeEach(async (to, from, next) => {
+  // Use Pinia store for admin auth
+  const authStore = useAuthStore();
   const { checkAuth: checkClubAuth } = useClubAuth();
-  const isAdminAuthenticated = checkAuth();
+
+  // Make auth checks asynchronous
+  const isAdminAuthenticated = await authStore.checkAuth();
   const isClubAuthenticated = checkClubAuth();
   const isPublicRoute = to.matched.some(record => record.meta.public);
 
@@ -28,16 +31,27 @@ router.beforeEach((to, from, next) => {
   // Check if the route is in the club section
   const isClubRoute = to.path.startsWith('/club');
 
+  // Debug auth state
+  console.log('Route navigation:', {
+    to: to.path,
+    isAdminRoute,
+    isClubRoute,
+    isAdminAuthenticated,
+    isClubAuthenticated,
+    isPublicRoute
+  });
+
   if (!isPublicRoute) {
     if (isAdminRoute && !isAdminAuthenticated) {
-      next('/admin/signIn');
+      // Redirect to sign in page
+      return next('/admin/signIn');
     } else if (isClubRoute && !isClubAuthenticated) {
-      next('/club/signIn');
+      return next('/club/signIn');
     } else {
-      next();
+      return next();
     }
   } else {
-    next();
+    return next();
   }
 });
 

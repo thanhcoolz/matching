@@ -65,14 +65,22 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useAuth } from '../store/auth.js';
+import { useAuthStore } from '../store/auth.js';
 
 const route = useRoute();
-const router = useRouter();
-const { clearAuth } = useAuth();
+const authStore = useAuthStore();
 const isSidebarCollapsed = ref(false);
+
+// Check authentication on mount
+// onMounted(async () => {
+//   const isAuthenticated = await authStore.checkAuth();
+
+//   if (!isAuthenticated) {
+//     window.location.href = '/admin/signIn';
+//   }
+// });
 
 const currentPageTitle = computed(() => {
   const path = route.path.split('/').pop();
@@ -84,7 +92,7 @@ const toggleSidebar = () => {
 };
 
 const handleLogout = async () => {
-  await clearAuth();
-  router.push('/admin/signIn');
+  authStore.clearAuth();
+  window.location.href = '/admin/signIn';
 };
 </script>
