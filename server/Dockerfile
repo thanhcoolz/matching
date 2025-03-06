@@ -8,12 +8,21 @@ RUN apt-get update -qq && \
 WORKDIR /app
 
 # Install Rails dependencies
-COPY Gemfile ./
+COPY Gemfile Gemfile.lock ./
+
+# Clear any existing bundle config
+RUN rm -rf /usr/local/bundle/*
+
+# Install bundler with specific version
+RUN gem install bundler:2.6.2
 
 # Add build arg for cache busting
 ARG CACHEBUST=1
 RUN echo "Cache bust: ${CACHEBUST}"
-RUN bundle install --no-cache
+
+# Install dependencies
+RUN bundle config set --local without 'development test' && \
+  bundle install --jobs 4 --retry 3
 
 # Copy the rest of the application
 COPY . .
