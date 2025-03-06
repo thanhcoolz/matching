@@ -41,6 +41,15 @@ router.beforeEach(async (to, from, next) => {
     isPublicRoute
   });
 
+  // Redirect authenticated users away from sign-in pages
+  if (to.path === '/admin/signIn' && isAdminAuthenticated) {
+    return next('/admin/');
+  }
+
+  if (to.path === '/club/signIn' && isClubAuthenticated) {
+    return next('/club/');
+  }
+
   if (!isPublicRoute) {
     if (isAdminRoute && !isAdminAuthenticated) {
       // Redirect to sign in page
