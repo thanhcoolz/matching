@@ -114,6 +114,7 @@ ActiveRecord::Schema[7.1].define(version: 0) do
   create_table "players", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "phone_number", null: false
     t.string "password_digest", null: false
+    t.string "username", null: false
     t.integer "age", null: false
     t.integer "gender", null: false
     t.integer "country_id", null: false

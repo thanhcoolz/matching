@@ -38,6 +38,12 @@ Rails.application.routes.draw do
         end
       end
 
+      resources :players, only: [] do
+        collection do
+          post :register, to: "players#register"
+        end
+      end
+
       resources :districts, only: [ :index ]
       resources :streets, only: [ :index ]
     end

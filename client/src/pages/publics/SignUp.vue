@@ -1,261 +1,203 @@
 <template>
   <div class="min-h-screen bg-gradient-to-r from-indigo-900 to-red-800 py-8 px-4">
-    <div class="max-w-2xl mx-auto">
-      <div class="bg-white rounded-2xl shadow-lg p-8">
-        <h1 class="text-3xl font-bold text-indigo-900 text-center mb-2">Join Our Community</h1>
-        <p class="text-gray-600 text-center mb-8">Create your account to start matching</p>
+    <div class="max-w-2xl mx-auto px-6">
+      <!-- Header -->
+      <div class="bg-white rounded-lg shadow-lg p-8 mb-10">
+        <h1 class="text-3xl font-bold text-gray-800">Sign Up</h1>
+        <p class="text-gray-600 mt-2">Create your account to join games</p>
+      </div>
+
+      <!-- Registration Form -->
+      <div class="bg-white rounded-lg shadow-lg p-8">
+        <!-- Error Messages -->
+        <div v-if="errors.length > 0" class="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+          <h3 class="text-red-800 font-medium mb-2">Please fix the following errors:</h3>
+          <ul class="list-disc pl-5 text-red-700">
+            <li v-for="(error, index) in errors" :key="index" class="mb-1">{{ error }}</li>
+          </ul>
+        </div>
 
         <form @submit.prevent="handleSubmit" class="space-y-6">
-          <!-- Phone Number -->
-          <div>
-            <label for="phone" class="block text-sm font-medium text-indigo-900 mb-2">Phone Number</label>
-            <input type="tel" id="phone" v-model="formData.phone"
-              class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-indigo-900 focus:outline-none transition-colors"
-              placeholder="Enter your phone number" required>
-          </div>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+              <input v-model="formData.username" type="text"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
 
-          <!-- Password -->
-          <div>
-            <label for="password" class="block text-sm font-medium text-indigo-900 mb-2">Password</label>
-            <input type="password" id="password" v-model="formData.password"
-              class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-indigo-900 focus:outline-none transition-colors"
-              placeholder="Create a password" required>
-          </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+              <input v-model="formData.phone_number" type="text"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
 
-          <!-- Password Confirmation -->
-          <div>
-            <label for="passwordConfirmation" class="block text-sm font-medium text-indigo-900 mb-2">Confirm
-              Password</label>
-            <input type="password" id="passwordConfirmation" v-model="formData.passwordConfirmation"
-              class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-indigo-900 focus:outline-none transition-colors"
-              placeholder="Confirm your password" required>
-          </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Age</label>
+              <select v-model="formData.age"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option value="">Select Age</option>
+                <option v-for="age in ageOptions" :key="age" :value="age">{{ age }}</option>
+              </select>
+            </div>
 
-          <!-- Age -->
-          <div>
-            <label for="age" class="block text-sm font-medium text-indigo-900 mb-2">Age</label>
-            <select id="age" v-model="formData.age"
-              class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-indigo-900 focus:outline-none transition-colors"
-              required>
-              <option value="" disabled selected>Select your age</option>
-              <option v-for="age in ageRange" :key="age" :value="age">{{ age }}</option>
-            </select>
-          </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+              <select v-model="formData.gender"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option value="">Select Gender</option>
+                <option v-for="gender in genderOptions" :key="gender.value" :value="gender.value">{{ gender.label }}
+                </option>
+              </select>
+            </div>
 
-          <!-- Gender -->
-          <div>
-            <label class="block text-sm font-medium text-indigo-900 mb-2">Gender</label>
-            <div class="flex gap-8">
-              <label class="flex items-center gap-2 cursor-pointer">
-                <input type="radio" v-model="formData.gender" value="male"
-                  class="w-4 h-4 text-indigo-900 focus:ring-indigo-900" required>
-                <span class="text-gray-700">Male</span>
-              </label>
-              <label class="flex items-center gap-2 cursor-pointer">
-                <input type="radio" v-model="formData.gender" value="female"
-                  class="w-4 h-4 text-indigo-900 focus:ring-indigo-900" required>
-                <span class="text-gray-700">Female</span>
-              </label>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+              <input v-model="formData.password" type="password"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Password Confirmation</label>
+              <input v-model="formData.password_confirmation" type="password"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">District</label>
+              <select v-model="formData.district_id"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option value="">Select District</option>
+                <option v-for="district in districts" :key="district.id" :value="district.id">
+                  {{ district.name }}
+                </option>
+              </select>
+            </div>
+
+            <div v-if="formData.district_id">
+              <label class="block text-sm font-medium text-gray-700 mb-1">Street</label>
+              <select v-model="formData.street_id"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option value="">Select Street</option>
+                <option v-for="street in streets" :key="street.id" :value="street.id">
+                  {{ street.name }}
+                </option>
+              </select>
             </div>
           </div>
 
-          <!-- District -->
-          <div>
-            <label for="district" class="block text-sm font-medium text-indigo-900 mb-2">District</label>
-            <select id="district" v-model="formData.districtId"
-              class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-indigo-900 focus:outline-none transition-colors"
-              @change="handleDistrictChange" required>
-              <option value="" disabled selected>Select your district</option>
-              <option v-for="district in districts" :key="district.id" :value="district.id">
-                {{ district.name }}
-              </option>
-            </select>
-          </div>
-
-          <!-- Street -->
-          <div>
-            <label for="street" class="block text-sm font-medium text-indigo-900 mb-2">Street</label>
-            <select id="street" v-model="formData.streetId"
-              class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-indigo-900 focus:outline-none transition-colors"
-              required>
-              <option value="" disabled selected>Select your street</option>
-              <option v-for="street in streets" :key="street.id" :value="street.id">
-                {{ street.name }}
-              </option>
-            </select>
-          </div>
-
           <button type="submit"
-            class="w-full py-4 bg-indigo-900 text-white text-lg font-medium rounded-lg hover:bg-indigo-800 transition-colors">
-            Create Account
+            class="w-full py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
+            Sign Up
           </button>
-        </form>
 
-        <p class="text-center text-gray-600 mt-6">
-          Already have an account?
-          <router-link to="/signIn" class="text-indigo-600 hover:underline">Sign in</router-link>
-        </p>
+          <div class="text-center mt-4">
+            <p class="text-gray-600">
+              Already have an account?
+              <router-link to="/signIn" class="text-blue-600 hover:text-blue-700">Sign In</router-link>
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Success Popup -->
+    <div v-if="showSuccessPopup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div class="bg-white rounded-lg shadow-xl p-8 max-w-md w-full">
+        <div class="text-center">
+          <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+            <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Registration Successful!</h3>
+          <p class="text-gray-600 mb-6">
+            Your account has been created successfully. You can now sign in.
+          </p>
+          <button @click="closePopup"
+            class="w-full py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
+            Got it!
+          </button>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import apiClient from '../../axios'
 
 const router = useRouter()
 
+const ageOptions = Array.from({ length: 43 }, (_, i) => i + 18);
+const genderOptions = [
+  { value: 1, label: 'Male' },
+  { value: 2, label: 'Female' },
+]
+
+const showSuccessPopup = ref(false)
+const errors = ref([])
+const districts = ref([])
+const streets = ref([])
+
 const formData = ref({
-  phone: '',
-  password: '',
-  passwordConfirmation: '',
-  age: '',
+  username: '',
+  phone_number: '',
   gender: '',
-  districtId: '',
-  streetId: ''
+  password: '',
+  password_confirmation: '',
+  district_id: '',
+  street_id: '',
+  age: '',
 })
 
-// Generate age range from 18 to 80
-const ageRange = computed(() => {
-  return Array.from({ length: 63 }, (_, i) => i + 18)
-})
-
-// Dummy data for districts
-const districts = ref([
-  { id: 1, name: 'District 1' },
-  { id: 2, name: 'District 2' },
-  { id: 3, name: 'District 3' },
-  { id: 4, name: 'District 4' },
-])
-
-// Dummy data for streets
-const streets = ref([
-  { id: 1, name: 'Street A', districtId: 1 },
-  { id: 2, name: 'Street B', districtId: 1 },
-  { id: 3, name: 'Street C', districtId: 2 },
-  { id: 4, name: 'Street D', districtId: 2 },
-])
-
-const handleDistrictChange = () => {
-  formData.value.streetId = '' // Reset street selection when district changes
+const fetchDistricts = async () => {
+  try {
+    const response = await apiClient.get('/api/public/districts')
+    districts.value = response.data
+  } catch (error) {
+    console.error('Error fetching districts:', error)
+  }
 }
+
+const fetchStreets = async (districtId) => {
+  try {
+    const response = await apiClient.get('/api/public/streets?district_id=' + districtId)
+    streets.value = response.data
+  } catch (error) {
+    console.error('Error fetching streets:', error)
+  }
+}
+
+watch(() => formData.value.district_id, () => {
+  if (formData.value.district_id) {
+    formData.value.street_id = ''
+    fetchStreets(formData.value.district_id)
+  }
+})
 
 const handleSubmit = async () => {
   try {
-    // Add your API call here
-    console.log('Form submitted:', formData.value)
-    // Redirect to success page or login
-    router.push('/login')
+    errors.value = []
+    await apiClient.post('/api/public/players/register', { player: formData.value })
+    showSuccessPopup.value = true
   } catch (error) {
-    console.error('Signup failed:', error)
+    console.error('Error during sign up:', error)
+    if (error.response?.data?.errors) {
+      errors.value = error.response.data.errors
+    } else {
+      errors.value = ['An unexpected error occurred. Please try again.']
+    }
   }
 }
+
+const closePopup = () => {
+  showSuccessPopup.value = false
+  router.push('/signIn')
+}
+
+onMounted(() => {
+  fetchDistricts()
+})
 </script>
-
-<style scoped>
-.signup-page {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #1a2a6c, #b21f1f);
-  padding: 2rem;
-}
-
-.form-section {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 2rem;
-}
-
-.form-container {
-  background: white;
-  padding: 2rem;
-  border-radius: 1rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.form-title {
-  font-size: 2rem;
-  color: #1a2a6c;
-  text-align: center;
-  margin-bottom: 0.5rem;
-}
-
-.form-subtitle {
-  text-align: center;
-  color: #666;
-  margin-bottom: 2rem;
-}
-
-.form-group {
-  margin-bottom: 1.5rem;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: #1a2a6c;
-  font-weight: 500;
-}
-
-.form-input {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 0.5rem;
-  font-size: 1rem;
-  transition: border-color 0.3s;
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: #1a2a6c;
-}
-
-.gender-options {
-  display: flex;
-  gap: 2rem;
-}
-
-.radio-label {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-}
-
-.submit-btn {
-  width: 100%;
-  padding: 1rem;
-  background: #1a2a6c;
-  color: white;
-  border: none;
-  border-radius: 0.5rem;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.submit-btn:hover {
-  background: #283c8e;
-}
-
-.login-link {
-  text-align: center;
-  margin-top: 1.5rem;
-  color: #666;
-}
-
-@media (max-width: 768px) {
-  .form-section {
-    padding: 1rem;
-  }
-
-  .form-container {
-    padding: 1.5rem;
-  }
-
-  .form-title {
-    font-size: 1.75rem;
-  }
-}
-</style>

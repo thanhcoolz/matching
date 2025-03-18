@@ -17,29 +17,21 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-  // Use Pinia store for admin auth
+  const isPublicRoute = to.matched.some(record => record.meta.public);
+
+  if (!isPublicRoute) {
+     // Use Pinia store for admin auth
   const authStore = useAuthStore();
   const { checkAuth: checkClubAuth } = useClubAuth();
 
   // Make auth checks asynchronous
   const isAdminAuthenticated = await authStore.checkAuth();
   const isClubAuthenticated = checkClubAuth();
-  const isPublicRoute = to.matched.some(record => record.meta.public);
 
   // Check if the route is in the admin section
   const isAdminRoute = to.path.startsWith('/admin');
   // Check if the route is in the club section
   const isClubRoute = to.path.startsWith('/club');
-
-  // Debug auth state
-  console.log('Route navigation:', {
-    to: to.path,
-    isAdminRoute,
-    isClubRoute,
-    isAdminAuthenticated,
-    isClubAuthenticated,
-    isPublicRoute
-  });
 
   // Redirect authenticated users away from sign-in pages
   if (to.path === '/admin/signIn' && isAdminAuthenticated) {
@@ -50,7 +42,6 @@ router.beforeEach(async (to, from, next) => {
     return next('/club/');
   }
 
-  if (!isPublicRoute) {
     if (isAdminRoute && !isAdminAuthenticated) {
       // Redirect to sign in page
       return next('/admin/signIn');

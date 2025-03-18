@@ -5,6 +5,7 @@
 #  id              :bigint           not null, primary key
 #  phone_number    :string(255)      not null
 #  password_digest :string(255)      not null
+#  username        :string(255)      not null
 #  age             :integer          not null
 #  gender          :integer          not null
 #  country_id      :integer          not null
@@ -21,9 +22,9 @@ class Player < ApplicationRecord
   belongs_to :district
   belongs_to :street
 
+  enum gender: { male: 1, female: 2 }
+
   # Validations
-  validates :country_id, presence: true
-  validates :city_id, presence: true
-  validates :district_id, presence: true
-  validates :street_id, presence: true
+  validates :phone_number, presence: true, uniqueness: true
+  validates :username, :gender, :age, presence: true
 end
