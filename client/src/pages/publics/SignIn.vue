@@ -5,11 +5,16 @@
         <h1 class="text-3xl font-bold text-indigo-900 text-center mb-2">Welcome Back</h1>
         <p class="text-gray-600 text-center mb-8">Sign in to your account</p>
 
+        <!-- Error Messages -->
+        <div v-if="error" class="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+          <p class="text-red-700">{{ error }}</p>
+        </div>
+
         <form @submit.prevent="handleSubmit" class="space-y-6">
           <!-- Phone Number -->
           <div>
             <label for="phone" class="block text-sm font-medium text-indigo-900 mb-2">Phone Number</label>
-            <input type="tel" id="phone" v-model="formData.phone"
+            <input type="tel" id="phone" v-model="formData.phone_number"
               class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-indigo-900 focus:outline-none transition-colors"
               placeholder="Enter your phone number" required>
           </div>
@@ -40,22 +45,35 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import apiClient from '../../axios'
+import { useAuthStore } from '../../store/auth'
 
 const router = useRouter()
+const authStore = useAuthStore()
+const error = ref('')
 
 const formData = ref({
-  phone: '',
+  phone_number: '',
   password: ''
 })
 
 const handleSubmit = async () => {
   try {
-    // Add your API call here
-    console.log('Form submitted:', formData.value)
-    // Redirect to dashboard or home page after successful login
-    router.push('/')
-  } catch (error) {
-    console.error('Login failed:', error)
+    error.value = ''
+    const response = await apiClient.post('/api/player/player_sessions', formData.value)
+
+    if (response.data) {
+      // Store the player data in auth store
+      authStore.setAuth({
+        player: response.data.player,
+      })
+
+      // Redirect to home page or dashboard
+      router.push('/')
+    }
+  } catch (err) {
+    console.error('Login failed:', err)
+    error.value = err.response?.data?.error || 'An unexpected error occurred. Please try again.'
   }
 }
 </script>

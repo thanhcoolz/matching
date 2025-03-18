@@ -31,6 +31,10 @@ Rails.application.routes.draw do
 
     get "clubs", to: "clubs#index"
 
+    namespace :player do
+      resources :player_sessions, only: [ :create, :destroy ]
+    end
+
     namespace :public do
       resources :clubs, only: [ :index, :show ] do
         collection do

@@ -1,43 +1,34 @@
 module Api
-  module Club
-    class ClubSessionsController < BaseController
+  module Player
+    class PlayerSessionsController < ApplicationController
       include ActionController::Cookies
       JWT_EXPIRATION = 24.hours
 
       def create
-        @club_manager = @club.club_managers.find_by(username: params[:username])
+        @player = ::Player.find_by(phone_number: params[:phone_number])
 
-        if @club_manager&.authenticate(params[:password])
-          token = generate_token(@club_manager)
+        if @player&.authenticate(params[:password])
+          token = generate_token(@player)
           set_jwt_cookie(token)
 
           render json: {
             message: "Sign-in successful",
-            club_manager: @club_manager,
-            current_club: @club
-          }, status: :ok
+            player: @player,
+          }
         else
-          render json: {
-            error: "Invalid email or password"
-          }, status: :unauthorized
+          render json: { error: "Invalid phone number or password" }, status: :not_found
         end
-      end
-
-      def destroy
-        cookies.delete(:jwt, httponly: true)
-        render json: { message: "Logged out successfully" }, status: :ok
       end
 
       private
 
-      def generate_token(club_manager)
+      def generate_token(player)
         secret = ENV["JWT_SECRET"]
         raise JWT::EncodeError, "JWT_SECRET environment variable is not configured" unless secret
 
         payload = {
-          club_manager_id: club_manager.id,
-          club_id: @club.id,
-          type: 'club',
+          player_id: player.id,
+          type: 'player',
           exp: JWT_EXPIRATION.from_now.to_i
         }
         JWT.encode(payload, secret, "HS256")
@@ -54,7 +45,7 @@ module Api
       end
 
       def session_params
-        params.require(:session).permit(:email, :password, :club_id)
+        params.require(:session).permit(:phone_number, :password)
       end
     end
   end
