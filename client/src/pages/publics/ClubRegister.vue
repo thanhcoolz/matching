@@ -74,6 +74,14 @@
             class="w-full py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
             Register Club
           </button>
+
+          <!-- add sign in to redirect to login page -->
+          <div class="flex justify-center">
+            <div class="text-center">
+              <p class="text-sm text-gray-500">Already have an account? <a href="/club/signIn"
+                  class="text-blue-600 hover:underline">Sign in</a></p>
+            </div>
+          </div>
         </form>
       </div>
     </div>

@@ -13,7 +13,7 @@ module Api
 
           render json: {
             message: "Sign-in successful",
-            player: @player,
+            player: @player
           }
         else
           render json: { error: "Invalid phone number or password" }, status: :not_found
@@ -28,7 +28,6 @@ module Api
 
         payload = {
           player_id: player.id,
-          type: 'player',
           exp: JWT_EXPIRATION.from_now.to_i
         }
         JWT.encode(payload, secret, "HS256")

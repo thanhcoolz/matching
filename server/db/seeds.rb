@@ -91,6 +91,11 @@ unless Club.exists?
 
       club.save!
 
+      club.club_managers.create!(
+        username: "club_manager",
+        password: "12341234"
+      )
+
       10.times do
         club.club_managers.create!(
           username: Faker::Alphanumeric.unique.alpha(number: 10),
