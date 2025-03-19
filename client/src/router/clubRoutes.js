@@ -23,6 +23,19 @@ export default {
         {
           path: 'dashboard',
           component: () => import('../pages/clubs/DashBoard.vue'),
+        },
+        {
+          path: 'managers',
+          children: [
+            {
+              path: '',
+              component: () => import('../pages/clubs/Managers.vue'),
+            },
+            {
+              path: 'create',
+              component: () => import('../pages/clubs/managers/Create.vue')
+            },
+          ]
         }
       ]
     }

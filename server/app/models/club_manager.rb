@@ -18,4 +18,5 @@ class ClubManager < ApplicationRecord
   # Validations
   validates :username, presence: true
   validates :username, uniqueness: { scope: :club_id }
+  validates :password_confirmation, presence: true, on: :create
 end

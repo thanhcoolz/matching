@@ -37,7 +37,6 @@ module Api
         payload = {
           club_manager_id: club_manager.id,
           club_id: @club.id,
-          type: 'club',
           exp: JWT_EXPIRATION.from_now.to_i
         }
         JWT.encode(payload, secret, "HS256")

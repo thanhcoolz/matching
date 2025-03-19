@@ -27,6 +27,7 @@ Rails.application.routes.draw do
 
     namespace :club do
       resources :club_sessions, only: [ :create, :destroy ]
+      resources :managers
     end
 
     get "clubs", to: "clubs#index"

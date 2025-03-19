@@ -44,9 +44,11 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async checkAuth() {
+      const checkUrl = '/api/admin/verify_token';
+
       try {
         // With HTTP-only cookies, the cookie is automatically sent with the request
-        const response = await apiClient.get('/api/admin/verify_token');
+        const response = await apiClient.get(checkUrl);
         this.isAuthenticated = response.status === 200;
         return this.isAuthenticated;
       } catch (error) {

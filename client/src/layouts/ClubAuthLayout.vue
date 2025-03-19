@@ -18,11 +18,11 @@
           <span class="ml-3 whitespace-nowrap" v-show="!isSidebarCollapsed">Dashboard</span>
         </router-link>
 
-        <router-link to="/club/members"
+        <router-link to="/club/managers"
           class="flex items-center px-5 py-3 text-gray-300 hover:bg-gray-700 transition-colors"
           active-class="bg-gray-700 border-l-4 border-blue-500">
           <span class="text-lg">👥</span>
-          <span class="ml-3 whitespace-nowrap" v-show="!isSidebarCollapsed">Members</span>
+          <span class="ml-3 whitespace-nowrap" v-show="!isSidebarCollapsed">Managers</span>
         </router-link>
 
         <router-link to="/club/parties"
