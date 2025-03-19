@@ -27,11 +27,10 @@
         <tr v-for="manager in managers" :key="manager.id" class="hover:bg-gray-50 transition-colors">
           <td class="px-6 py-4 text-sm text-gray-900">{{ manager.username }}</td>
           <td class="px-6 py-4 text-sm text-gray-900 space-x-2">
-            <button
-              class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              @click="navigateToEdit(manager.id)">
+            <router-link :to="`/club/managers/${manager.id}/edit`"
+              class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
               Edit
-            </button>
+            </router-link>
             <button
               class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
               @click="confirmDelete(manager)">

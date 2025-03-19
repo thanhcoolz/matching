@@ -14,7 +14,7 @@ module Api
       end
 
       def create
-        manager = @club.club_managers.new(manager_params)
+        manager = @club.club_managers.new(create_params)
 
         if manager.save
           render json: manager, status: :created
@@ -32,7 +32,7 @@ module Api
       def update
         manager = @club.club_managers.find(params[:id])
 
-        if manager.update(manager_params)
+        if manager.update(update_params)
           render json: manager
         else
           render json: { errors: manager.errors.full_messages }, status: :unprocessable_entity
@@ -54,8 +54,12 @@ module Api
         @club = ::Club.find(params[:club_id])
       end
 
-      def manager_params
+      def create_params
         params.require(:club_manager).permit(:username, :password, :password_confirmation)
+      end
+
+      def update_params
+        params.require(:club_manager).permit(:password, :password_confirmation)
       end
     end
   end

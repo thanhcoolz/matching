@@ -35,6 +35,10 @@ export default {
               path: 'create',
               component: () => import('../pages/clubs/managers/Create.vue')
             },
+            {
+              path: ':id/edit',
+              component: () => import('../pages/clubs/managers/Edit.vue')
+            }
           ]
         }
       ]
