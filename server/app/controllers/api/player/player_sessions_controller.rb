@@ -12,8 +12,8 @@ module Api
           set_jwt_cookie(token)
 
           render json: {
-            message: "Sign-in successful",
-            player: @player
+            status: 'ok',
+            player: @player.as_json(only: [:username])
           }
         else
           render json: { error: "Invalid phone number or password" }, status: :not_found

@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import { useAuthStore } from '../store/auth';
+import { useAuthStore } from '../store/adminAuth';
 import { useClubAuth } from '../store/clubAuth';
 import adminRoutes from './adminRoutes';
 import clubRoutes from './clubRoutes';

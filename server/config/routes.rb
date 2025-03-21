@@ -33,7 +33,9 @@ Rails.application.routes.draw do
     get "clubs", to: "clubs#index"
 
     namespace :player do
-      resources :player_sessions, only: [ :create, :destroy ]
+      post "player_sessions", to: "player_sessions#create"
+      delete "player_sessions", to: "player_sessions#destroy"
+      get "verify_token", to: "player_sessions#verify_token"
     end
 
     namespace :public do
