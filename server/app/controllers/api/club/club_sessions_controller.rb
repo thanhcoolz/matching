@@ -5,6 +5,7 @@ module Api
       JWT_EXPIRATION = 24.hours
 
       def create
+        @club = ::Club.active.find(params[:club_id])
         @club_manager = @club.club_managers.find_by(username: params[:username])
 
         if @club_manager&.authenticate(params[:password])

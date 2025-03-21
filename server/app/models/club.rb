@@ -56,6 +56,10 @@ class Club < ApplicationRecord
     "#{district.name}, #{street.name}, #{address}"
   end
 
+  def self.active
+    where(active: true)
+  end
+
   private
 
   def acceptable_main_image

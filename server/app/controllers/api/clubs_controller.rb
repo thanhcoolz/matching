@@ -2,7 +2,7 @@ module Api
   class ClubsController < ApplicationController
     def index
       if params[:name].present?
-        @clubs = ::Club.where("name LIKE ?", "%#{params[:name]}%")
+        @clubs = ::Club.active.where("name LIKE ?", "%#{params[:name]}%")
                     .select(:id, :name)
       else
         @clubs = []
