@@ -61,8 +61,14 @@ module Api
         club.assign_attributes(
           country_id: 1,
           city_id: 1,
-          club_managers_attributes: [ { username: "admin", password: "12341234" } ]
+          club_managers_attributes: [ { username: "admin", password: "12341234", password_confirmation: "12341234" } ]
         )
+
+        if club.table_numbers.present?
+          club.table_numbers.times do |i|
+            club.tables.build(name: "Table #{i + 1}")
+          end
+        end
 
         if club.save
           render json: { message: "Club registered successfully" }, status: :created
@@ -74,7 +80,7 @@ module Api
       private
 
       def club_register_params
-        params.require(:club).permit(:name, :address, :description, :district_id, :street_id, :email)
+        params.require(:club).permit(:name, :address, :description, :district_id, :street_id, :email, :table_numbers)
       end
     end
   end

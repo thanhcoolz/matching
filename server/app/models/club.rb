@@ -31,6 +31,8 @@ class Club < ApplicationRecord
   has_many_attached :sub_images
 
   has_many :tables
+  accepts_nested_attributes_for :tables, allow_destroy: true
+
   has_many :reservations
 
   # Validations
