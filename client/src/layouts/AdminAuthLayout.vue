@@ -67,7 +67,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
-import { useAuthStore } from '../store/auth.js';
+import { useAuthStore } from '../store/adminAuth.js';
 
 const route = useRoute();
 const authStore = useAuthStore();

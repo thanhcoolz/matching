@@ -10,8 +10,4 @@ const pinia = createPinia();
 app.use(pinia);
 app.use(router);
 
-// Initialize auth check on app start
-import { useAuthStore } from './store/auth';
-app.config.globalProperties.$auth = useAuthStore();
-
 app.mount('#app');

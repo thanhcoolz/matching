@@ -19,6 +19,27 @@
 
         <form @submit.prevent="handleSubmit" class="space-y-6">
           <div class="space-y-4">
+            <!-- Avatar Upload -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Profile Picture</label>
+              <div class="mt-1 flex items-center space-x-4">
+                <div class="w-24 h-24 rounded-full overflow-hidden bg-gray-100">
+                  <img v-if="imagePreview" :src="imagePreview" alt="Preview" class="w-full h-full object-cover">
+                  <div v-else class="w-full h-full flex items-center justify-center text-gray-400">
+                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  </div>
+                </div>
+                <input type="file" ref="fileInput" @change="handleImageChange" accept="image/*" class="hidden">
+                <button type="button" @click="$refs.fileInput.click()"
+                  class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+                  Choose Image
+                </button>
+              </div>
+            </div>
+
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Username</label>
               <input v-model="formData.username" type="text"
@@ -128,12 +149,17 @@ import { ref, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import apiClient from '../../axios'
 
-const router = useRouter()
+import { usePlayerAuthStore } from '../../store/playerAuth';
+const playerStore = usePlayerAuthStore()
 
-const ageOptions = Array.from({ length: 43 }, (_, i) => i + 18);
+const router = useRouter()
+const fileInput = ref(null)
+const imagePreview = ref(null)
+
+const ageOptions = Array.from({ length: 43 }, (_, i) => i + 18)
 const genderOptions = [
-  { value: 1, label: 'Male' },
-  { value: 2, label: 'Female' },
+  { value: 'male', label: 'Male' },
+  { value: 'female', label: 'Female' },
 ]
 
 const showSuccessPopup = ref(false)
@@ -150,7 +176,16 @@ const formData = ref({
   district_id: '',
   street_id: '',
   age: '',
+  avatar: null
 })
+
+const handleImageChange = (event) => {
+  const file = event.target.files[0]
+  if (file) {
+    formData.value.avatar = file
+    imagePreview.value = URL.createObjectURL(file)
+  }
+}
 
 const fetchDistricts = async () => {
   try {
@@ -180,7 +215,21 @@ watch(() => formData.value.district_id, () => {
 const handleSubmit = async () => {
   try {
     errors.value = []
-    await apiClient.post('/api/public/players/register', { player: formData.value })
+    const submitData = new FormData()
+
+    Object.keys(formData.value).forEach(key => {
+      if (formData.value[key] !== '' && formData.value[key] !== null) {
+        submitData.append(`player[${key}]`, formData.value[key])
+      }
+    })
+
+    playerStore.register(submitData);
+
+    await apiClient.post('/api/public/players/register', submitData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
     showSuccessPopup.value = true
   } catch (error) {
     console.error('Error during sign up:', error)

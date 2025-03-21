@@ -10,7 +10,7 @@ class Api::Admin::AdminSessionsController < ApplicationController
     if admin&.authenticate(params[:password])
       token = generate_token(admin)
       set_jwt_cookie(token)
-      render json: { status: :ok, message: "Sign-in successful" }, status: :ok
+      render json: { status: :ok, admin: admin.as_json(only: [:email]) }, status: :ok
     else
       render json: { error: "Invalid email or password" }, status: :unauthorized
     end

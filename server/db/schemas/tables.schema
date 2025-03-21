@@ -1,0 +1,10 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+create_table "tables", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+  t.bigint :club_id, null: false
+  t.string :name, null: false
+  t.timestamps
+
+  t.index [ "club_id", "name" ], name: "index_tables_on_club_id_and_name", unique: true, using: :btree
+end

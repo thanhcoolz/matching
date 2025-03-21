@@ -1,0 +1,18 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+create_table "reservations", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+  t.bigint :club_id, null: false
+  t.bigint :player_id, null: false
+  t.bigint :club_id, null: false
+  t.bigint :table_id, null: false
+  t.datetime :start_time, null: false
+  t.integer :duration_hours, null: false, default: 2
+  t.integer :reservation_type, null: false, default: 1
+  t.integer :status, null: false, default: 1
+
+  t.timestamps
+
+  t.index [ "club_id", "table_id", "start_time" ], name: "index_reservations_on_club_id_and_table_id_and_start_time", unique: true, using: :btree
+  t.index [ "player_id" ], name: "index_reservations_on_player_id", using: :btree
+end

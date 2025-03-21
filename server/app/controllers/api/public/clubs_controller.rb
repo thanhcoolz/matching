@@ -46,6 +46,7 @@ module Api
           name: @club.name,
           address: @club.full_address,
           description: @club.description,
+          table_numbers: @club.table_numbers,
           district_name: @club.district.name,
           street_name: @club.street.name,
           main_image_url: @club.main_image.attached? ? url_for(@club.main_image) : nil,
@@ -61,20 +62,40 @@ module Api
         club.assign_attributes(
           country_id: 1,
           city_id: 1,
-          club_managers_attributes: [ { username: "admin", password: "12341234" } ]
+          club_managers_attributes: [{
+            username: "admin",
+            password: "12341234",
+            password_confirmation: "12341234"
+          }]
         )
 
+        # Build tables if table_numbers is present
+        if club.table_numbers.to_i > 0
+          club.table_numbers.to_i.times do |i|
+            club.tables.build(name: "Table #{i + 1}")
+          end
+        end
+
         if club.save
-          render json: { message: "Club registered successfully" }, status: :created
+          render json: {
+            message: "Club registered successfully",
+            club_id: club.id
+          }, status: :created
         else
           render json: { errors: club.errors.full_messages }, status: :unprocessable_entity
         end
+      rescue StandardError => e
+        render json: { errors: ["An unexpected error occurred"] }, status: :internal_server_error
       end
 
       private
 
       def club_register_params
-        params.require(:club).permit(:name, :address, :description, :district_id, :street_id, :email)
+        params.require(:club).permit(
+          :name, :address, :description, :district_id,
+          :street_id, :email, :table_numbers,
+          :main_image, sub_images: [],
+        )
       end
     end
   end

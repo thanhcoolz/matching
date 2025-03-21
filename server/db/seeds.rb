@@ -71,7 +71,8 @@ unless Club.exists?
         district_id: district.id,
         street_id: street.id,
         address: Faker::Address.unique.street_address,
-        description: Faker::Lorem.paragraph
+        description: Faker::Lorem.paragraph,
+        table_numbers: rand(10..20),
       )
 
       # Attach images with new file handles each time
@@ -93,14 +94,20 @@ unless Club.exists?
 
       club.club_managers.create!(
         username: "club_manager",
-        password: "12341234"
+        password: "12341234",
+        password_confirmation: "12341234"
       )
 
       10.times do
         club.club_managers.create!(
           username: Faker::Alphanumeric.unique.alpha(number: 10),
-          password: "12341234"
+          password: "12341234",
+          password_confirmation: "12341234"
         )
+      end
+
+      club.table_numbers.times do |i|
+        club.tables.create!(name: "Table #{i + 1}")
       end
     end
   end

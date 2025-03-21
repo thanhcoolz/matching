@@ -44,12 +44,11 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import apiClient from '../../axios'
-import { useAuthStore } from '../../store/auth'
+import { useRouter } from 'vue-router';
+import { usePlayerAuthStore } from '../../store/playerAuth'
+const playerStore = usePlayerAuthStore();
 
-const router = useRouter()
-const authStore = useAuthStore()
+const router = useRouter();
 const error = ref('')
 
 const formData = ref({
@@ -59,21 +58,15 @@ const formData = ref({
 
 const handleSubmit = async () => {
   try {
-    error.value = ''
-    const response = await apiClient.post('/api/player/player_sessions', formData.value)
+    const success = await playerStore.login(formData.value.phone_number, formData.value.password)
 
-    if (response.data) {
-      // Store the player data in auth store
-      authStore.setAuth({
-        player: response.data.player,
-      })
-
-      // Redirect to home page or dashboard
-      router.push('/')
+    if (success) {
+      window.location.href = "/"
+    } else {
+      error.value = 'Authentication failed. Please try again.'
     }
-  } catch (err) {
-    console.error('Login failed:', err)
-    error.value = err.response?.data?.error || 'An unexpected error occurred. Please try again.'
+  } catch (error) {
+    error.value = error.response?.data?.message || 'Invalid credentials. Please try again.'
   }
 }
 </script>
