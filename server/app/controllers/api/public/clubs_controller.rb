@@ -46,6 +46,7 @@ module Api
           name: @club.name,
           address: @club.full_address,
           description: @club.description,
+          table_numbers: @club.table_numbers,
           district_name: @club.district.name,
           street_name: @club.street.name,
           main_image_url: @club.main_image.attached? ? url_for(@club.main_image) : nil,
