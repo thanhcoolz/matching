@@ -74,6 +74,7 @@ ActiveRecord::Schema[7.1].define(version: 0) do
     t.integer "street_id", null: false
     t.string "address", null: false
     t.string "description", null: false
+    t.integer "table_numbers", default: 1, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["city_id"], name: "index_clubs_on_city_id"
@@ -128,12 +129,34 @@ ActiveRecord::Schema[7.1].define(version: 0) do
     t.index ["street_id"], name: "index_players_on_street_id"
   end
 
+  create_table "reservations", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "club_id", null: false
+    t.bigint "player_id", null: false
+    t.bigint "table_id", null: false
+    t.datetime "start_time", null: false
+    t.integer "duration_hours", default: 2, null: false
+    t.integer "reservation_type", default: 1, null: false
+    t.integer "status", default: 1, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["club_id", "table_id", "start_time"], name: "index_reservations_on_club_id_and_table_id_and_start_time", unique: true
+    t.index ["player_id"], name: "index_reservations_on_player_id"
+  end
+
   create_table "streets", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "district_id", null: false
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["district_id"], name: "index_streets_on_district_id"
+  end
+
+  create_table "tables", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "club_id", null: false
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["club_id", "name"], name: "index_tables_on_club_id_and_name", unique: true
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"

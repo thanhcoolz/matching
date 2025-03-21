@@ -2,18 +2,19 @@
 #
 # Table name: clubs
 #
-#  id          :bigint           not null, primary key
-#  active      :boolean          default(FALSE)
-#  email       :string(255)      not null
-#  name        :string(255)      not null
-#  country_id  :integer          not null
-#  city_id     :integer          not null
-#  district_id :integer          not null
-#  street_id   :integer          not null
-#  address     :string(255)      not null
-#  description :string(255)      not null
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
+#  id            :bigint           not null, primary key
+#  active        :boolean          default(FALSE)
+#  email         :string(255)      not null
+#  name          :string(255)      not null
+#  country_id    :integer          not null
+#  city_id       :integer          not null
+#  district_id   :integer          not null
+#  street_id     :integer          not null
+#  address       :string(255)      not null
+#  description   :string(255)      not null
+#  table_numbers :integer          default(1), not null
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
 #
 class Club < ApplicationRecord
   # Associations
@@ -28,6 +29,9 @@ class Club < ApplicationRecord
   # active storage
   has_one_attached :main_image
   has_many_attached :sub_images
+
+  has_many :tables
+  has_many :reservations
 
   # Validations
   validates :country_id, presence: true
