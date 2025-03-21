@@ -27,4 +27,10 @@ class Player < ApplicationRecord
   # Validations
   validates :phone_number, presence: true, uniqueness: true
   validates :username, :gender, :age, presence: true
+
+  has_one_attached :avatar
+
+  def avatar_url
+    avatar.attached? ? Rails.application.routes.url_helpers.rails_blob_url(avatar) : nil
+  end
 end

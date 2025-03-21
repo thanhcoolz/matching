@@ -35,9 +35,15 @@ export const usePlayerAuthStore = defineStore('playerAuth', () => {
   // Register new player
   async function register(playerData) {
     try {
-      const response = await apiClient.post('/api/player/register', playerData)
-      currentPlayer.value = response.data.player
-      isAuthenticated.value = true
+      const response = await apiClient.post('/api/public/players/register', playerData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+
+      if (response.data.status === 'ok') {
+        return true
+      }
     } catch (err) {
       console.log('register error', err)
       return false;

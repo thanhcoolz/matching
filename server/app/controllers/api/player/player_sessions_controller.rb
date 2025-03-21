@@ -13,7 +13,7 @@ module Api
 
           render json: {
             status: 'ok',
-            player: @player.as_json(only: [:username])
+            player: player_response_data
           }
         else
           render json: { error: "Invalid phone number or password" }, status: :not_found
@@ -31,6 +31,13 @@ module Api
           exp: JWT_EXPIRATION.from_now.to_i
         }
         JWT.encode(payload, secret, "HS256")
+      end
+
+      def player_response_data
+        {
+          username: @player.username,
+          avatar_url: @player.avatar_url
+        }
       end
 
       def set_jwt_cookie(token)

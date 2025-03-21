@@ -9,8 +9,10 @@
 
           <div v-if="isAuthenticated" class="relative">
             <button @click="toggleDropdown" class="flex items-center space-x-2 nav-link">
-              <span>{{ currentPlayer?.username || 'Player' }}</span>
-              <img src="https://ui-avatars.com/api/?name=Player" alt="User" class="w-8 h-8 rounded-full">
+              <template v-if="currentPlayer">
+                <span>{{ currentPlayer.username }}</span>
+                <img :src="currentPlayer.avatar_url" alt="User" class="w-8 h-8 rounded-full">
+              </template>
             </button>
 
             <div v-if="showDropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">

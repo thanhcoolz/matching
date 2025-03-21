@@ -6,8 +6,12 @@ module Api
         player.country_id = 1
         player.city_id = 1
 
+        if player_params[:avatar].present?
+          player.avatar.attach(player_params[:avatar])
+        end
+
         if player.save
-          render json: { message: "Player registered successfully" }, status: :created
+          render json: { status: 'ok' }, status: :created
         else
           render json: { errors: player.errors.full_messages }, status: :unprocessable_entity
         end
@@ -19,6 +23,7 @@ module Api
         params.require(:player).permit(
           :username, :phone_number, :password, :password_confirmation,
           :district_id, :street_id, :age, :gender,
+          :avatar,
         )
       end
     end

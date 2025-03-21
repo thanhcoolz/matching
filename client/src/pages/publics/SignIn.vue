@@ -61,7 +61,7 @@ const handleSubmit = async () => {
     const success = await playerStore.login(formData.value.phone_number, formData.value.password)
 
     if (success) {
-      router.push('/')
+      window.location.href = "/"
     } else {
       error.value = 'Authentication failed. Please try again.'
     }
