@@ -20,6 +20,60 @@
         <form @submit.prevent="handleSubmit" class="space-y-6">
           <!-- Basic Info -->
           <div class="space-y-4">
+            <!-- Main Image Upload -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Main Image</label>
+              <div class="mt-1 flex items-center space-x-4">
+                <div class="w-32 h-32 rounded-lg overflow-hidden bg-gray-100">
+                  <img v-if="mainImagePreview" :src="mainImagePreview" alt="Main Preview"
+                    class="w-full h-full object-cover">
+                  <div v-else class="w-full h-full flex items-center justify-center text-gray-400">
+                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                </div>
+                <input type="file" ref="mainImageInput" @change="handleMainImageChange" accept="image/*" class="hidden">
+                <button type="button" @click="$refs.mainImageInput.click()"
+                  class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+                  Choose Main Image
+                </button>
+              </div>
+            </div>
+
+            <!-- Multiple Sub Images Upload -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Sub Images (Up to 5)</label>
+              <div class="mt-1 space-y-4">
+                <!-- Image Previews -->
+                <div class="flex flex-wrap gap-4">
+                  <div v-for="(preview, index) in subImagePreviews" :key="index"
+                    class="relative w-32 h-32 rounded-lg overflow-hidden bg-gray-100">
+                    <img :src="preview" alt="Sub Preview" class="w-full h-full object-cover">
+                    <button @click.prevent="removeSubImage(index)"
+                      class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  <!-- Add Image Button -->
+                  <div v-if="subImagePreviews.length < 5"
+                    class="w-32 h-32 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-gray-400"
+                    @click="$refs.subImagesInput.click()">
+                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                  </div>
+                </div>
+                <input type="file" ref="subImagesInput" @change="handleSubImagesChange" accept="image/*" multiple
+                  class="hidden">
+              </div>
+            </div>
+
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Club Name</label>
               <input v-model="formData.name" type="text"
@@ -81,7 +135,6 @@
             Register Club
           </button>
 
-          <!-- add sign in to redirect to login page -->
           <div class="flex justify-center">
             <div class="text-center">
               <p class="text-sm text-gray-500">Already have an account? <a href="/club/signIn"
@@ -126,6 +179,10 @@ const showSuccessPopup = ref(false)
 const districts = ref([])
 const streets = ref([])
 const errors = ref([])
+const mainImagePreview = ref(null)
+const subImagePreviews = ref([])
+const mainImageInput = ref(null)
+const subImagesInput = ref(null)
 
 const formData = ref({
   name: '',
@@ -135,7 +192,33 @@ const formData = ref({
   street_id: '',
   address: '',
   table_numbers: 1,
+  main_image: null,
+  sub_images: []
 })
+
+const handleMainImageChange = (event) => {
+  const file = event.target.files[0]
+  if (file) {
+    formData.value.main_image = file
+    mainImagePreview.value = URL.createObjectURL(file)
+  }
+}
+
+const handleSubImagesChange = (event) => {
+  const files = Array.from(event.target.files)
+  const remainingSlots = 5 - subImagePreviews.value.length
+  const validFiles = files.slice(0, remainingSlots)
+
+  validFiles.forEach(file => {
+    formData.value.sub_images.push(file)
+    subImagePreviews.value.push(URL.createObjectURL(file))
+  })
+}
+
+const removeSubImage = (index) => {
+  formData.value.sub_images.splice(index, 1)
+  subImagePreviews.value.splice(index, 1)
+}
 
 const fetchDistricts = async () => {
   try {
@@ -157,12 +240,28 @@ const fetchStreets = async (districtId) => {
 
 const handleSubmit = async () => {
   try {
-    errors.value = [] // Clear previous errors
-    await apiClient.post('/api/public/clubs/register', { club: formData.value })
+    errors.value = []
+    const submitData = new FormData()
+
+    Object.keys(formData.value).forEach(key => {
+      if (key === 'sub_images') {
+        formData.value.sub_images.forEach((file, index) => {
+          submitData.append(`club[sub_images][]`, file)
+        })
+      } else if (formData.value[key] !== '' && formData.value[key] !== null) {
+        submitData.append(`club[${key}]`, formData.value[key])
+      }
+    })
+
+    await apiClient.post('/api/public/clubs/register', submitData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
     showSuccessPopup.value = true
   } catch (error) {
     console.error('Error registering club:', error)
-    if (error.response && error.response.data && error.response.data.errors) {
+    if (error.response?.data?.errors) {
       errors.value = error.response.data.errors
     } else {
       errors.value = ['An unexpected error occurred. Please try again.']
@@ -172,11 +271,14 @@ const handleSubmit = async () => {
 
 const closePopup = () => {
   showSuccessPopup.value = false
-  router.push('/clubs') // Redirect to clubs listing page
+  router.push('/clubs')
 }
 
 watch(() => formData.value.district_id, () => {
-  fetchStreets(formData.value.district_id)
+  if (formData.value.district_id) {
+    formData.value.street_id = ''
+    fetchStreets(formData.value.district_id)
+  }
 })
 
 onMounted(() => {

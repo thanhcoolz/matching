@@ -46,7 +46,6 @@ class Club < ApplicationRecord
   validates :email, presence: true
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, uniqueness: true, if: :presence
 
-
   # Image validations
   validate :acceptable_main_image
   validate :acceptable_sub_images
