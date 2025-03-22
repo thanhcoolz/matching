@@ -60,6 +60,56 @@ class Club < ApplicationRecord
     where(active: true)
   end
 
+  def check_and_create_reservation(player_id, reservation_params)
+    Rails.logger.info "Creating reservation with params: #{reservation_params.inspect}"
+    Rails.logger.info "Current player: #{player_id}"
+
+    # validate reservation params
+    if reservation_params[:start_time].blank? || reservation_params[:duration_hours].blank?
+      return { success: false, error: 'Invalid reservation parameters' }
+    end
+
+    duration_hours = reservation_params[:duration_hours].to_i
+    start_time = reservation_params[:start_time].to_datetime
+    end_time = start_time + duration_hours.hours
+
+    # check if club has any available tables for the requested time
+    available = available_tables(start_time, end_time)
+
+    if available.empty?
+      return { success: false, error: 'No tables available for the requested time' }
+    end
+
+    # Create reservation with first available table
+    reservation = reservations.new(
+      player_id: player_id,
+      table_id: available.first.id,
+      start_time: start_time,
+      end_time: end_time,
+      duration_hours: duration_hours,
+      reservation_type: reservation_params[:reservation_type],
+      status: :pending
+    )
+
+    if reservation.save
+      { success: true, reservation: reservation }
+    else
+      { success: false, error: reservation.errors.full_messages.join(', ') }
+    end
+  rescue StandardError => e
+    Rails.logger.error "Error creating reservation: #{e.message}"
+    { success: false, error: 'An unexpected error occurred' }
+  end
+
+  def available_tables(start_time, end_time)
+    tables.where.not(
+      id: reservations
+        .where(status: [:pending, :accepted])
+        .where('start_time < ? AND end_time > ?', end_time, start_time)
+        .select(:table_id)
+    ).order(:id)
+  end
+
   private
 
   def acceptable_main_image

@@ -36,6 +36,8 @@ Rails.application.routes.draw do
       post "player_sessions", to: "player_sessions#create"
       delete "player_sessions", to: "player_sessions#destroy"
       get "verify_token", to: "player_sessions#verify_token"
+
+      resources :reservations, only: [:create]
     end
 
     namespace :public do

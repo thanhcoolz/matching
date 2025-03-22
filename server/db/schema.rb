@@ -134,6 +134,7 @@ ActiveRecord::Schema[7.1].define(version: 0) do
     t.bigint "player_id", null: false
     t.bigint "table_id", null: false
     t.datetime "start_time", null: false
+    t.datetime "end_time", null: false
     t.integer "duration_hours", default: 2, null: false
     t.integer "reservation_type", default: 1, null: false
     t.integer "status", default: 1, null: false

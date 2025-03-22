@@ -91,37 +91,121 @@
           <div
             class="bg-white rounded-xl shadow-lg p-8 space-y-4 transform hover:scale-[1.02] transition-transform duration-300">
             <h3 class="text-2xl font-bold text-gray-900 mb-6">Ready to Play?</h3>
-            <button
+            <button @click="showReservationModal = true"
               class="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-lg font-semibold rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl">
               Book Now
-            </button>
-            <button
-              class="w-full py-4 bg-gradient-to-r from-gray-100 to-gray-200 text-gray-800 text-lg font-semibold rounded-xl hover:from-gray-200 hover:to-gray-300 transition-all duration-300 shadow-md hover:shadow-lg">
-              Contact Club
             </button>
           </div>
         </div>
 
         <!-- Right Column - Gallery (8) -->
         <div class="col-span-12 lg:col-span-8">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="grid grid-cols-2 gap-6">
             <div v-for="(image, index) in club.sub_image_urls" :key="index"
-              class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 shadow-lg transform hover:scale-[1.03] transition-all duration-500">
-              <img :src="image" :alt="`Gallery image ${index + 1}`" class="w-full h-full object-cover">
+              class="aspect-[4/3] rounded-xl overflow-hidden bg-gray-200 shadow-lg group">
+              <img :src="image" :alt="`Gallery image ${index + 1}`"
+                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
             </div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Reservation Modal -->
+    <div v-if="showReservationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl" @click.stop>
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-2xl font-bold text-gray-900">Make a Reservation</h3>
+          <button @click="showReservationModal = false" class="text-gray-500 hover:text-gray-700">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <form @submit.prevent="createReservation" class="space-y-6">
+          <!-- Date Picker -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Date</label>
+            <input type="date" v-model="reservation.date"
+              class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              :min="today">
+          </div>
+
+          <!-- Time Picker -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Time</label>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">Hour</label>
+                <select v-model="reservation.hour"
+                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                  <option v-for="hour in 24" :key="hour" :value="String(hour - 1).padStart(2, '0')">
+                    {{ String(hour - 1).padStart(2, '0') }}
+                  </option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">Minute</label>
+                <select v-model="reservation.minute"
+                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                  <option value="00">00</option>
+                  <option value="30">30</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Duration (hours)</label>
+            <select v-model="reservation.duration"
+              class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              <option v-for="duration in 8" :key="duration" :value="duration">
+                {{ duration }} {{ duration === 1 ? 'hour' : 'hours' }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Reservation Type -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Reservation Type</label>
+            <div class="grid grid-cols-2 gap-4">
+              <button type="button" @click="reservation.type = 1" :class="[
+                  'py-3 px-4 rounded-xl text-center font-medium transition-all duration-200',
+                  reservation.type === 1
+                    ? 'bg-blue-600 text-white shadow-lg'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                ]">
+                Private
+              </button>
+              <button type="button" @click="reservation.type = 2" :class="[
+                  'py-3 px-4 rounded-xl text-center font-medium transition-all duration-200',
+                  reservation.type === 2
+                    ? 'bg-blue-600 text-white shadow-lg'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                ]">
+                Public
+              </button>
+            </div>
+          </div>
+
+          <button type="submit"
+            class="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-lg font-semibold rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl">
+            Confirm Reservation
+          </button>
+        </form>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, onMounted, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import apiClient from '../../axios'
 
 const route = useRoute()
+const router = useRouter()
 const club = ref({
   name: '',
   address: '',
@@ -129,7 +213,22 @@ const club = ref({
   district_name: '',
   street_name: '',
   main_image_url: '',
-  sub_image_urls: []
+  sub_image_urls: [],
+  table_numbers: 0
+})
+
+const showReservationModal = ref(false)
+const reservation = ref({
+  date: '',
+  hour: '00',
+  minute: '00',
+  duration: 2,
+  type: 1
+})
+
+const today = computed(() => {
+  const date = new Date()
+  return date.toISOString().split('T')[0]
 })
 
 const fetchClubDetails = async () => {
@@ -138,6 +237,31 @@ const fetchClubDetails = async () => {
     club.value = response.data
   } catch (error) {
     console.error('Error fetching club details:', error)
+  }
+}
+
+const createReservation = async () => {
+  try {
+    const startTime = new Date(`${reservation.value.date}T${reservation.value.hour}:${reservation.value.minute}:00`)
+
+    const response = await apiClient.post(`/api/player/reservations`, {
+      reservation: {
+        start_time: startTime.toISOString(),
+        duration_hours: reservation.value.duration,
+        reservation_type: reservation.value.type,
+        club_id: route.params.id
+      }
+    })
+
+    // const response = await apiClient.post(`/api/public/clubs/${route.params.id}/reservations`, {
+    //   start_time: startTime.toISOString(),
+    //   reservation_type: reservation.value.type
+    // })
+
+    // showReservationModal.value = false
+    // router.push('/reservations')
+  } catch (error) {
+    console.error('Error creating reservation:', error)
   }
 }
 

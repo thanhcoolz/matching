@@ -77,38 +77,32 @@
       <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <div v-for="club in clubs" :key="club.id"
           class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group">
-          <div class="relative h-[250px] overflow-hidden">
-            <img :src="club.main_image_url || 'https://placehold.co/600x400'" :alt="club.name"
-              class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-            <div
-              class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <router-link :to="`/clubs/${club.id}`" class="block">
+            <div class="relative h-[250px] overflow-hidden">
+              <img :src="club.main_image_url || 'https://placehold.co/600x400'" :alt="club.name"
+                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              </div>
             </div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-bold text-gray-900 mb-3 line-clamp-1 group-hover:text-indigo-600 transition-colors">
-              {{ club.name }}
-            </h3>
-            <p class="flex items-start gap-2 text-gray-600 mb-4">
-              <svg class="w-5 h-5 text-indigo-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              <span class="line-clamp-2 text-sm">{{ club.address }}</span>
-            </p>
-            <p class="text-gray-600 mb-6 line-clamp-3 text-sm">{{ club.description }}</p>
-            <div class="flex gap-4">
-              <router-link :to="`/clubs/${club.id}`"
-                class="flex-1 py-3 px-4 rounded-xl bg-gray-100 text-gray-900 font-medium text-center hover:bg-gray-200 transition-colors">
-                View Details
-              </router-link>
-              <button
-                class="flex-1 py-3 px-4 rounded-xl bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition-colors shadow-md hover:shadow-lg">
-                Book Now
-              </button>
+            <div class="p-6">
+              <h3
+                class="text-xl font-bold text-gray-900 mb-3 line-clamp-1 group-hover:text-indigo-600 transition-colors">
+                {{ club.name }}
+              </h3>
+              <p class="flex items-start gap-2 text-gray-600 mb-4">
+                <svg class="w-5 h-5 text-indigo-500 flex-shrink-0" fill="none" stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <span class="line-clamp-2 text-sm">{{ club.address }}</span>
+              </p>
+              <p class="text-gray-600 mb-6 line-clamp-3 text-sm">{{ club.description }}</p>
             </div>
-          </div>
+          </router-link>
         </div>
       </div>
 
@@ -129,7 +123,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import apiClient from '../../axios';
+import apiClient from '../../axios'
 import { debounce } from 'lodash'
 
 const clubs = ref([])
@@ -139,7 +133,7 @@ const filters = ref({
   district_id: '',
   street_id: '',
   page: 1,
-  per_page: 10
+  per_page: 12
 })
 const pagination = ref({
   current_page: 1,
@@ -202,6 +196,7 @@ const changePage = (page) => {
 const handleDistrictChange = async () => {
   filters.value.street_id = ''
   streets.value = []
+  pagination.value.current_page = 1
 
   if (filters.value.district_id) {
     await fetchStreets(filters.value.district_id)

@@ -7,6 +7,7 @@ create_table "reservations", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", f
   t.bigint :club_id, null: false
   t.bigint :table_id, null: false
   t.datetime :start_time, null: false
+  t.datetime :end_time, null: false
   t.integer :duration_hours, null: false, default: 2
   t.integer :reservation_type, null: false, default: 1
   t.integer :status, null: false, default: 1
