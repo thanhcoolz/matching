@@ -6,15 +6,22 @@ const isAuthenticated = ref(localStorage.getItem('playerIsAuthenticated') === 't
 const currentPlayer = ref(JSON.parse(localStorage.getItem('currentPlayer') || 'null'));
 
 export const usePlayerAuthStore = defineStore('playerAuth', () => {
+  const loading = ref(false)
+
   const setAuth = (playerData) => {
     currentPlayer.value = playerData
     isAuthenticated.value = true
-
     localStorage.setItem('playerIsAuthenticated', 'true')
     localStorage.setItem('currentPlayer', JSON.stringify(playerData))
   }
 
-  // Login player
+  const clearAuth = () => {
+    currentPlayer.value = null
+    isAuthenticated.value = false
+    localStorage.setItem('playerIsAuthenticated', 'false')
+    localStorage.removeItem('currentPlayer')
+  }
+
   async function login(phoneNumber, password) {
     try {
       const response = await apiClient.post('/api/player/player_sessions', {
@@ -24,64 +31,47 @@ export const usePlayerAuthStore = defineStore('playerAuth', () => {
 
       if (response.data.status === 'ok') {
         setAuth(response.data.player)
-        return true;
-      }
-    } catch (err) {
-      console.log('login error', err)
-      return false;
-    }
-  }
-
-  // Register new player
-  async function register(playerData) {
-    try {
-      const response = await apiClient.post('/api/public/players/register', playerData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })
-
-      if (response.data.status === 'ok') {
         return true
       }
+      return false
     } catch (err) {
-      console.log('register error', err)
-      return false;
+      console.log('login error', err)
+      return false
     }
   }
 
-  // Logout player
   async function logout() {
     try {
-      await apiClient.post('/api/player/logout')
-      currentPlayer.value = null
-      isAuthenticated.value = false
+      await apiClient.delete('/api/player/player_sessions')
+      clearAuth()
+      return true
     } catch (err) {
       console.error('Logout error:', err)
       return false
     }
   }
 
-  // Check player authentication status
   async function checkAuth() {
     try {
-      const response = await apiClient.get('/api/player/check')
-      currentPlayer.value = response.data.player
-      isAuthenticated.value = true
+      const response = await apiClient.get('/api/player/verify_token')
+      if (response.data.authenticated) {
+        setAuth(response.data.player)
+        return true
+      }
+      clearAuth()
+      return false
     } catch (err) {
-      currentPlayer.value = null
-      isAuthenticated.value = false
-    } finally {
-      loading.value = false
+      clearAuth()
+      return false
     }
   }
 
   return {
     currentPlayer,
     isAuthenticated,
+    loading,
     login,
     setAuth,
-    register,
     logout,
     checkAuth
   }

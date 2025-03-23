@@ -48,7 +48,7 @@ import { useRouter } from 'vue-router';
 import { usePlayerAuthStore } from '../store/playerAuth.js';
 
 const router = useRouter();
-const { isAuthenticated, currentPlayer, clearAuth } = usePlayerAuthStore();
+const { isAuthenticated, currentPlayer, logout } = usePlayerAuthStore();
 const showDropdown = ref(false);
 
 const toggleDropdown = () => {
@@ -56,8 +56,8 @@ const toggleDropdown = () => {
 };
 
 const handleSignOut = async () => {
-  await clearAuth();
-  router.push('/signIn');
+  await logout();
+  window.location.reload();
 };
 
 const handleClickOutside = (event) => {

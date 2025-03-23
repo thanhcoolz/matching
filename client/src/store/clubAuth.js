@@ -6,52 +6,48 @@ const currentClub = ref(JSON.parse(localStorage.getItem('currentClub') || 'null'
 const currentClubManager = ref(JSON.parse(localStorage.getItem('currentClubManager') || 'null'));
 
 export const useClubAuth = () => {
+  const loading = ref(false)
+
   const setAuth = (clubData, clubManagerData) => {
-    isAuthenticated.value = true;
-    currentClub.value = clubData;
-    currentClubManager.value = clubManagerData;
+    isAuthenticated.value = true
+    currentClub.value = clubData
+    currentClubManager.value = clubManagerData
+    localStorage.setItem('clubIsAuthenticated', 'true')
+    localStorage.setItem('currentClub', JSON.stringify(clubData))
+    localStorage.setItem('currentClubManager', JSON.stringify(clubManagerData))
+  }
 
-    localStorage.setItem('clubIsAuthenticated', 'true');
-    localStorage.setItem('currentClub', JSON.stringify(clubData));
-    localStorage.setItem('currentClubManager', JSON.stringify(clubManagerData));
-  };
+  const clearAuth = () => {
+    isAuthenticated.value = false
+    currentClub.value = null
+    currentClubManager.value = null
+    localStorage.setItem('clubIsAuthenticated', 'false')
+    localStorage.removeItem('currentClub')
+    localStorage.removeItem('currentClubManager')
+  }
 
-  const clearAuth = async () => {
+  const checkAuth = async () => {
     try {
-      await apiClient.delete('/api/club/club_sessions');
+      const response = await apiClient.get('/api/club/verify_token')
+      if (response.data.authenticated) {
+        setAuth(response.data.current_club, response.data.club_manager)
+        return true
+      }
+      clearAuth()
+      return false
     } catch (error) {
-      console.error('Error during club sign out:', error);
-    } finally {
-      // Clear local auth state regardless of API call result
-      isAuthenticated.value = false;
-      currentClub.value = null;
-      currentClubManager.value = null;
-
-      localStorage.setItem('clubIsAuthenticated', 'false');
-      localStorage.removeItem('currentClub');
-      localStorage.removeItem('currentClubManager');
+      clearAuth()
+      return false
     }
-  };
-
-  const checkAuth = () => {
-    const storedAuth = localStorage.getItem('clubIsAuthenticated');
-    if (storedAuth !== null) {
-      isAuthenticated.value = storedAuth === 'true';
-      currentClub.value = JSON.parse(localStorage.getItem('currentClub') || 'null');
-      currentClubManager.value = JSON.parse(localStorage.getItem('currentClubManager') || 'null');
-    }
-    return isAuthenticated.value;
-  };
-
-  // Initialize auth state from localStorage
-  checkAuth();
+  }
 
   return {
     isAuthenticated,
     currentClub,
     currentClubManager,
+    loading,
     setAuth,
     clearAuth,
     checkAuth
-  };
-};
+  }
+}

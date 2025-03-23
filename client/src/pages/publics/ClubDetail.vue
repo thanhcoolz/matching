@@ -91,7 +91,7 @@
           <div
             class="bg-white rounded-xl shadow-lg p-8 space-y-4 transform hover:scale-[1.02] transition-transform duration-300">
             <h3 class="text-2xl font-bold text-gray-900 mb-6">Ready to Play?</h3>
-            <button @click="showReservationModal = true"
+            <button @click="handleBookNowClick"
               class="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-lg font-semibold rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl">
               Book Now
             </button>
@@ -203,6 +203,9 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import apiClient from '../../axios'
+import { usePlayerAuthStore } from '../../store/playerAuth'
+
+const playerAuthStore = usePlayerAuthStore()
 
 const route = useRoute()
 const router = useRouter()
@@ -238,6 +241,16 @@ const fetchClubDetails = async () => {
   } catch (error) {
     console.error('Error fetching club details:', error)
   }
+}
+
+const handleBookNowClick = async () => {
+  const isAuthenticated = await playerAuthStore.checkAuth()
+  if (!isAuthenticated) {
+    alert('You must be logged in to book a table.')
+    window.location.href = '/login'
+    return
+  }
+  showReservationModal.value = true
 }
 
 const createReservation = async () => {

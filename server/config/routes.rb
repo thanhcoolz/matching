@@ -26,8 +26,11 @@ Rails.application.routes.draw do
     end
 
     namespace :club do
-      resources :club_sessions, only: [ :create, :destroy ]
+      post "club_sessions", to: "club_sessions#create"
+      delete "club_sessions", to: "club_sessions#destroy"
       resources :managers
+
+      get "verify_token", to: "club_sessions#verify_token"
     end
 
     get "clubs", to: "clubs#index"

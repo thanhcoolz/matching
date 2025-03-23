@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from '../store/adminAuth';
 import { useClubAuth } from '../store/clubAuth';
+import { usePlayerAuthStore } from '../store/playerAuth';
 import adminRoutes from './adminRoutes';
 import clubRoutes from './clubRoutes';
 import publicRoutes from './publicRoutes';
@@ -20,10 +21,9 @@ router.beforeEach(async (to, from, next) => {
   const isPublicRoute = to.matched.some(record => record.meta.public);
 
   if (!isPublicRoute) {
-    // Check if the route is in the admin section
     const isAdminRoute = to.path.startsWith('/admin');
-    // Check if the route is in the club section
     const isClubRoute = to.path.startsWith('/club');
+    const isPlayerRoute = to.path.startsWith('/player');
 
     if (isAdminRoute) {
       const authStore = useAuthStore();
@@ -46,6 +46,17 @@ router.beforeEach(async (to, from, next) => {
 
       if (!isClubAuthenticated) {
         return next('/club/signIn');
+      }
+    } else if (isPlayerRoute) {
+      const playerAuthStore = usePlayerAuthStore();
+      const isPlayerAuthenticated = await playerAuthStore.checkAuth();
+
+      if (to.path === '/signIn' && isPlayerAuthenticated) {
+        return next('/player/');
+      }
+
+      if (!isPlayerAuthenticated) {
+        return next('/signIn');
       }
     }
 
