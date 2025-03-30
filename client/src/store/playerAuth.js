@@ -1,68 +1,92 @@
-import { defineStore } from 'pinia'
-import { ref } from 'vue'
-import apiClient from '../axios';
+import { defineStore } from "pinia";
+import { ref } from "vue";
+import apiClient from "../axios";
 
-const isAuthenticated = ref(localStorage.getItem('playerIsAuthenticated') === 'true');
-const currentPlayer = ref(JSON.parse(localStorage.getItem('currentPlayer') || 'null'));
+const isAuthenticated = ref(
+  localStorage.getItem("playerIsAuthenticated") === "true"
+);
+const currentPlayer = ref(
+  JSON.parse(localStorage.getItem("currentPlayer") || "null")
+);
 
-export const usePlayerAuthStore = defineStore('playerAuth', () => {
-  const loading = ref(false)
+export const usePlayerAuthStore = defineStore("playerAuth", () => {
+  const loading = ref(false);
 
   const setAuth = (playerData) => {
-    currentPlayer.value = playerData
-    isAuthenticated.value = true
-    localStorage.setItem('playerIsAuthenticated', 'true')
-    localStorage.setItem('currentPlayer', JSON.stringify(playerData))
-  }
+    currentPlayer.value = playerData;
+    isAuthenticated.value = true;
+    localStorage.setItem("playerIsAuthenticated", "true");
+    localStorage.setItem("currentPlayer", JSON.stringify(playerData));
+  };
 
   const clearAuth = () => {
-    currentPlayer.value = null
-    isAuthenticated.value = false
-    localStorage.setItem('playerIsAuthenticated', 'false')
-    localStorage.removeItem('currentPlayer')
-  }
+    currentPlayer.value = null;
+    isAuthenticated.value = false;
+    localStorage.setItem("playerIsAuthenticated", "false");
+    localStorage.removeItem("currentPlayer");
+  };
 
   async function login(phoneNumber, password) {
     try {
-      const response = await apiClient.post('/api/player/player_sessions', {
+      const response = await apiClient.post("/api/player/player_sessions", {
         phone_number: phoneNumber,
         password,
-      })
+      });
 
-      if (response.data.status === 'ok') {
-        setAuth(response.data.player)
-        return true
+      if (response.data.status === "ok") {
+        setAuth(response.data.player);
+        return true;
       }
-      return false
+      return false;
     } catch (err) {
-      console.log('login error', err)
-      return false
+      console.log("login error", err);
+      return false;
     }
   }
 
   async function logout() {
     try {
-      await apiClient.delete('/api/player/player_sessions')
-      clearAuth()
-      return true
+      await apiClient.delete("/api/player/player_sessions");
+      clearAuth();
+      return true;
     } catch (err) {
-      console.error('Logout error:', err)
-      return false
+      console.error("Logout error:", err);
+      return false;
     }
   }
 
   async function checkAuth() {
     try {
-      const response = await apiClient.get('/api/player/verify_token')
+      const response = await apiClient.get("/api/player/verify_token");
       if (response.data.authenticated) {
-        setAuth(response.data.player)
-        return true
+        setAuth(response.data.player);
+        return true;
       }
-      clearAuth()
-      return false
+      clearAuth();
+      return false;
     } catch (err) {
-      clearAuth()
-      return false
+      clearAuth();
+      return false;
+    }
+  }
+
+  async function register(playerData) {
+    try {
+      loading.value = true;
+      const response = await apiClient.post("/api/player/players", playerData);
+      if (response.data.status === "ok") {
+        setAuth(response.data.player);
+        return { success: true };
+      }
+      return { success: false, error: response.data.message };
+    } catch (err) {
+      console.error("Registration error:", err);
+      return {
+        success: false,
+        error: err.response?.data?.message || "Registration failed",
+      };
+    } finally {
+      loading.value = false;
     }
   }
 
@@ -73,6 +97,7 @@ export const usePlayerAuthStore = defineStore('playerAuth', () => {
     login,
     setAuth,
     logout,
-    checkAuth
-  }
-})
+    checkAuth,
+    register,
+  };
+});
