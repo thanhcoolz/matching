@@ -56,17 +56,26 @@ export const usePlayerAuthStore = defineStore("playerAuth", () => {
   }
 
   async function checkAuth() {
+    loading.value = true;
     try {
       const response = await apiClient.get("/api/player/verify_token");
+      isAuthenticated.value = response.data.authenticated;
       if (response.data.authenticated) {
-        setAuth(response.data.player);
-        return true;
+        currentPlayer.value = response.data.player;
+        localStorage.setItem("playerIsAuthenticated", "true");
+        localStorage.setItem(
+          "currentPlayer",
+          JSON.stringify(response.data.player)
+        );
+      } else {
+        clearAuth();
       }
+      return isAuthenticated.value;
+    } catch (error) {
       clearAuth();
       return false;
-    } catch (err) {
-      clearAuth();
-      return false;
+    } finally {
+      loading.value = false;
     }
   }
 

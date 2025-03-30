@@ -2,7 +2,7 @@ module Api
   module Player
     class PlayerSessionsController < ApplicationController
       include ActionController::Cookies
-      JWT_EXPIRATION = 30.seconds
+      JWT_EXPIRATION = 24.hours
 
       def create
         @player = ::Player.find_by(phone_number: params[:phone_number])
@@ -35,8 +35,8 @@ module Api
             return
           end
 
-          player = ::Player.find_by(id: payload["player_id"])
-          if player
+          @player = ::Player.find_by(id: payload["player_id"])
+          if @player
             render json: {
               authenticated: true,
               player: player_response_data
