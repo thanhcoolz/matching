@@ -15,7 +15,11 @@ Rails.application.routes.draw do
       get "verify_token", to: "admin_sessions#verify_token"
 
       resources :clubs, only: [ :index, :new, :create, :edit, :update, :destroy ] do
-        resources :managers, only: [ :index, :show, :create, :edit, :update, :destroy ], controller: "club_managers"
+        resources :managers, only: [ :index, :show, :create, :edit, :update, :destroy ], controller: "club_managers" do
+        collection do
+          put :update_table_numbers
+        end
+      end
 
         member do
           patch :activate
@@ -28,7 +32,11 @@ Rails.application.routes.draw do
     namespace :club do
       post "club_sessions", to: "club_sessions#create"
       delete "club_sessions", to: "club_sessions#destroy"
-      resources :managers
+      resources :managers do
+        member do
+          put :update_table_numbers
+        end
+      end
 
       get "verify_token", to: "club_sessions#verify_token"
     end

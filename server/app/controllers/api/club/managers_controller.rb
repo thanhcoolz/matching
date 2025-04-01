@@ -48,6 +48,14 @@ module Api
         end
       end
 
+      def update_table_numbers
+        if @club.update(table_numbers: params[:table_numbers])
+          render json: @club
+        else
+          render json: { errors: @club.errors.full_messages }, status: :unprocessable_entity
+        end
+      end
+
       private
 
       def fetch_club
