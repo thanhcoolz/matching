@@ -1,0 +1,9 @@
+create_table "reservations_parties", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+  t.bigint :reservation_id, null: false
+  t.bigint :player_id, null: false
+  t.boolean :is_host, default: false
+
+  t.timestamps
+
+  t.index [ "reservation_id", "player_id" ], name: "index_reservations_id_on_player_id", unique: true, using: :btree
+end

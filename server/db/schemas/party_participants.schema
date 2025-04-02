@@ -1,7 +1,0 @@
-# -*- mode: ruby -*-
-# vi: set ft=ruby :
-
-create_table "party_participants", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
-  t.integer :party_id, null: false
-  t.integer :player_id, null: false
-end

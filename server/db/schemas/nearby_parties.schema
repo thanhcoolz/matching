@@ -1,8 +1,0 @@
-# -*- mode: ruby -*-
-# vi: set ft=ruby :
-
-create_table "nearby_parties", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
-  t.integer :player_id, null: false
-  t.integer :party_id, null: false
-  t.integer :distance, null: false
-end

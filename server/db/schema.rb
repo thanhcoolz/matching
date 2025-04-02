@@ -96,22 +96,6 @@ ActiveRecord::Schema[7.1].define(version: 0) do
     t.index ["city_id"], name: "index_districts_on_city_id"
   end
 
-  create_table "nearby_parties", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.integer "player_id", null: false
-    t.integer "party_id", null: false
-    t.integer "distance", null: false
-  end
-
-  create_table "parties", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.integer "captain_id", null: false
-    t.integer "club_id", null: false
-  end
-
-  create_table "party_participants", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.integer "party_id", null: false
-    t.integer "player_id", null: false
-  end
-
   create_table "players", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "phone_number", null: false
     t.string "password_digest", null: false
@@ -138,10 +122,20 @@ ActiveRecord::Schema[7.1].define(version: 0) do
     t.integer "duration_hours", default: 2, null: false
     t.integer "reservation_type", default: 1, null: false
     t.integer "status", default: 1, null: false
+    t.integer "number_of_player", default: 1, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["club_id", "table_id", "start_time"], name: "index_reservations_on_club_id_and_table_id_and_start_time", unique: true
     t.index ["player_id"], name: "index_reservations_on_player_id"
+  end
+
+  create_table "reservations_parties", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "reservation_id", null: false
+    t.bigint "player_id", null: false
+    t.boolean "is_host", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["reservation_id", "player_id"], name: "index_reservations_id_on_player_id", unique: true
   end
 
   create_table "streets", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|

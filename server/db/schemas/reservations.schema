@@ -11,6 +11,7 @@ create_table "reservations", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", f
   t.integer :duration_hours, null: false, default: 2
   t.integer :reservation_type, null: false, default: 1
   t.integer :status, null: false, default: 1
+  t.integer :number_of_player, null: false, default: 1
 
   t.timestamps
 
