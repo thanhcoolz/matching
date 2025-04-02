@@ -88,6 +88,7 @@ class Club < ApplicationRecord
       end_time: end_time,
       duration_hours: duration_hours,
       reservation_type: reservation_params[:reservation_type],
+      number_of_player: reservation_params[:number_of_player],
       status: :pending
     )
 

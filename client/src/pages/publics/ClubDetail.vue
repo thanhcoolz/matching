@@ -318,6 +318,20 @@
             </div>
           </div>
 
+          <!-- Number of Players (Only shown for public reservations) -->
+          <div v-if="reservation.type === 2">
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Number of Players</label
+            >
+            <input
+              type="number"
+              v-model="reservation.number_of_player"
+              min="1"
+              max="4"
+              class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+
           <button
             type="submit"
             class="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-lg font-semibold rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl"
@@ -358,6 +372,7 @@ const reservation = ref({
   minute: "00",
   duration: 2,
   type: 1,
+  number_of_player: 1,
 });
 
 const today = computed(() => {
@@ -398,18 +413,15 @@ const createReservation = async () => {
         duration_hours: reservation.value.duration,
         reservation_type: reservation.value.type,
         club_id: route.params.id,
+        number_of_player: reservation.value.number_of_player ?? 1,
       },
     });
 
-    // const response = await apiClient.post(`/api/public/clubs/${route.params.id}/reservations`, {
-    //   start_time: startTime.toISOString(),
-    //   reservation_type: reservation.value.type
-    // })
-
-    // showReservationModal.value = false
-    // router.push('/reservations')
+    showReservationModal.value = false;
+    router.push("/reservations");
   } catch (error) {
     console.error("Error creating reservation:", error);
+    alert("Failed to create reservation. Please try again.");
   }
 };
 

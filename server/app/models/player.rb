@@ -33,4 +33,6 @@ class Player < ApplicationRecord
   def avatar_url
     avatar.attached? ? Rails.application.routes.url_helpers.rails_blob_url(avatar) : nil
   end
+
+  has_many :reservations
 end

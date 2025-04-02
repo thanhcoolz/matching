@@ -25,6 +25,40 @@ module Api
         render json: { error: "An unexpected error occurred" }, status: :internal_server_error
       end
 
+      def index
+        reservations = @current_player.reservations
+          .includes(:club)
+          .order(start_time: :desc)
+          .map do |reservation|
+            {
+              id: reservation.id,
+              club_name: reservation.club.name,
+              start_time: reservation.start_time,
+              duration_hours: reservation.duration_hours,
+              reservation_type: reservation.reservation_type,
+              number_of_player: reservation.number_of_player,
+              status: reservation.start_time > Time.current ? 'upcoming' : 'past'
+            }
+          end
+
+        render json: reservations
+      rescue StandardError => e
+        Rails.logger.error "Error fetching reservations: #{e.message}"
+        render json: { error: "An unexpected error occurred" }, status: :internal_server_error
+      end
+
+      def update_payment_status
+        reservation = Reservation.find(params[:id])
+        
+        if reservation.update(status: :paid)
+          render json: reservation
+        else
+          render json: { error: reservation.errors.full_messages }, status: :unprocessable_entity
+        end
+      rescue ActiveRecord::RecordNotFound
+        render json: { error: 'Reservation not found' }, status: :not_found
+      end
+
       private
 
       def set_reservation
@@ -38,7 +72,8 @@ module Api
           :start_time,
           :duration_hours,
           :reservation_type,
-          :status
+          :status,
+          :number_of_player
         )
       end
     end

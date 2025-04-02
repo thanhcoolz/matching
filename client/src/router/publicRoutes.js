@@ -1,36 +1,41 @@
 export default {
-  path: '/',
-  component: () => import('../layouts/PublicLayout.vue'),
+  path: "/",
+  component: () => import("../layouts/PublicLayout.vue"),
   children: [
     {
-      path: '/',
+      path: "/",
       meta: { public: true },
-      component: () => import('../pages/publics/Home.vue'),
+      component: () => import("../pages/publics/Home.vue"),
     },
     {
-      path: '/signUp',
+      path: "/signUp",
       meta: { public: true },
-      component: () => import('../pages/publics/SignUp.vue'),
+      component: () => import("../pages/publics/SignUp.vue"),
     },
     {
-      path: '/signIn',
+      path: "/signIn",
       meta: { public: true },
-      component: () => import('../pages/publics/SignIn.vue'),
+      component: () => import("../pages/publics/SignIn.vue"),
     },
     {
-      path: '/clubs',
+      path: "/clubs",
       meta: { public: true },
-      component: () => import('../pages/publics/Clubs.vue'),
+      component: () => import("../pages/publics/Clubs.vue"),
     },
     {
-      path: '/clubs/:id',
+      path: "/clubs/:id",
       meta: { public: true },
-      component: () => import('../pages/publics/ClubDetail.vue'),
+      component: () => import("../pages/publics/ClubDetail.vue"),
     },
     {
-      path: '/clubs/register',
+      path: "/clubs/register",
       meta: { public: true },
-      component: () => import('../pages/publics/ClubRegister.vue'),
+      component: () => import("../pages/publics/ClubRegister.vue"),
     },
-  ]
+    {
+      path: "/reservations",
+      meta: { public: false },
+      component: () => import("../pages/publics/Reservations.vue"),
+    },
+  ],
 };
