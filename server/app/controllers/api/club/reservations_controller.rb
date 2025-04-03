@@ -16,13 +16,24 @@ module Api
       def update_status
         reservation = @club.reservations.find(params[:id])
         
-        if reservation.update(status: params[:status])
-          render json: reservation
-        else
-          render json: { errors: reservation.errors.full_messages }, status: :unprocessable_entity
+        ActiveRecord::Base.transaction do
+          if reservation.update(status: params[:status])
+            if params[:status] == 'confirmed' && !ReservationsParty.exists?(reservation_id: reservation.id, player_id: reservation.player_id)
+              ReservationsParty.create!(
+                reservation_id: reservation.id,
+                player_id: reservation.player_id,
+                is_host: true
+              )
+            end
+            render json: reservation
+          else
+            render json: { errors: reservation.errors.full_messages }, status: :unprocessable_entity
+          end
         end
       rescue ActiveRecord::RecordNotFound
         render json: { error: 'Reservation not found' }, status: :not_found
+      rescue ActiveRecord::RecordInvalid => e
+        render json: { error: e.message }, status: :unprocessable_entity
       end
 
       private
