@@ -20,7 +20,7 @@ class Reservation < ApplicationRecord
   belongs_to :table
 
   enum reservation_type: { private: 1, public: 2 }, _prefix: true
-  enum status: { pending: 1, accepted: 2, rejected: 3, canceled: 4 }
+  enum status: { pending: 1, rejected: 2, canceled: 3, confirmed: 4 }
 
   validates :start_time, presence: true
   validates :duration_hours, presence: true

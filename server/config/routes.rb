@@ -38,6 +38,12 @@ Rails.application.routes.draw do
         end
       end
 
+      resources :reservations, only: [:index] do
+        member do
+          patch :update_status
+        end
+      end
+
       get "verify_token", to: "club_sessions#verify_token"
     end
 

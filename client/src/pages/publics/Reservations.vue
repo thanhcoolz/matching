@@ -14,22 +14,21 @@
           :key="reservation.id"
           class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-[1.02] transition-all duration-300"
         >
-          <div class="p-6">
-            <div class="flex items-center justify-between mb-4">
+          <div class="p-6 w-full">
+            <div class="flex items-center justify-between w-full mb-4">
               <h3 class="text-xl font-bold text-gray-900">
                 {{ reservation.club_name }}
               </h3>
               <span
-                :class="[
-                  'px-3 py-1 rounded-full text-sm font-medium',
-                  reservation.status === 'accepted'
-                    ? 'bg-green-100 text-green-800'
-                    : 'bg-gray-100 text-gray-800',
-                  reservation.status === 'rejected' ||
-                  reservation.status === 'canceled'
-                    ? 'bg-red-100 text-red-800'
-                    : 'bg-gray-100 text-gray-800',
-                ]"
+                :class="{
+                  'px-3 py-1 rounded-full text-sm font-medium': true,
+                  'bg-green-100 text-green-800':
+                    reservation.status === 'confirmed',
+                  'bg-red-100 text-red-800': ['rejected', 'canceled'].includes(
+                    reservation.status
+                  ),
+                  'bg-gray-100 text-gray-800': reservation.status === 'pending',
+                }"
               >
                 {{ reservation.status }}
               </span>
