@@ -105,9 +105,22 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import apiClient from "../../axios";
+import { usePlayerAuthStore } from "../../store/playerAuth";
 
+const router = useRouter();
+const playerAuthStore = usePlayerAuthStore();
 const reservations = ref([]);
+
+const checkAuth = async () => {
+  const isAuthenticated = await playerAuthStore.checkAuth();
+  if (!isAuthenticated) {
+    router.push("/signin");
+    return false;
+  }
+  return true;
+};
 
 const fetchReservations = async () => {
   try {
@@ -136,7 +149,9 @@ const formatTime = (dateString) => {
   });
 };
 
-onMounted(() => {
-  fetchReservations();
+onMounted(async () => {
+  if (await checkAuth()) {
+    fetchReservations();
+  }
 });
 </script>
