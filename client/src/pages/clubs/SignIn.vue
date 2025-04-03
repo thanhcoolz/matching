@@ -157,7 +157,7 @@ const searchClubs = async (query) => {
 
 const debouncedSearch = debounce(() => {
   searchClubs(clubSearch.value);
-}, 1000);
+}, 200);
 
 const selectClub = (club) => {
   clubSearch.value = club.name;

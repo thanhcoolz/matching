@@ -37,7 +37,7 @@ module Api
               duration_hours: reservation.duration_hours,
               reservation_type: reservation.reservation_type,
               number_of_player: reservation.number_of_player,
-              status: reservation.start_time > Time.current ? 'upcoming' : 'past'
+              status: reservation.status
             }
           end
 
