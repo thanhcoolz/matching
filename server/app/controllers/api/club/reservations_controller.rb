@@ -18,8 +18,8 @@ module Api
         
         ActiveRecord::Base.transaction do
           if reservation.update(status: params[:status])
-            if params[:status] == 'confirmed' && !ReservationsParty.exists?(reservation_id: reservation.id, player_id: reservation.player_id)
-              ReservationsParty.create!(
+            if params[:status] == 'confirmed' && !ReservationParty.exists?(reservation_id: reservation.id, player_id: reservation.player_id)
+              ReservationParty.create!(
                 reservation_id: reservation.id,
                 player_id: reservation.player_id,
                 is_host: true

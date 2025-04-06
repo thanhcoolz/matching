@@ -13,6 +13,9 @@ module Api
           .joins(:reservation_parties)
           .group('reservations.id')
           .having('reservations.number_of_player > COUNT(reservations_parties.id)')
+          .where.not(
+            id: ReservationParty.where(player_id: @current_player.id).select(:reservation_id)
+          )
           .order(start_time: :asc)
           .map do |reservation|
             {

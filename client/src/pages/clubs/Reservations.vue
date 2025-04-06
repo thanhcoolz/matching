@@ -74,15 +74,22 @@
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm">
                 <select
+                  v-if="reservation.status === 'pending'"
                   v-model="reservation.status"
                   @change="updateStatus(reservation)"
                   class="form-select rounded-md text-sm border-gray-300 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                 >
-                  <option value="pending">Pending</option>
+                  <option value="pending" disabled>Pending</option>
                   <option value="confirmed">Confirmed</option>
                   <option value="rejected">Rejected</option>
-                  <option value="canceled">Canceled</option>
                 </select>
+                <span
+                  v-else
+                  class="px-2 py-1 text-sm rounded-md"
+                  :class="getStatusClass(reservation.status)"
+                >
+                  {{ reservation.status }}
+                </span>
               </td>
             </tr>
           </tbody>

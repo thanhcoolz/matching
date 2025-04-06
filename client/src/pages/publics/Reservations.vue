@@ -3,9 +3,7 @@
     <div class="max-w-6xl mx-auto px-6">
       <div class="mb-8">
         <h1 class="text-4xl font-bold text-gray-900">My Reservations</h1>
-        <p class="mt-2 text-gray-600">
-          Manage your upcoming and past reservations
-        </p>
+        <p class="mt-2 text-gray-600">Manage your upcoming</p>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -124,7 +122,9 @@ const checkAuth = async () => {
 
 const fetchReservations = async () => {
   try {
-    const response = await apiClient.get("/api/player/reservations");
+    const response = await apiClient.get(
+      "/api/player/reservations?upcoming=true"
+    );
     reservations.value = response.data;
   } catch (error) {
     console.error("Error fetching reservations:", error);

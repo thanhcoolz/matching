@@ -1,5 +1,6 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12">
+    <Toast v-model:show="showToast" :message="toastMessage" :type="toastType" />
     <div class="max-w-6xl mx-auto px-6">
       <div class="mb-8">
         <h1 class="text-4xl font-bold text-gray-900">Available Matches</h1>
@@ -108,6 +109,11 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import apiClient from "../../axios";
 import { usePlayerAuthStore } from "../../store/playerAuth";
+import Toast from "../../components/Toast.vue";
+
+const showToast = ref(false);
+const toastMessage = ref("");
+const toastType = ref("success");
 
 const router = useRouter();
 const playerAuthStore = usePlayerAuthStore();
@@ -133,12 +139,20 @@ const fetchPublicReservations = async () => {
 
 const joinReservation = async (reservationId) => {
   try {
-    await apiClient.post(
+    const response = await apiClient.post(
       `/api/player/public_reservations/${reservationId}/join`
     );
+    toastMessage.value = response.data.message;
+    toastType.value = "success";
+    showToast.value = true;
     router.push("/reservations");
   } catch (error) {
-    console.error("Error joining reservation:", error);
+    if (error.response?.data?.error) {
+      alert(error.response.data.error);
+    } else {
+      alert("Error joining reservation. Please try again.");
+      console.error("Error joining reservation:", error);
+    }
   }
 };
 

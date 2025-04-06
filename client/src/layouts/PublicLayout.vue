@@ -1,22 +1,40 @@
 <template>
-  <div class="layout" style="font-family: 'Poppins', sans-serif;">
+  <div class="layout" style="font-family: 'Poppins', sans-serif">
     <header class="header">
       <div class="header-content">
         <h1 class="logo">Billiard Matching</h1>
         <nav class="nav">
           <router-link to="/" class="nav-link">Home</router-link>
-          <router-link to="/clubs" class="nav-link">Our Partner Clubs</router-link>
+          <router-link to="/reservations" class="nav-link"
+            >Reservations</router-link
+          >
+          <router-link to="/clubs" class="nav-link"
+            >Our Partner Clubs</router-link
+          >
 
           <div v-if="isAuthenticated" class="relative">
-            <button @click="toggleDropdown" class="flex items-center space-x-2 nav-link">
+            <button
+              @click="toggleDropdown"
+              class="flex items-center space-x-2 nav-link"
+            >
               <template v-if="currentPlayer">
                 <span>{{ currentPlayer.username }}</span>
-                <img :src="currentPlayer.avatar_url" alt="User" class="w-8 h-8 rounded-full">
+                <img
+                  :src="currentPlayer.avatar_url"
+                  alt="User"
+                  class="w-8 h-8 rounded-full"
+                />
               </template>
             </button>
 
-            <div v-if="showDropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
-              <button @click="handleSignOut" class="w-full text-left px-4 py-2 hover:bg-gray-100">
+            <div
+              v-if="showDropdown"
+              class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50"
+            >
+              <button
+                @click="handleSignOut"
+                class="w-full text-left px-4 py-2 hover:bg-gray-100"
+              >
                 Sign Out
               </button>
             </div>
@@ -43,9 +61,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { usePlayerAuthStore } from '../store/playerAuth.js';
+import { ref, onMounted, onUnmounted } from "vue";
+import { useRouter } from "vue-router";
+import { usePlayerAuthStore } from "../store/playerAuth.js";
 
 const router = useRouter();
 const { isAuthenticated, currentPlayer, logout } = usePlayerAuthStore();
@@ -61,18 +79,18 @@ const handleSignOut = async () => {
 };
 
 const handleClickOutside = (event) => {
-  const dropdown = document.querySelector('.relative');
+  const dropdown = document.querySelector(".relative");
   if (dropdown && !dropdown.contains(event.target)) {
     showDropdown.value = false;
   }
 };
 
 onMounted(() => {
-  document.addEventListener('click', handleClickOutside);
+  document.addEventListener("click", handleClickOutside);
 });
 
 onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside);
+  document.removeEventListener("click", handleClickOutside);
 });
 </script>
 
@@ -171,7 +189,7 @@ onUnmounted(() => {
   border-radius: 0.5rem;
 }
 
-.space-x-2>*+* {
+.space-x-2 > * + * {
   margin-left: 0.5rem;
 }
 
