@@ -37,5 +37,10 @@ export default {
       meta: { public: false },
       component: () => import("../pages/publics/Reservations.vue"),
     },
+    {
+      path: "/matches",
+      meta: { public: false },
+      component: () => import("../pages/publics/PublicMatches.vue"),
+    },
   ],
 };

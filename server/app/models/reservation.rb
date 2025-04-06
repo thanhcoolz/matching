@@ -18,10 +18,12 @@ class Reservation < ApplicationRecord
   belongs_to :player
   belongs_to :club
   belongs_to :table
+  has_many :reservation_parties, class_name: 'ReservationParty'
+  has_many :players, through: :reservation_parties
 
   enum reservation_type: { private: 1, public: 2 }, _prefix: true
   enum status: { pending: 1, rejected: 2, canceled: 3, confirmed: 4 }
-
+  
   validates :start_time, presence: true
   validates :duration_hours, presence: true
   validates :reservation_type, presence: true

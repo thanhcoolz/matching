@@ -59,6 +59,12 @@ Rails.application.routes.draw do
             put :update_payment_status
           end
         end
+
+      resources :public_reservations, only: [:index, :show] do
+        member do
+          post :join
+        end
+      end
     end
 
     namespace :public do
