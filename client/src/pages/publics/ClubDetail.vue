@@ -326,7 +326,7 @@
             <input
               type="number"
               v-model="reservation.number_of_player"
-              min="1"
+              min="2"
               max="4"
               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />

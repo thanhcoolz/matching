@@ -4,7 +4,7 @@ module Api
       before_action :authenticate_club_manager!
 
       def index
-        reservations = @club.reservations
+        reservations = @club.reservations.order(created_at: :desc)
 
         if params[:status].present?
           reservations = reservations.where(status: params[:status])
