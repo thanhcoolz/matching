@@ -1,6 +1,5 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12">
-    <Toast v-model:show="showToast" :message="toastMessage" :type="toastType" />
     <div class="max-w-6xl mx-auto px-6">
       <div class="mb-8">
         <h1 class="text-4xl font-bold text-gray-900">Available Matches</h1>
@@ -101,6 +100,7 @@
         </div>
       </div>
     </div>
+    <Toast v-model:show="showToast" :message="toastMessage" :type="toastType" />
   </div>
 </template>
 
@@ -142,10 +142,13 @@ const joinReservation = async (reservationId) => {
     const response = await apiClient.post(
       `/api/player/public_reservations/${reservationId}/join`
     );
-    toastMessage.value = response.data.message;
+    toastMessage.value = "success join match";
     toastType.value = "success";
     showToast.value = true;
-    router.push("/reservations");
+
+    setTimeout(() => {
+      router.push("/reservations");
+    }, 500);
   } catch (error) {
     if (error.response?.data?.error) {
       alert(error.response.data.error);

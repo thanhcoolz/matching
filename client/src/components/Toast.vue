@@ -9,7 +9,7 @@
   >
     <div
       v-if="show"
-      class="fixed top-4 right-4 z-50 flex items-center p-4 rounded-lg shadow-lg"
+      class="fixed top-0 right-0 z-[10000] flex items-center p-4 rounded-lg shadow-lg m-4"
       :class="{
         'bg-green-100 text-green-800': type === 'success',
         'bg-red-100 text-red-800': type === 'error',
