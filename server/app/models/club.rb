@@ -69,8 +69,12 @@ class Club < ApplicationRecord
       return { success: false, error: 'Invalid reservation parameters' }
     end
 
-    duration_hours = reservation_params[:duration_hours].to_i
     start_time = reservation_params[:start_time].to_datetime
+    if start_time <= Time.current
+      return { success: false, error: 'Reservation must be for a future time' }
+    end
+
+    duration_hours = reservation_params[:duration_hours].to_i
     end_time = start_time + duration_hours.hours
 
     # check if club has any available tables for the requested time

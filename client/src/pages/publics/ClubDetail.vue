@@ -420,8 +420,13 @@ const createReservation = async () => {
     showReservationModal.value = false;
     router.push("/reservations");
   } catch (error) {
-    console.error("Error creating reservation:", error);
-    alert("Failed to create reservation. Please try again.");
+    const errorMessage =
+      error.response?.data?.error ||
+      error.response?.data?.message ||
+      error.message ||
+      "An unexpected error occurred";
+
+    alert(`error: ${errorMessage}`);
   }
 };
 
