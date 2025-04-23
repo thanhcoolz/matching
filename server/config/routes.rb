@@ -54,11 +54,12 @@ Rails.application.routes.draw do
       delete "player_sessions", to: "player_sessions#destroy"
       get "verify_token", to: "player_sessions#verify_token"
 
-      resources :reservations, only: [:create, :index] do
-          member do
-            put :update_payment_status
-          end
+      resources :reservations, only: [:create, :index, :show] do
+        member do
+          patch :update_payment_status
+          put :update_payment_status
         end
+      end
 
       resources :public_reservations, only: [:index, :show] do
         member do

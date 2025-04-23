@@ -342,6 +342,53 @@
       </div>
     </div>
   </div>
+  <!-- Payment Modal -->
+  <div
+    v-if="showPaymentModal"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+  >
+    <div
+      class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl"
+      @click.stop
+    >
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-2xl font-bold text-gray-900">Thanh toán</h3>
+        <button
+          @click="showPaymentModal = false"
+          class="text-gray-500 hover:text-gray-700"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <div class="text-center space-y-6">
+        <p class="text-lg text-gray-600">Quét mã QR để thanh toán</p>
+        <div class="flex justify-center">
+          <img :src="qrCode" alt="QR Code" class="w-48 h-48" />
+        </div>
+        <p class="text-sm text-gray-500">Hoặc mở link thanh toán:</p>
+        <a
+          :href="generatePaymentUrl(currentReservation?.id)"
+          target="_blank"
+          class="text-blue-600 hover:text-blue-800 underline break-all"
+        >
+          {{ generatePaymentUrl(currentReservation?.id) }}
+        </a>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -401,6 +448,22 @@ const handleBookNowClick = async () => {
   showReservationModal.value = true;
 };
 
+const showPaymentModal = ref(false);
+const currentReservation = ref(null);
+const qrCode = ref("");
+
+const generatePaymentUrl = (reservationId) => {
+  const baseUrl = window.location.origin;
+  return `${baseUrl}/payment/${reservationId}`;
+};
+
+const generateQRCode = (reservationId) => {
+  const paymentUrl = generatePaymentUrl(reservationId);
+  return `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
+    paymentUrl
+  )}`;
+};
+
 const createReservation = async () => {
   try {
     const startTime = new Date(
@@ -417,8 +480,10 @@ const createReservation = async () => {
       },
     });
 
+    currentReservation.value = response.data;
+    qrCode.value = generateQRCode(response.data.id);
     showReservationModal.value = false;
-    router.push("/reservations");
+    showPaymentModal.value = true;
   } catch (error) {
     const errorMessage =
       error.response?.data?.error ||

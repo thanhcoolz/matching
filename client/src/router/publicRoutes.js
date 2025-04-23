@@ -38,6 +38,11 @@ export default {
       component: () => import("../pages/publics/Reservations.vue"),
     },
     {
+      path: "/payment/:id",
+      meta: { public: false },
+      component: () => import("../pages/publics/payment.vue"),
+    },
+    {
       path: "/matches",
       meta: { public: false },
       component: () => import("../pages/publics/PublicMatches.vue"),

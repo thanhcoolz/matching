@@ -22,7 +22,7 @@ class Reservation < ApplicationRecord
   has_many :players, through: :reservation_parties
 
   enum reservation_type: { private: 1, public: 2 }, _prefix: true
-  enum status: { pending: 1, rejected: 2, canceled: 3, confirmed: 4 }
+  enum status: { pending: 1, rejected: 2, canceled: 3, confirmed: 4, paid: 5 }
   
   validates :start_time, presence: true
   validates :duration_hours, presence: true

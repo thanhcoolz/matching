@@ -3,6 +3,21 @@ module Api
     class ReservationsController < BaseController
       before_action :authenticate_player!
 
+      def show
+        reservation = Reservation.find(params[:id])
+        render json: {
+          id: reservation.id,
+          club_name: reservation.club.name,
+          club_address: reservation.club.address,
+          start_time: reservation.start_time.strftime("%Y-%m-%d %H:%M:%S"),
+          duration_hours: reservation.duration_hours,
+          reservation_type: reservation.reservation_type,
+          number_of_player: reservation.number_of_player
+        }
+      rescue ActiveRecord::RecordNotFound
+        render json: { error: 'Reservation not found' }, status: :not_found
+      end
+
       def create
         Rails.logger.info "Creating reservation with params: #{reservation_params.inspect}"
         Rails.logger.info "Current player: #{@current_player.inspect}"
