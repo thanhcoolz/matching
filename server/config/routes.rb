@@ -42,6 +42,8 @@ Rails.application.routes.draw do
         end
       end
 
+      get 'dashboard', to: 'dashboard#index'
+
       resources :reservations, only: [:index] do
         member do
           patch :update_status

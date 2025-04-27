@@ -13,32 +13,52 @@
 
       <!-- Stats Grid -->
       <div class="mb-10">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div
-            v-for="(value, key) in stats"
-            :key="key"
-            class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
-          >
-            <div class="flex justify-between items-start mb-5">
-              <div class="p-3 rounded-lg bg-gray-50 text-xl">
-                {{ getStatIcon(key) }}
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6">
+          <!-- Total Reservations -->
+          <div class="bg-white rounded-xl shadow-sm p-6">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm font-medium text-gray-600">
+                  Total Reservations
+                </p>
+                <p class="text-2xl font-semibold text-gray-900">
+                  {{ stats.total_reservations }}
+                </p>
               </div>
-              <div
-                class="flex items-center gap-2 px-3 py-1 rounded-full bg-green-50 text-green-600 text-sm"
-              >
-                <span>↗</span>
-                <span>+5%</span>
+              <div class="p-3 bg-green-50 rounded-lg">
+                <span class="text-2xl">📊</span>
               </div>
             </div>
-            <div>
-              <h3 class="text-gray-500 text-sm font-medium mb-2">
-                {{ formatStatName(key) }}
-              </h3>
-              <div
-                class="text-3xl font-semibold text-gray-800"
-                v-animate-number="value"
-              >
-                {{ value }}
+          </div>
+
+          <!-- Active Reservations -->
+          <div class="bg-white rounded-xl shadow-sm p-6">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm font-medium text-gray-600">
+                  Active Reservations
+                </p>
+                <p class="text-2xl font-semibold text-gray-900">
+                  {{ stats.active_reservations }}
+                </p>
+              </div>
+              <div class="p-3 bg-yellow-50 rounded-lg">
+                <span class="text-2xl">🎉</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Revenue -->
+          <div class="bg-white rounded-xl shadow-sm p-6">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm font-medium text-gray-600">Total Revenue</p>
+                <p class="text-2xl font-semibold text-gray-900">
+                  {{ formatCurrency(stats.revenue) }}
+                </p>
+              </div>
+              <div class="p-3 bg-purple-50 rounded-lg">
+                <span class="text-2xl">💰</span>
               </div>
             </div>
           </div>
@@ -81,8 +101,10 @@
         <!-- Recent Activity -->
         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
           <div class="mb-6">
-            <h2 class="text-xl font-semibold text-gray-800">Recent Activity</h2>
-            <p class="mt-1 text-gray-500">Latest actions in your club</p>
+            <h2 class="text-xl font-semibold text-gray-800">
+              Recent Reservations
+            </h2>
+            <p class="mt-1 text-gray-500">Latest reservations in your club</p>
           </div>
 
           <div v-if="loading" class="py-8 text-center">
@@ -92,28 +114,37 @@
 
           <div v-else class="space-y-4">
             <div
-              v-for="activity in recentActivities"
-              :key="activity.id"
+              v-for="reservation in stats.recent_reservations"
+              :key="reservation.id"
               class="p-4 hover:bg-gray-50 rounded-lg transition-colors"
             >
               <div class="flex items-start gap-4">
-                <div class="p-2 bg-gray-50 rounded-lg text-xl">
-                  {{ getActivityIcon(activity.type) }}
+                <div class="flex-shrink-0">
+                  <img
+                    v-if="reservation.player.avatar_url"
+                    :src="reservation.player.avatar_url"
+                    class="w-10 h-10 rounded-full"
+                  />
+                  <div
+                    v-else
+                    class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center"
+                  >
+                    <span class="text-gray-600 font-medium">
+                      {{ reservation.player.username[0] }}
+                    </span>
+                  </div>
                 </div>
                 <div class="flex-1">
                   <div class="flex justify-between items-start">
                     <div class="font-medium text-gray-800">
-                      {{ activity.description }}
+                      {{ reservation.player.username }}
                     </div>
                     <div class="text-sm text-gray-400">
-                      {{ formatTime(activity.timestamp || activity.date) }}
+                      {{ formatTime(reservation.created_at) }}
                     </div>
                   </div>
-                  <div
-                    v-if="activity.details"
-                    class="text-sm text-gray-500 mt-1"
-                  >
-                    {{ activity.details }}
+                  <div class="text-sm text-gray-500 mt-1">
+                    {{ reservation.player.phone_number }}
                   </div>
                 </div>
               </div>
@@ -131,142 +162,87 @@ import { useRouter } from "vue-router";
 import { useClubAuth } from "../../store/clubAuth";
 import apiClient from "../../axios.js";
 
-// Custom number animation directive
-const vAnimateNumber = {
-  mounted(el, binding) {
-    const start = 0;
-    const end = binding.value;
-    const duration = 1000;
-    const startTime = performance.now();
-
-    function update(currentTime) {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-
-      const value = Math.floor(start + (end - start) * progress);
-      el.textContent = value.toLocaleString();
-
-      if (progress < 1) {
-        requestAnimationFrame(update);
-      }
-    }
-
-    requestAnimationFrame(update);
-  },
-};
-
 const router = useRouter();
 const { currentClub, currentClubManager } = useClubAuth();
 
 const stats = ref({
-  members: 156,
-  Reservations: 8,
-  revenue: 12500,
-  upcomingEvents: 3,
+  total_members: 0,
+  total_reservations: 0,
+  active_reservations: 0,
+  revenue: 0,
+  recent_reservations: [],
 });
-const recentActivities = ref([]);
-const loading = ref(true);
 
+const loading = ref(false);
+
+// Quick Actions definition
 const quickActions = [
   {
+    name: "managers",
     icon: "👥",
-    title: "Manage Members",
-    description: "View and manage club members",
-    route: "members",
+    title: "Manage Staff",
+    description: "Add or remove club managers",
+    route: "/club/managers",
   },
   {
-    icon: "📊",
-    title: "View Reports",
-    description: "Check club statistics",
-    route: "reports",
-  },
-  {
-    icon: "⚙️",
-    title: "Club Settings",
-    description: "Manage club preferences",
-    route: "settings",
+    name: "reservations",
+    icon: "📅",
+    title: "Reservations",
+    description: "View and manage reservations",
+    route: "/club/reservations",
   },
 ];
 
-const getStatIcon = (type) => {
-  const icons = {
-    members: "👥",
-    activeParties: "🎉",
-    revenue: "💰",
-    upcomingEvents: "📅",
-  };
-  return icons[type] || "📊";
-};
-
-const formatStatName = (key) => {
-  return key
-    .replace(/([A-Z])/g, " $1")
-    .split(" ")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-};
-
-const getActivityIcon = (type) => {
-  const icons = {
-    create: "➕",
-    update: "✏️",
-    delete: "🗑️",
-    login: "🔑",
-    payment: "💳",
-    member: "👤",
-    party: "🎉",
-  };
-  return icons[type] || "📝";
-};
-
 const fetchStats = async () => {
   try {
-    const response = await apiClient.get("/api/club/dashboard/stats");
+    loading.value = true;
+    const response = await apiClient.get("/api/club/dashboard");
     stats.value = response.data;
   } catch (error) {
     console.error("Failed to fetch stats:", error);
-  }
-};
-
-const fetchRecentActivities = async () => {
-  try {
-    const response = await apiClient.get("/api/club/dashboard/activities");
-    recentActivities.value = response.data;
-  } catch (error) {
-    console.error("Failed to fetch activities:", error);
   } finally {
     loading.value = false;
   }
 };
 
-const navigateTo = (section) => {
-  router.push(`/club/${section}`);
+const formatCurrency = (amount) => {
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  }).format(amount);
 };
 
 const formatTime = (timestamp) => {
-  const date = new Date(timestamp);
-  const now = new Date();
-  const diff = now - date;
-
-  if (diff < 24 * 60 * 60 * 1000) {
-    const hours = Math.floor(diff / (60 * 60 * 1000));
-    if (hours < 1) {
-      const minutes = Math.floor(diff / (60 * 1000));
-      return `${minutes} minute${minutes !== 1 ? "s" : ""} ago`;
-    }
-    return `${hours} hour${hours !== 1 ? "s" : ""} ago`;
-  }
-
-  return date.toLocaleDateString(undefined, {
+  return new Intl.DateTimeFormat("en-US", {
     month: "short",
     day: "numeric",
     hour: "2-digit",
     minute: "2-digit",
-  });
+  }).format(new Date(timestamp));
+};
+
+const navigateTo = (route) => {
+  router.push(route);
 };
 
 onMounted(() => {
   fetchStats();
-  fetchRecentActivities();
 });
 </script>
+
+<style scoped>
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>
