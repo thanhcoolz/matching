@@ -16,6 +16,8 @@ Rails.application.routes.draw do
 
       resources :players, only: [:index, :show]
 
+      get 'dashboard', to: 'dashboard#index'
+
       resources :clubs, only: [ :index, :new, :create, :edit, :update, :destroy ] do
         resources :managers, only: [ :index, :show, :create, :edit, :update, :destroy ], controller: "club_managers" do
         collection do
