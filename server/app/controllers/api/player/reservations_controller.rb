@@ -44,6 +44,7 @@ module Api
         reservations = @current_player.reservations
           .includes(:club)
           .order(start_time: :desc)
+          .where.not(status: :pending)
           .map do |reservation|
             {
               id: reservation.id,

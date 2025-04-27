@@ -8,7 +8,7 @@
         class="form-select rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
       >
         <option value="">All</option>
-        <option value="pending">Pending</option>
+        <option value="paid">Paid</option>
         <option value="confirmed">Confirmed</option>
         <option value="rejected">Rejected</option>
         <option value="canceled">Canceled</option>
@@ -74,12 +74,12 @@
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm">
                 <select
-                  v-if="reservation.status === 'pending'"
+                  v-if="reservation.status === 'paid'"
                   v-model="reservation.status"
                   @change="updateStatus(reservation)"
                   class="form-select rounded-md text-sm border-gray-300 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                 >
-                  <option value="pending" disabled>Pending</option>
+                  <option value="paid" disabled>Paid</option>
                   <option value="confirmed">Confirmed</option>
                   <option value="rejected">Rejected</option>
                 </select>
@@ -175,7 +175,7 @@ const updateStatus = async (reservation) => {
 
 const getStatusClass = (status) => {
   const classes = {
-    pending: "bg-yellow-100 text-yellow-800",
+    paid: "bg-yellow-100 text-yellow-800",
     confirmed: "bg-green-100 text-green-800",
     cancelled: "bg-red-100 text-red-800",
     completed: "bg-blue-100 text-blue-800",
