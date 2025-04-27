@@ -60,11 +60,14 @@ module Api
         club.assign_attributes(
           country_id: 1,
           city_id: 1,
-          club_managers_attributes: [ { username: "admin", password: "12341234" } ]
+          club_managers_attributes: [
+            {
+              username: "admin",
+              password: "12341234",
+              password_confirmation: "12341234"
+            }
+          ]
         )
-
-        club.country_id = 1
-        club.city_id = 1
 
         if club.save
           render json: club, status: :created
