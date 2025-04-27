@@ -26,7 +26,7 @@ export default {
         },
         {
           path: 'players',
-          component: () => import('../pages/admins/DashBoard.vue'), // Placeholder for future implementation
+          component: () => import('../pages/admins/players/PlayersList.vue'),
         },
         {
           path: 'clubs',

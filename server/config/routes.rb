@@ -14,6 +14,8 @@ Rails.application.routes.draw do
       delete "admin_sessions", to: "admin_sessions#destroy"
       get "verify_token", to: "admin_sessions#verify_token"
 
+      resources :players, only: [:index, :show]
+
       resources :clubs, only: [ :index, :new, :create, :edit, :update, :destroy ] do
         resources :managers, only: [ :index, :show, :create, :edit, :update, :destroy ], controller: "club_managers" do
         collection do
