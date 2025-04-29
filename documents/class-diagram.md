@@ -6,29 +6,43 @@ classDiagram
         +int admin_id
         +string email
         +string password
+        +login()
+        +manageClubs()
+        +manageClubManagers()
+        +viewSystemStats()
     }
 
     class Country {
         +int country_id
         +string name
+        +getCities()
+        +getPlayers()
     }
 
     class City {
         +int city_id
         +string name
         +int country_id
+        +getDistricts()
+        +getClubs()
+        +getPlayers()
     }
 
     class District {
         +int district_id
         +string name
         +int city_id
+        +getStreets()
+        +getPlayers()
+        +getClubs()
     }
 
     class Street {
         +int street_id
         +string name
         +int district_id
+        +getPlayers()
+        +getClubs()
     }
 
     class Club {
@@ -40,6 +54,17 @@ classDiagram
         +int district_id
         +int street_id
         +bool active
+        +string email
+        +string description
+        +int table_numbers
+        +createClub()
+        +updateClub()
+        +activate()
+        +deactivate()
+        +getManagers()
+        +getTables()
+        +getReservations()
+        +fullAddress()
     }
 
     class ClubManager {
@@ -47,12 +72,18 @@ classDiagram
         +string username
         +string password
         +int club_id
+        +login()
+        +manageTables()
+        +handleReservations()
+        +viewClubStats()
     }
 
     class Table {
         +int table_id
         +string name
         +int club_id
+        +getReservations()
+        +isAvailable()
     }
 
     class Player {
@@ -66,6 +97,11 @@ classDiagram
         +int city_id
         +int district_id
         +int street_id
+        +login()
+        +makeReservation()
+        +viewReservations()
+        +joinPublicMatch()
+        +getAvatarUrl()
     }
 
     class Reservation {
@@ -78,6 +114,12 @@ classDiagram
         +int duration_hours
         +int reservation_type
         +int status
+        +createReservation()
+        +cancelReservation()
+        +confirmReservation()
+        +isPublic()
+        +getPlayers()
+        +calculateEndTime()
     }
 
     Country "1" -- "*" City
