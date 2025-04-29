@@ -52,6 +52,15 @@
             >Reservations</span
           >
         </router-link>
+
+        <router-link
+          to="/club/settings"
+          class="flex items-center px-5 py-3 text-gray-300 hover:bg-gray-700 transition-colors"
+          active-class="bg-gray-700 border-l-4 border-blue-500"
+        >
+          <span class="text-lg">⚙️</span>
+          <span class="ml-3 whitespace-nowrap" v-show="!isSidebarCollapsed">Settings</span>
+        </router-link>
       </nav>
 
       <div class="p-5 border-t border-gray-700">

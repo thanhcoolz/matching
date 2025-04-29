@@ -34,6 +34,8 @@ Rails.application.routes.draw do
     end
 
     namespace :club do
+      get 'profile', to: 'setting#show'
+      put 'profile', to: 'setting#update_profile'
       post "club_sessions", to: "club_sessions#create"
       delete "club_sessions", to: "club_sessions#destroy"
       resources :managers do

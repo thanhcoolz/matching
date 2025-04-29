@@ -25,6 +25,11 @@ export default {
           component: () => import("../pages/clubs/DashBoard.vue"),
         },
         {
+          path: "settings",
+          component: () => import("../pages/clubs/Settings.vue"),
+          meta: { public: true },
+        },
+        {
           path: "managers",
           children: [
             {
