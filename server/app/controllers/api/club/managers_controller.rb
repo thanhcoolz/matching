@@ -49,11 +49,38 @@ module Api
       end
 
       def update_table_numbers
-        if @club.update(table_numbers: params[:table_numbers])
-          render json: @club
-        else
-          render json: { errors: @club.errors.full_messages }, status: :unprocessable_entity
+        ActiveRecord::Base.transaction do
+          current_table_count = @club.tables.count
+          new_table_count = params[:table_numbers].to_i
+
+          if new_table_count > current_table_count
+            # Create additional tables
+            (current_table_count + 1..new_table_count).each do |i|
+              @club.tables.create!(name: "Table #{i}")
+            end
+          elsif new_table_count < current_table_count
+            # Delete excess tables, starting from the highest numbered ones
+            # Only delete tables that are not currently in use
+            tables_to_delete = @club.tables
+              .where.not(id: @club.reservations.where(status: :confirmed).select(:table_id))
+              .order(created_at: :desc)
+              .limit(current_table_count - new_table_count)
+
+            if tables_to_delete.count < (current_table_count - new_table_count)
+              return render json: { errors: ["Cannot reduce tables: Some tables are currently in use"] }, status: :unprocessable_entity
+            end
+
+            tables_to_delete.destroy_all
+          end
+
+          if @club.update(table_numbers: new_table_count)
+            render json: @club
+          else
+            render json: { errors: @club.errors.full_messages }, status: :unprocessable_entity
+          end
         end
+      rescue ActiveRecord::RecordInvalid => e
+        render json: { errors: [e.message] }, status: :unprocessable_entity
       end
 
       private
