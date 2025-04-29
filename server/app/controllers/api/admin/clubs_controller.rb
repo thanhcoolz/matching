@@ -69,7 +69,6 @@ module Api
           ]
         )
 
-        # Build tables if table_numbers is present
         if club.table_numbers.to_i > 0
           club.table_numbers.to_i.times do |i|
             club.tables.build(name: "Table #{i + 1}")
@@ -83,10 +82,52 @@ module Api
         end
       end
 
+      def edit
+        club = ::Club.find(params[:id])
+        districts = ::District.all
+        streets = ::Street.all
+
+        render json: {
+          club: club.as_json(),
+          districts: districts,
+          streets: streets
+        }
+      end
+
+      def update
+        club = ::Club.find(params[:id])
+
+        if club.update(club_params)
+          render json: club
+        else
+          render json: { errors: club.errors.full_messages }, status: :unprocessable_entity
+        end
+      end
+
+      def destroy
+        club = ::Club.find(params[:id])
+
+        if club.destroy
+          head :no_content
+        else
+          render json: { errors: club.errors.full_messages }, status: :unprocessable_entity
+        end
+      end
+
+      def activate
+        club = ::Club.find(params[:id])
+
+        if club.update(active: true)
+          render json: club
+        else
+          render json: { errors: club.errors.full_messages }, status: :unprocessable_entity
+        end
+      end
+
       private
 
       def club_params
-        params.require(:club).permit(:district_id, :street_id, :name, :address, :description, :email, :active, :table_numbers)
+        params.require(:club).permit(:district_id, :street_id, :name, :address, :description, :email, :active)
       end
     end
   end
