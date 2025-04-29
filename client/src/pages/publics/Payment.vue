@@ -187,12 +187,19 @@
       </div>
     </div>
   </div>
+  <Toast v-model:show="showToast" :message="toastMessage" :type="toastType" />
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import axios from "../../axios.js";
+import Toast from "../../components/Toast.vue";
+
+// Add these refs for toast
+const showToast = ref(false);
+const toastMessage = ref("");
+const toastType = ref("success");
 
 // reactive reservation object (must match your template bindings)
 const reservation = ref({
@@ -219,14 +226,25 @@ async function fetchReservation(id) {
 
 // Called when the user clicks “Xác nhận thanh toán”
 async function confirmPayment() {
-  // Gọi API để cập nhật trạng thái reservation sang "paid"
-  await axios.put(
-    `/api/player/reservations/${route.params.id}/update_payment_status`,
-    {
-      status: "paid",
-    }
-  );
-  router.push("/reservations");
+  try {
+    // Gọi API để cập nhật trạng thái reservation sang "paid"
+    await axios.put(
+      `/api/player/reservations/${route.params.id}/update_payment_status`,
+      {
+        status: "paid",
+      }
+    );
+    toastMessage.value = "Thanh toán thành công!";
+    toastType.value = "success";
+    showToast.value = true;
+    setTimeout(() => {
+      router.push("/reservations");
+    }, 500);
+  } catch (error) {
+    toastMessage.value = "Có lỗi xảy ra khi thanh toán!";
+    toastType.value = "error";
+    showToast.value = true;
+  }
 }
 
 // Helpers you call from the template:
@@ -249,3 +267,4 @@ onMounted(() => {
   fetchReservation(route.params.id);
 });
 </script>
+<Toast v-model:show="showToast" :message="toastMessage" :type="toastType" />

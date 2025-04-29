@@ -163,6 +163,9 @@ const updateStatus = async (reservation) => {
     toastMessage.value = "Reservation status updated successfully";
     toastType.value = "success";
     showToast.value = true;
+    setTimeout(() => {
+      router.push("/reservations");
+    }, 500);
   } catch (error) {
     console.error("Error updating reservation status:", error);
     toastMessage.value = "Failed to update reservation status";
