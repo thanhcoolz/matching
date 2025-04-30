@@ -66,6 +66,7 @@ Rails.application.routes.draw do
         member do
           patch :update_payment_status
           put :update_payment_status
+          patch :cancel  
         end
       end
 

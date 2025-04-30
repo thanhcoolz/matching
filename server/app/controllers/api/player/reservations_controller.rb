@@ -75,6 +75,22 @@ module Api
         render json: { error: 'Reservation not found' }, status: :not_found
       end
 
+      def cancel
+        reservation = @current_player.reservations.find(params[:id])
+        
+        if reservation.start_time > Time.current
+          if reservation.update(status: :canceled)
+            render json: reservation
+          else
+            render json: { error: reservation.errors.full_messages }, status: :unprocessable_entity
+          end
+        else
+          render json: { error: 'Cannot cancel a reservation after its start time' }, status: :unprocessable_entity
+        end
+      rescue ActiveRecord::RecordNotFound
+        render json: { error: 'Reservation not found' }, status: :not_found
+      end
+
       private
 
       def set_reservation

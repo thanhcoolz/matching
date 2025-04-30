@@ -93,11 +93,32 @@
                   >({{ reservation.number_of_player }} players)</span
                 >
               </div>
+              <div class="mt-4">
+                <button
+                  @click="cancelReservation(reservation.id)"
+                  :disabled="
+                    !canCancel(reservation.start_time) ||
+                    ['canceled', 'rejected'].includes(reservation.status)
+                  "
+                  :class="{
+                    'w-full px-4 py-2 text-sm font-medium rounded-md transition-colors': true,
+                    'bg-red-600 text-white hover:bg-red-700':
+                      canCancel(reservation.start_time) &&
+                      !['canceled', 'rejected'].includes(reservation.status),
+                    'bg-gray-300 text-gray-500 cursor-not-allowed':
+                      !canCancel(reservation.start_time) ||
+                      ['canceled', 'rejected'].includes(reservation.status),
+                  }"
+                >
+                  Cancel Reservation
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+    <Toast v-model:show="showToast" :message="toastMessage" :type="toastType" />
   </div>
 </template>
 
@@ -106,6 +127,11 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import apiClient from "../../axios";
 import { usePlayerAuthStore } from "../../store/playerAuth";
+import Toast from "../../components/Toast.vue";
+
+const showToast = ref(false);
+const toastMessage = ref("");
+const toastType = ref("success");
 
 const router = useRouter();
 const playerAuthStore = usePlayerAuthStore();
@@ -147,6 +173,22 @@ const formatTime = (dateString) => {
     hour: "2-digit",
     minute: "2-digit",
   });
+};
+
+const cancelReservation = async (reservationId) => {
+  try {
+    await apiClient.patch(`/api/player/reservations/${reservationId}/cancel`);
+    await fetchReservations();
+    toastMessage.value = "success join match";
+    toastType.value = "success";
+    showToast.value = true;
+  } catch (error) {
+    console.error("Error canceling reservation:", error);
+  }
+};
+
+const canCancel = (startTime) => {
+  return new Date(startTime) > new Date();
 };
 
 onMounted(async () => {
