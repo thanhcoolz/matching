@@ -36,7 +36,11 @@
                     class="px-4 py-2 hover:bg-indigo-50 cursor-pointer transition-colors duration-150"
                     @click="selectClub(club)"
                   >
-                    {{ club.name }}
+                    <div class="flex items-center justify-between">
+                      <p>{{ club.name }}</p>
+                      <p> - </p>
+                      <p>{{ club.email }}</p>
+                    </div>
                   </li>
                 </ul>
               </div>
