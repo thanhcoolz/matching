@@ -35,4 +35,7 @@ class Player < ApplicationRecord
   end
 
   has_many :reservations
+  has_many :reservation_parties
+  has_many :joined_reservations, through: :reservation_parties, source: :reservation
+
 end

@@ -95,6 +95,7 @@
               </div>
               <div class="mt-4">
                 <button
+                  v-if="reservation.is_host"
                   @click="cancelReservation(reservation.id)"
                   :disabled="
                     !canCancel(reservation.start_time) ||

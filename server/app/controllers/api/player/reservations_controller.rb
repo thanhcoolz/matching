@@ -41,11 +41,13 @@ module Api
       end
 
       def index
-        reservations = @current_player.reservations
-          .includes(:club)
-          .order(start_time: :desc)
-          .where.not(status: :pending)
-          .map do |reservation|
+        reservations = @current_player.reservation_parties
+          .includes(reservation: :club)
+          .joins(:reservation)
+          .where.not(reservations: { status: :pending })
+          .order('reservations.start_time DESC')
+          .map do |party|
+            reservation = party.reservation
             {
               id: reservation.id,
               club_name: reservation.club.name,
@@ -53,7 +55,8 @@ module Api
               duration_hours: reservation.duration_hours,
               reservation_type: reservation.reservation_type,
               number_of_player: reservation.number_of_player,
-              status: reservation.status
+              status: reservation.status,
+              is_host: party.is_host
             }
           end
 
