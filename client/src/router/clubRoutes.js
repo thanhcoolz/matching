@@ -27,7 +27,6 @@ export default {
         {
           path: "settings",
           component: () => import("../pages/clubs/Settings.vue"),
-          meta: { public: true },
         },
         {
           path: "managers",
