@@ -63,8 +63,8 @@ module Api
           club_managers_attributes: [
             {
               username: "admin",
-              password: "12341234",
-              password_confirmation: "12341234"
+              password: "123456",
+              password_confirmation: "123456"
             }
           ]
         )
