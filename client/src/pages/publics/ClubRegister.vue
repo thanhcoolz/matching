@@ -175,6 +175,9 @@ import { useRouter } from 'vue-router'
 import apiClient from '../../axios'
 
 // Khởi tạo router để điều hướng sau khi đăng ký thành công
+const errors = ref([])
+const mainImagePreview = ref(null)
+const subImagePreviews = ref([])
 const router = useRouter()
 const showSuccessPopup = ref(false)
 const districts = ref([])
