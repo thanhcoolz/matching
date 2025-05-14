@@ -63,7 +63,7 @@ module Api
           country_id: 1,
           city_id: 1,
           club_managers_attributes: [{
-            username: "admin",
+            username: "club_manager",
             password: "123456",
             password_confirmation: "123456"
           }]
