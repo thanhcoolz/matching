@@ -1,8 +1,8 @@
 # Create admin if not exists
 unless Admin.exists?
   Admin.create!(
-    email: "admin@example.com",
-    password: "12341234",
+    email: "admin@gmail.com",
+    password: "123456",
   )
   puts "Admin user created successfully."
 end
@@ -94,15 +94,15 @@ unless Club.exists?
 
       club.club_managers.create!(
         username: "club_manager",
-        password: "12341234",
-        password_confirmation: "12341234"
+        password: "123456",
+        password_confirmation: "123456"
       )
 
       10.times do
         club.club_managers.create!(
           username: Faker::Alphanumeric.unique.alpha(number: 10),
-          password: "12341234",
-          password_confirmation: "12341234"
+          password: "123456",
+          password_confirmation: "123456"
         )
       end
 

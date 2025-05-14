@@ -60,58 +60,71 @@
 </template>
 
 <script setup>
+// Import các hàm và biến cần thiết từ Vue và Vue Router
 import { ref, reactive, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import apiClient from '../../../axios';
 
+// Khởi tạo router để điều hướng sau khi cập nhật thành công
 const router = useRouter();
+// Lấy thông tin route hiện tại để lấy id club cần chỉnh sửa
 const route = useRoute();
+
 const districts = ref([]);
+
 const streets = ref([]);
+// Biến kiểm soát trạng thái đang gửi form
 const isSubmitting = ref(false);
 
+// Đối tượng reactive lưu trữ dữ liệu form chỉnh sửa club
 const form = reactive({
-  name: '',
-  address: '',
+  name: '',      
+  address: '',      
   description: '',
-  district_id: '',
-  street_id: '',
-  active: false
+  district_id: '',  
+  street_id: '',  
+  active: false     
 });
 
+// Hàm lấy dữ liệu club hiện tại và các lựa chọn quận/huyện, đường/phố khi component được mount
 const fetchData = async () => {
   try {
+    // Gọi song song 2 API: lấy thông tin club và lấy danh sách quận/huyện, đường/phố
     const [clubResponse, optionsResponse] = await Promise.all([
       apiClient.get(`/api/admin/clubs/${route.params.id}/edit`),
       apiClient.get('/api/admin/clubs/new')
     ]);
 
+    // Gán dữ liệu quận/huyện và đường/phố vào biến reactive
     districts.value = optionsResponse.data.districts;
     streets.value = optionsResponse.data.streets;
 
-    // Populate form with existing club data
+    // Gán dữ liệu club hiện tại vào form để hiển thị lên giao diện
     Object.assign(form, clubResponse.data.club);
   } catch (error) {
     console.error('Error fetching data:', error);
-    // You might want to show an error message to the user here
+    // Có thể hiển thị thông báo lỗi cho người dùng tại đây nếu muốn
   }
 };
 
+// Hàm xử lý submit form cập nhật club
 const handleSubmit = async () => {
   if (isSubmitting.value) return;
 
   try {
     isSubmitting.value = true;
+    // Gửi dữ liệu form lên server để cập nhật club
     await apiClient.put(`/api/admin/clubs/${route.params.id}`, { club: form });
+    // Điều hướng về trang danh sách club sau khi cập nhật thành công
     router.push('/admin/clubs');
   } catch (error) {
     console.error('Error updating club:', error);
-    // You might want to show an error message to the user here
+    // Có thể hiển thị thông báo lỗi cho người dùng tại đây nếu muốn
   } finally {
     isSubmitting.value = false;
   }
 };
 
-// Fetch data when component is mounted
+// Gọi hàm fetchData khi component được mount để lấy dữ liệu ban đầu
 onMounted(fetchData);
 </script>

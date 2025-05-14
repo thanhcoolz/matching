@@ -3,9 +3,12 @@ require "jwt"
 module Api
   module Club
     class SettingController < BaseController
+      # Bắt buộc xác thực club manager trước khi thực hiện bất kỳ action nào
       before_action :authenticate_club_manager!
+      # Cho phép sử dụng các helper để sinh URL cho ảnh
       include Rails.application.routes.url_helpers
       
+      # Trả về thông tin profile của club hiện tại (bao gồm cả link ảnh)
       def show
         render json: {
           club: {
@@ -19,6 +22,7 @@ module Api
         }
       end
 
+      # Cập nhật thông tin profile của club (bao gồm cả ảnh đại diện và ảnh phụ)
       def update_profile
         if @club.update(club_profile_params)
           render json: {
@@ -39,6 +43,7 @@ module Api
 
       private
 
+      # Chỉ cho phép các trường này được truyền vào khi cập nhật profile club
       def club_profile_params
         params.require(:club).permit(
           :name, :email, :description, :main_image, sub_images: []

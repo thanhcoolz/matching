@@ -102,24 +102,29 @@
 </template>
 
 <script setup>
+// Import các hàm và biến cần thiết từ Vue, Vue Router và store xác thực club
 import { ref, computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useClubAuth } from "../store/clubAuth";
 
+// Khởi tạo router, route và lấy thông tin club, club manager từ store
 const router = useRouter();
 const route = useRoute();
 const { clearAuth, currentClub, currentClubManager } = useClubAuth();
 const isSidebarCollapsed = ref(false);
 
+// Tính toán tiêu đề trang dựa vào đường dẫn hiện tại
 const pageTitle = computed(() => {
   const path = route.path.split("/").pop();
   return path.charAt(0).toUpperCase() + path.slice(1);
 });
 
+// Hàm thu gọn/mở rộng sidebar
 const toggleSidebar = () => {
   isSidebarCollapsed.value = !isSidebarCollapsed.value;
 };
 
+// Hàm logout: xoá trạng thái xác thực và chuyển về trang đăng nhập club
 const logout = async () => {
   try {
     await clearAuth();

@@ -4,7 +4,7 @@
       <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
         <!-- Header -->
         <div class="bg-gradient-to-r from-blue-600 to-blue-700 p-8">
-          <h1 class="text-3xl font-bold text-white">Chi tiết thanh toán</h1>
+          <h1 class="text-3xl font-bold text-white">Payment Detail</h1>
         </div>
 
         <!-- Content -->
@@ -12,7 +12,7 @@
           <!-- Club Info -->
           <div class="space-y-2">
             <h2 class="text-2xl font-semibold text-gray-900">
-              Thông tin câu lạc bộ
+              Club Information
             </h2>
             <div class="flex items-start gap-4 p-4 bg-gray-50 rounded-xl">
               <div class="p-3 bg-blue-50 rounded-lg">
@@ -42,7 +42,7 @@
           <!-- Reservation Details -->
           <div class="space-y-4">
             <h2 class="text-2xl font-semibold text-gray-900">
-              Chi tiết đặt bàn
+              Reservation Details
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <!-- Time Info -->
@@ -61,7 +61,7 @@
                       d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                     />
                   </svg>
-                  <span class="font-medium">Thời gian bắt đầu:</span>
+                  <span class="font-medium">Start Time:</span>
                 </div>
                 <p class="text-lg font-semibold text-gray-900">
                   {{ formatDateTime(reservation.start_time) }}
@@ -84,10 +84,10 @@
                       d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                     />
                   </svg>
-                  <span class="font-medium">Thời lượng:</span>
+                  <span class="font-medium">Duration:</span>
                 </div>
                 <p class="text-lg font-semibold text-gray-900">
-                  {{ reservation.duration_hours }} giờ
+                  {{ reservation.duration_hours }} hours
                 </p>
               </div>
 
@@ -107,10 +107,10 @@
                       d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
                     />
                   </svg>
-                  <span class="font-medium">Loại đặt bàn:</span>
+                  <span class="font-medium">Type of booking:</span>
                 </div>
                 <p class="text-lg font-semibold text-gray-900">
-                  {{ reservation.type === 1 ? "Riêng tư" : "Công khai" }}
+                  {{ reservation.type === 1 ? "Private" : "Public" }}
                 </p>
               </div>
 
@@ -130,10 +130,10 @@
                       d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
                     />
                   </svg>
-                  <span class="font-medium">Số người chơi:</span>
+                  <span class="font-medium">Number of Player:</span>
                 </div>
                 <p class="text-lg font-semibold text-gray-900">
-                  {{ reservation.number_of_player }} người
+                  {{ reservation.number_of_player }} people
                 </p>
               </div>
             </div>
@@ -142,27 +142,27 @@
           <!-- Payment Summary -->
           <div class="space-y-4">
             <h2 class="text-2xl font-semibold text-gray-900">
-              Tổng thanh toán
+              Total Payment
             </h2>
             <div class="p-6 bg-gray-50 rounded-xl space-y-4">
               <div class="flex justify-between items-center text-lg">
-                <span class="text-gray-600">Giá mỗi giờ</span>
-                <span class="font-semibold">80,000 VNĐ</span>
+                <span class="text-gray-600">Price per hour</span>
+                <span class="font-semibold">80,000 VND</span>
               </div>
               <div class="flex justify-between items-center text-lg">
-                <span class="text-gray-600">Số giờ</span>
+                <span class="text-gray-600">Hours</span>
                 <span class="font-semibold"
                   >× {{ reservation.duration_hours }}</span
                 >
               </div>
               <div class="h-px bg-gray-200 my-4"></div>
               <div class="flex justify-between items-center text-xl font-bold">
-                <span class="text-gray-900">Tổng cộng</span>
+                <span class="text-gray-900">Total</span>
                 <span class="text-blue-600"
                   >{{
                     formatCurrency(reservation.duration_hours * 80000)
                   }}
-                  VNĐ</span
+                  VND</span
                 >
               </div>
             </div>
@@ -174,13 +174,13 @@
               @click="confirmPayment"
               class="flex-1 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-lg font-semibold rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl"
             >
-              Xác nhận thanh toán
+              Confirm
             </button>
             <button
               @click="$router.push('/reservations')"
               class="flex-1 py-4 bg-gray-100 text-gray-600 text-lg font-semibold rounded-xl hover:bg-gray-200 transition-all duration-300"
             >
-              Hủy
+              Cancel
             </button>
           </div>
         </div>
@@ -234,14 +234,14 @@ async function confirmPayment() {
         status: "paid",
       }
     );
-    toastMessage.value = "Thanh toán thành công!";
+    toastMessage.value = "Payment Successful!";
     toastType.value = "success";
     showToast.value = true;
     setTimeout(() => {
       router.push("/reservations");
     }, 500);
   } catch (error) {
-    toastMessage.value = "Có lỗi xảy ra khi thanh toán!";
+    toastMessage.value = "Payment Fail!";
     toastType.value = "error";
     showToast.value = true;
   }

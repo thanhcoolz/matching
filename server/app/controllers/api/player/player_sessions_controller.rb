@@ -1,9 +1,12 @@
 module Api
   module Player
     class PlayerSessionsController < ApplicationController
+      # Cho phép sử dụng cookies trong controller
       include ActionController::Cookies
+      # Định nghĩa thời gian hết hạn của JWT là 24 giờ
       JWT_EXPIRATION = 24.hours
 
+      # Đăng nhập player, tạo JWT và lưu vào cookie nếu xác thực thành công
       def create
         @player = ::Player.find_by(phone_number: params[:phone_number])
 
@@ -20,6 +23,7 @@ module Api
         end
       end
 
+      # Kiểm tra tính hợp lệ của JWT token trong cookie
       def verify_token
         token = cookies[:jwt]
         return render json: { authenticated: false }, status: :unauthorized unless token
@@ -51,6 +55,7 @@ module Api
         end
       end
 
+      # Đăng xuất player, xoá cookie JWT
       def destroy
         cookies.delete(:jwt, httponly: true)
         render json: { message: "Logged out successfully" }, status: :ok
@@ -58,6 +63,7 @@ module Api
 
       private
 
+      # Sinh ra JWT token cho player với thời gian hết hạn
       def generate_token(player)
         secret = ENV["JWT_SECRET"]
         raise JWT::EncodeError, "JWT_SECRET environment variable is not configured" unless secret
@@ -69,6 +75,7 @@ module Api
         JWT.encode(payload, secret, "HS256")
       end
 
+      # Trả về thông tin cơ bản của player (username và avatar_url)
       def player_response_data
         {
           username: @player.username,
@@ -76,6 +83,7 @@ module Api
         }
       end
 
+      # Thiết lập cookie JWT với các tuỳ chọn bảo mật
       def set_jwt_cookie(token)
         cookies[:jwt] = {
           value: token,
@@ -86,6 +94,7 @@ module Api
         }
       end
 
+      # Lấy và cho phép các tham số cần thiết khi đăng nhập
       def session_params
         params.require(:session).permit(:phone_number, :password)
       end

@@ -2,16 +2,21 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import apiClient from "../axios";
 
+// Biến lưu trạng thái xác thực player, lấy từ localStorage nếu có
 const isAuthenticated = ref(
   localStorage.getItem("playerIsAuthenticated") === "true"
 );
+// Biến lưu thông tin player hiện tại, lấy từ localStorage nếu có
 const currentPlayer = ref(
   JSON.parse(localStorage.getItem("currentPlayer") || "null")
 );
 
+// Định nghĩa store quản lý xác thực player sử dụng Pinia
 export const usePlayerAuthStore = defineStore("playerAuth", () => {
+  // Biến loading để theo dõi trạng thái loading khi xác thực hoặc đăng ký
   const loading = ref(false);
 
+  // Hàm thiết lập trạng thái xác thực và lưu thông tin player vào localStorage
   const setAuth = (playerData) => {
     currentPlayer.value = playerData;
     isAuthenticated.value = true;
@@ -19,6 +24,7 @@ export const usePlayerAuthStore = defineStore("playerAuth", () => {
     localStorage.setItem("currentPlayer", JSON.stringify(playerData));
   };
 
+  // Hàm xoá trạng thái xác thực và thông tin player khỏi localStorage
   const clearAuth = () => {
     currentPlayer.value = null;
     isAuthenticated.value = false;
@@ -26,6 +32,7 @@ export const usePlayerAuthStore = defineStore("playerAuth", () => {
     localStorage.removeItem("currentPlayer");
   };
 
+  // Hàm đăng nhập player, gọi API và lưu trạng thái xác thực nếu thành công
   async function login(phoneNumber, password) {
     try {
       const response = await apiClient.post("/api/player/player_sessions", {
@@ -44,6 +51,7 @@ export const usePlayerAuthStore = defineStore("playerAuth", () => {
     }
   }
 
+  // Hàm đăng xuất player, gọi API xoá session và xoá localStorage
   async function logout() {
     try {
       await apiClient.delete("/api/player/player_sessions");
@@ -55,6 +63,7 @@ export const usePlayerAuthStore = defineStore("playerAuth", () => {
     }
   }
 
+  // Hàm kiểm tra trạng thái xác thực hiện tại bằng cách gọi API verify_token
   async function checkAuth() {
     loading.value = true;
     try {
@@ -79,6 +88,7 @@ export const usePlayerAuthStore = defineStore("playerAuth", () => {
     }
   }
 
+  // Hàm đăng ký player mới, gọi API và lưu trạng thái xác thực nếu thành công
   async function register(playerData) {
     try {
       loading.value = true;
@@ -99,6 +109,7 @@ export const usePlayerAuthStore = defineStore("playerAuth", () => {
     }
   }
 
+  // Trả về các biến và hàm quản lý xác thực để sử dụng trong các component khác
   return {
     currentPlayer,
     isAuthenticated,

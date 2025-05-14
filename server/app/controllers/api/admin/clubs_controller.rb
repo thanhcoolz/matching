@@ -3,8 +3,10 @@ require "jwt"
 module Api
   module Admin
     class ClubsController < BaseController
+      # Bắt buộc xác thực admin trước khi thực hiện bất kỳ action nào
       before_action :authenticate_admin!
 
+      # Lấy danh sách các club, có thể lọc theo tên, quận, phố và phân trang
       def index
         clubs = ::Club.includes(:district, :street)
           .select("clubs.*, districts.name as district_name, streets.name as street_name")
@@ -38,22 +40,26 @@ module Api
         }
       end
 
+      # Lấy danh sách tất cả quận và phố để phục vụ cho việc tạo mới club
       def new
         @districts = ::District.all
         @streets = ::Street.all
         render json: { districts: @districts, streets: @streets }
       end
 
+      # Lấy danh sách tất cả quận
       def districts
         districts = ::District.all
         render json: districts
       end
 
+      # Lấy danh sách các phố thuộc quận được truyền vào
       def streets
         streets = ::Street.where(district_id: params[:district_id])
         render json: streets
       end
 
+      # Tạo mới một club, đồng thời tạo luôn club manager mặc định và các bàn (table)
       def create
         club = ::Club.new(club_params)
 
@@ -62,7 +68,7 @@ module Api
           city_id: 1,
           club_managers_attributes: [
             {
-              username: "admin",
+              username: "club_manager",
               password: "123456",
               password_confirmation: "123456"
             }
@@ -82,6 +88,7 @@ module Api
         end
       end
 
+      # Lấy thông tin chi tiết một club để phục vụ cho việc chỉnh sửa
       def edit
         club = ::Club.find(params[:id])
         districts = ::District.all
@@ -94,6 +101,7 @@ module Api
         }
       end
 
+      # Cập nhật thông tin club
       def update
         club = ::Club.find(params[:id])
 
@@ -104,6 +112,7 @@ module Api
         end
       end
 
+      # Xoá một club
       def destroy
         club = ::Club.find(params[:id])
 
@@ -114,6 +123,7 @@ module Api
         end
       end
 
+      # Kích hoạt club (set active = true)
       def activate
         club = ::Club.find(params[:id])
 
@@ -126,6 +136,7 @@ module Api
 
       private
 
+      # Chỉ cho phép các trường này được truyền vào khi tạo/cập nhật club
       def club_params
         params.require(:club).permit(:district_id, :street_id, :name, :address, :description, :email, :active)
       end

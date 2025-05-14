@@ -40,19 +40,25 @@
 </template>
 
 <script setup>
+// Import các hàm cần thiết từ Vue và các module liên quan
 import { ref } from "vue";
 import axios from "../axios.js";
 import { useClubAuth } from "../store/clubAuth";
 
+// Lấy thông tin club hiện tại từ store xác thực club
 const { currentClub } = useClubAuth();
+// Biến lưu số lượng bàn hiện tại, khởi tạo từ dữ liệu club
 const tableNumbers = ref(currentClub.value?.table_numbers || 0);
+// Biến kiểm soát trạng thái đang gửi request
 const isSubmitting = ref(false);
 
+// Hàm xử lý cập nhật số lượng bàn khi submit form
 const updateTableNumbers = async () => {
   if (isSubmitting.value) return;
 
   try {
     isSubmitting.value = true;
+    // Gửi request PUT lên server để cập nhật số lượng bàn
     await axios.put(
       `/api/club/managers/${currentClub.value.id}/update_table_numbers`,
       {

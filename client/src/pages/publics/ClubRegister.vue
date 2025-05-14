@@ -174,28 +174,34 @@ import { ref, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import apiClient from '../../axios'
 
+// Khởi tạo router để điều hướng sau khi đăng ký thành công
 const router = useRouter()
 const showSuccessPopup = ref(false)
 const districts = ref([])
 const streets = ref([])
-const errors = ref([])
-const mainImagePreview = ref(null)
-const subImagePreviews = ref([])
 const mainImageInput = ref(null)
+// Tham chiếu đến input file ảnh phụ
 const subImagesInput = ref(null)
 
+// Đối tượng reactive lưu trữ dữ liệu form đăng ký club
 const formData = ref({
-  name: '',
-  email: '',
-  description: '',
-  district_id: '',
-  street_id: '',
-  address: '',
-  table_numbers: 1,
-  main_image: null,
-  sub_images: []
+  name: '',             // Tên club
+  email: '',            // Email liên hệ
+  description: '',      // Mô tả club
+  district_id: '',      // ID quận/huyện
+  street_id: '',        // ID đường/phố
+  address: '',          // Địa chỉ chi tiết
+  table_numbers: 1,     // Số bàn
+  main_image: null,     // File ảnh chính
+  sub_images: []        // Danh sách file ảnh phụ
 })
 
+//Logic upload ảnh
+//Ảnh được upload từ client lên server qua API dưới dạng file.
+//Server sẽ lưu file ảnh và trả về đường dẫn ảnh khi cần hiển thị.
+//Client chỉ giữ preview tạm thời, không lưu ảnh thực tế.
+
+// Hàm xử lý khi người dùng chọn ảnh chính
 const handleMainImageChange = (event) => {
   const file = event.target.files[0]
   if (file) {
@@ -204,6 +210,7 @@ const handleMainImageChange = (event) => {
   }
 }
 
+// Hàm xử lý khi người dùng chọn nhiều ảnh phụ
 const handleSubImagesChange = (event) => {
   const files = Array.from(event.target.files)
   const remainingSlots = 5 - subImagePreviews.value.length
@@ -215,11 +222,13 @@ const handleSubImagesChange = (event) => {
   })
 }
 
+// Hàm xóa một ảnh phụ khỏi danh sách
 const removeSubImage = (index) => {
   formData.value.sub_images.splice(index, 1)
   subImagePreviews.value.splice(index, 1)
 }
 
+// Hàm lấy danh sách quận/huyện từ server
 const fetchDistricts = async () => {
   try {
     const response = await apiClient.get('/api/public/districts')
@@ -229,6 +238,7 @@ const fetchDistricts = async () => {
   }
 }
 
+// Hàm lấy danh sách đường/phố theo quận/huyện đã chọn
 const fetchStreets = async (districtId) => {
   try {
     const response = await apiClient.get('/api/public/streets?district_id=' + districtId)
@@ -238,11 +248,13 @@ const fetchStreets = async (districtId) => {
   }
 }
 
+// Hàm xử lý submit form đăng ký club
 const handleSubmit = async () => {
   try {
     errors.value = []
     const submitData = new FormData()
 
+    // Duyệt qua từng trường trong formData để append vào FormData gửi lên server
     Object.keys(formData.value).forEach(key => {
       if (key === 'sub_images') {
         formData.value.sub_images.forEach((file, index) => {
@@ -253,6 +265,7 @@ const handleSubmit = async () => {
       }
     })
 
+    // Gửi request đăng ký club lên server (bao gồm cả ảnh)
     await apiClient.post('/api/public/clubs/register', submitData, {
       headers: {
         'Content-Type': 'multipart/form-data'
@@ -269,11 +282,13 @@ const handleSubmit = async () => {
   }
 }
 
+// Hàm đóng popup thành công và chuyển hướng về trang danh sách club
 const closePopup = () => {
   showSuccessPopup.value = false
   router.push('/clubs')
 }
 
+// Theo dõi thay đổi district_id để cập nhật lại danh sách street và reset street_id
 watch(() => formData.value.district_id, () => {
   if (formData.value.district_id) {
     formData.value.street_id = ''
@@ -281,6 +296,7 @@ watch(() => formData.value.district_id, () => {
   }
 })
 
+// Khi component được mount, gọi hàm fetchDistricts để lấy dữ liệu ban đầu
 onMounted(() => {
   fetchDistricts()
 })

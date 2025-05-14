@@ -1,9 +1,12 @@
 module Api
   module Club
     class ClubSessionsController < BaseController
+      # Cho phép sử dụng cookies trong controller
       include ActionController::Cookies
+      # Định nghĩa thời gian hết hạn của JWT là 24 giờ
       JWT_EXPIRATION = 24.hours
 
+      # Đăng nhập club manager, tạo JWT và lưu vào cookie nếu xác thực thành công
       def create
         @club = ::Club.active.find(params[:club_id])
         @club_manager = @club.club_managers.find_by(username: params[:username])
@@ -24,11 +27,13 @@ module Api
         end
       end
 
+      # Đăng xuất club manager, xoá cookie JWT
       def destroy
         cookies.delete(:jwt, httponly: true)
         render json: { message: "Logged out successfully" }, status: :ok
       end
 
+      # Kiểm tra tính hợp lệ của JWT token trong cookie
       def verify_token
         token = cookies[:jwt]
         return render json: { authenticated: false }, status: :unauthorized unless token
@@ -65,6 +70,7 @@ module Api
 
       private
 
+      # Sinh ra JWT token cho club manager với thời gian hết hạn
       def generate_token(club_manager)
         secret = ENV["JWT_SECRET"]
         raise JWT::EncodeError, "JWT_SECRET environment variable is not configured" unless secret
@@ -77,6 +83,7 @@ module Api
         JWT.encode(payload, secret, "HS256")
       end
 
+      # Thiết lập cookie JWT với các tuỳ chọn bảo mật
       def set_jwt_cookie(token)
         cookies[:jwt] = {
           value: token,
@@ -87,6 +94,7 @@ module Api
         }
       end
 
+      # Lấy và cho phép các tham số cần thiết khi đăng nhập
       def session_params
         params.require(:session).permit(:email, :password, :club_id)
       end

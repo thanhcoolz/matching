@@ -139,12 +139,14 @@
 </template>
 
 <script setup>
+
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from '../../../axios.js'
 import usePaging from '../../../composables/usePaging'
 import PaginationControls from '../../../components/PaginationControls.vue'
 
+// Khởi tạo router để điều hướng giữa các trang
 const router = useRouter()
 const clubs = ref([])
 const districts = ref([])
@@ -153,6 +155,7 @@ const searchQuery = ref('')
 const selectedDistrict = ref('')
 const selectedStreet = ref('')
 
+// Hàm lấy danh sách club từ server với các tham số lọc và phân trang
 const fetchClubs = async () => {
   try {
     const params = {
@@ -169,6 +172,7 @@ const fetchClubs = async () => {
   }
 }
 
+// Sử dụng composable usePaging để quản lý phân trang
 const {
   currentPage,
   totalPages,
@@ -176,6 +180,7 @@ const {
   updatePagination
 } = usePaging(fetchClubs, 1, 10)
 
+// Hàm lấy danh sách quận/huyện từ server
 const fetchDistricts = async () => {
   try {
     const response = await axios.get('/api/admin/districts')
@@ -185,6 +190,7 @@ const fetchDistricts = async () => {
   }
 }
 
+// Hàm lấy danh sách đường/phố từ server
 const fetchStreets = async () => {
   try {
     const response = await axios.get('/api/admin/streets')
@@ -194,24 +200,29 @@ const fetchStreets = async () => {
   }
 }
 
+// Hàm điều hướng sang trang tạo club mới
 const navigateToCreate = () => {
   router.push('/admin/clubs/new')
 }
 
+// Hàm điều hướng sang trang chỉnh sửa club
 const navigateToEdit = (clubId) => {
   router.push(`/admin/clubs/${clubId}/edit`)
 }
 
+// Hàm điều hướng sang trang quản lý manager của club
 const navigateToManagers = (clubId) => {
   router.push(`/admin/clubs/${clubId}/managers`)
 }
 
+// Hàm xác nhận xóa club, nếu đồng ý thì gọi hàm xóa
 const confirmDelete = (club) => {
   if (confirm(`Are you sure you want to delete ${club.name}?`)) {
     deleteClub(club.id)
   }
 }
 
+// Hàm xóa club khỏi hệ thống
 const deleteClub = async (clubId) => {
   try {
     await axios.delete(`/api/admin/clubs/${clubId}`)
@@ -222,6 +233,7 @@ const deleteClub = async (clubId) => {
   }
 }
 
+// Hàm kích hoạt club (nếu club đang ở trạng thái inactive)
 const activateClub = async (clubId) => {
   if (confirm(`Are you sure you want to activate this club?`)) {
     try {
@@ -234,6 +246,7 @@ const activateClub = async (clubId) => {
   }
 }
 
+// Khi component được mount, gọi các hàm lấy dữ liệu ban đầu
 onMounted(() => {
   fetchClubs()
   fetchDistricts()

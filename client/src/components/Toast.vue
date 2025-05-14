@@ -31,6 +31,7 @@
             clip-rule="evenodd"
           />
         </svg>
+
         <!-- Error Icon -->
         <svg
           v-if="type === 'error'"
@@ -53,6 +54,7 @@
 <script setup>
 import { ref, watch } from "vue";
 
+// Định nghĩa props cho Toast: show (hiện/ẩn), message (nội dung), type (kiểu), duration (thời gian hiển thị)
 const props = defineProps({
   show: {
     type: Boolean,
@@ -74,8 +76,10 @@ const props = defineProps({
   },
 });
 
+// Định nghĩa sự kiện để cập nhật trạng thái show từ component cha
 const emit = defineEmits(["update:show"]);
 
+// Theo dõi props.show, nếu show=true và có duration thì tự động ẩn Toast sau duration ms
 watch(
   () => props.show,
   (newVal) => {

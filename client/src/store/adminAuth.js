@@ -1,14 +1,25 @@
 import { ref } from "vue";
 import apiClient from "../axios";
 
+//Người dùng đăng nhập → nhận JWT qua cookie.
+//Gọi API cần xác thực → JWT tự động gửi kèm cookie.
+//Server xác thực JWT → trả về dữ liệu nếu hợp lệ.
+//Khi chuyển route hoặc cần kiểm tra đăng nhập → gọi API verify_token.
+//Đăng xuất → xóa JWT khỏi cookie.
+
+
+// Biến lưu trạng thái xác thực admin, lấy từ localStorage nếu có
 const isAuthenticated = ref(
   localStorage.getItem("adminIsAuthenticated") === "true"
 );
+// Biến lưu thông tin admin hiện tại, lấy từ localStorage nếu có
 const currentAdmin = ref(
   JSON.parse(localStorage.getItem("currentAdmin") || "null")
 );
 
+// Store quản lý xác thực admin
 export const useAuthStore = () => {
+  // Hàm thiết lập trạng thái xác thực và lưu thông tin admin vào localStorage
   const setAuth = (adminData) => {
     isAuthenticated.value = true;
     currentAdmin.value = adminData;
@@ -17,6 +28,7 @@ export const useAuthStore = () => {
     localStorage.setItem("currentAdmin", JSON.stringify(adminData));
   };
 
+  // Hàm đăng xuất admin, gọi API xoá session, xoá localStorage và chuyển hướng về trang đăng nhập
   const logout = async () => {
     try {
       await apiClient.delete("/api/admin/admin_sessions");
@@ -33,6 +45,7 @@ export const useAuthStore = () => {
     }
   };
 
+  // Hàm kiểm tra trạng thái xác thực hiện tại bằng cách gọi API verify_token
   const checkAuth = async () => {
     if (!isAuthenticated.value) {
       return true;
@@ -48,6 +61,7 @@ export const useAuthStore = () => {
     }
   };
 
+  // Hàm đăng nhập admin, gọi API và lưu trạng thái xác thực nếu thành công
   const login = async (email, password) => {
     try {
       const response = await apiClient.post("/api/admin/admin_sessions", {
@@ -66,7 +80,7 @@ export const useAuthStore = () => {
     }
   };
 
-  // Initialize auth state from localStorage
+  // Khởi tạo lại trạng thái xác thực từ localStorage khi store được tạo
   const storedAuth = localStorage.getItem("adminIsAuthenticated");
   if (storedAuth !== null) {
     isAuthenticated.value = storedAuth === "true";
@@ -75,6 +89,7 @@ export const useAuthStore = () => {
     );
   }
 
+  // Trả về các biến và hàm quản lý xác thực để sử dụng trong các component khác
   return {
     isAuthenticated,
     currentAdmin,
@@ -85,5 +100,5 @@ export const useAuthStore = () => {
   };
 };
 
-// For backward compatibility
+// Đảm bảo tương thích với các cách import cũ
 export const useAuth = useAuthStore;

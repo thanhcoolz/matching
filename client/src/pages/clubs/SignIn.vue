@@ -129,17 +129,28 @@ import { useClubAuth } from "../../store/clubAuth";
 import apiClient from "../../axios.js";
 import debounce from "lodash/debounce";
 
+// Khởi tạo router để điều hướng trang sau khi đăng nhập thành công
 const router = useRouter();
+
 const { setAuth } = useClubAuth();
+
 const clubSearch = ref("");
+
 const clubs = ref([]);
+
 const showDropdown = ref(false);
+
 const selectedClubId = ref(null);
+
 const username = ref("");
+
 const password = ref("");
+
 const loading = ref(false);
+
 const errorMessage = ref("");
 
+// Hàm tìm kiếm club theo tên (gọi API khi người dùng nhập vào ô tìm kiếm)
 const searchClubs = async (query) => {
   if (!query) {
     clubs.value = [];
@@ -159,16 +170,19 @@ const searchClubs = async (query) => {
   }
 };
 
+// Hàm debounce để giảm số lần gọi API khi nhập tìm kiếm (chỉ gọi sau 200ms không nhập)
 const debouncedSearch = debounce(() => {
   searchClubs(clubSearch.value);
 }, 200);
 
+// Hàm chọn club từ dropdown, lưu lại club đã chọn
 const selectClub = (club) => {
   clubSearch.value = club.name;
   selectedClubId.value = club.id;
   showDropdown.value = false;
 };
 
+// Hàm xử lý submit form đăng nhập club manager
 const handleSubmit = async () => {
   if (!selectedClubId.value) {
     alert("Please select a club");
@@ -179,12 +193,14 @@ const handleSubmit = async () => {
   errorMessage.value = "";
 
   try {
+    // Gửi request đăng nhập club manager lên server
     const response = await apiClient.post("/api/club/club_sessions", {
       club_id: selectedClubId.value,
       username: username.value,
       password: password.value,
     });
 
+    // Nếu đăng nhập thành công, lưu thông tin xác thực và chuyển hướng dashboard
     if (response.data) {
       setAuth(response.data.current_club, response.data.club_manager);
       router.push("/club/dashboard");
@@ -192,13 +208,14 @@ const handleSubmit = async () => {
       errorMessage.value = "Authentication failed. Please try again.";
     }
   } catch (error) {
+    // Nếu đăng nhập thất bại, hiển thị thông báo lỗi
     errorMessage.value = error.response?.data?.error || "Sign in failed";
   } finally {
     loading.value = false;
   }
 };
 
-// Close dropdown when clicking outside
+// Khi component mounted, thêm sự kiện click ngoài ô tìm kiếm để đóng dropdown
 onMounted(() => {
   document.addEventListener("click", (e) => {
     if (!e.target.closest("#club-search")) {

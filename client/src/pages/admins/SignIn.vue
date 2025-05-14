@@ -37,33 +37,39 @@
 </template>
 
 <script setup>
+
 import { ref } from 'vue';
 import { useAuthStore } from '../../store/adminAuth.js';
 
+// Khởi tạo store xác thực admin
 const authStore = useAuthStore();
 
-const email = ref('');
-const password = ref('');
+// Khai báo các biến reactive để lưu trữ thông tin đăng nhập và trạng thái
+const email = ref(''); 
+const password = ref(''); 
 const errorMessage = ref('');
 const loading = ref(false);
 
+// Hàm xử lý sự kiện khi người dùng submit form đăng nhập
 const handleSignIn = async () => {
   loading.value = true;
   errorMessage.value = '';
 
   try {
-    // Use the login function from authStore
+    // Gọi hàm login từ authStore để xác thực với email và password
     const success = await authStore.login(email.value, password.value);
 
     if (success) {
-      // Use window.location for a hard navigation to ensure a full page reload
+      // Sử dụng window.location để đảm bảo tải lại trang hoàn toàn
       window.location.href = '/admin/dashboard';
     } else {
       errorMessage.value = 'Authentication failed. Please try again.';
     }
   } catch (error) {
+    // Xử lý lỗi từ API, hiển thị thông báo lỗi từ server hoặc thông báo mặc định
     errorMessage.value = error.response?.data?.message || 'Invalid credentials. Please try again.';
   } finally {
+    // Tắt trạng thái loading sau khi hoàn thành, dù thành công hay thất bại
     loading.value = false;
   }
 };

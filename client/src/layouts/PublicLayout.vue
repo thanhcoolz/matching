@@ -65,19 +65,24 @@ import { ref, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import { usePlayerAuthStore } from "../store/playerAuth.js";
 
+// Khởi tạo router và lấy các biến, hàm xác thực từ store player
 const router = useRouter();
 const { isAuthenticated, currentPlayer, logout } = usePlayerAuthStore();
+// Biến kiểm soát trạng thái hiển thị dropdown user
 const showDropdown = ref(false);
 
+// Hàm bật/tắt dropdown user khi click vào avatar hoặc tên user
 const toggleDropdown = () => {
   showDropdown.value = !showDropdown.value;
 };
 
+// Hàm xử lý đăng xuất: gọi logout, sau đó reload lại trang
 const handleSignOut = async () => {
   await logout();
   window.location.reload();
 };
 
+// Hàm xử lý khi click ra ngoài dropdown thì sẽ đóng dropdown lại
 const handleClickOutside = (event) => {
   const dropdown = document.querySelector(".relative");
   if (dropdown && !dropdown.contains(event.target)) {
@@ -85,10 +90,12 @@ const handleClickOutside = (event) => {
   }
 };
 
+// Khi component được mount, thêm event listener để bắt sự kiện click ngoài dropdown
 onMounted(() => {
   document.addEventListener("click", handleClickOutside);
 });
 
+// Khi component bị unmount, xoá event listener để tránh memory leak
 onUnmounted(() => {
   document.removeEventListener("click", handleClickOutside);
 });

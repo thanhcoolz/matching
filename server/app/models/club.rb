@@ -17,7 +17,7 @@
 #  updated_at    :datetime         not null
 #
 class Club < ApplicationRecord
-  # Associations
+  # Thiết lập các quan hệ liên kết với các bảng khác
   belongs_to :country
   belongs_to :city
   belongs_to :district
@@ -26,7 +26,7 @@ class Club < ApplicationRecord
   has_many :club_managers, dependent: :destroy
   accepts_nested_attributes_for :club_managers, allow_destroy: true
 
-  # active storage
+  # Thiết lập lưu trữ ảnh sử dụng Active Storage
   has_one_attached :main_image
   has_many_attached :sub_images
 
@@ -35,7 +35,7 @@ class Club < ApplicationRecord
 
   has_many :reservations
 
-  # Validations
+  # Các ràng buộc kiểm tra dữ liệu đầu vào
   validates :country_id, presence: true
   validates :city_id, presence: true
   validates :district_id, presence: true
@@ -46,25 +46,29 @@ class Club < ApplicationRecord
   validates :email, presence: true
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, uniqueness: true, if: :presence
 
-  # Image validations
+  # Kiểm tra hợp lệ cho ảnh đại diện và ảnh phụ
   validate :acceptable_main_image
   validate :acceptable_sub_images
 
+  # Scope lấy các club đang hoạt động
   scope :is_active, -> { where(active: true) }
 
+  # Trả về địa chỉ đầy đủ của club
   def full_address
     "#{district.name}, #{street.name}, #{address}"
   end
 
+  # Class method lấy các club đang hoạt động
   def self.active
     where(active: true)
   end
 
+  # Kiểm tra và tạo mới reservation cho player
   def check_and_create_reservation(player_id, reservation_params)
     Rails.logger.info "Creating reservation with params: #{reservation_params.inspect}"
     Rails.logger.info "Current player: #{player_id}"
 
-    # validate reservation params
+    # Kiểm tra tham số reservation hợp lệ
     if reservation_params[:start_time].blank? || reservation_params[:duration_hours].blank?
       return { success: false, error: 'Invalid reservation parameters' }
     end
@@ -77,14 +81,14 @@ class Club < ApplicationRecord
     duration_hours = reservation_params[:duration_hours].to_i
     end_time = start_time + duration_hours.hours
 
-    # check if club has any available tables for the requested time
+    # Kiểm tra club có bàn trống trong khoảng thời gian yêu cầu không
     available = available_tables(start_time, end_time)
 
     if available.empty?
       return { success: false, error: 'No tables available for the requested time' }
     end
 
-    # Create reservation with first available table
+    # Tạo reservation với bàn đầu tiên còn trống
     reservation = reservations.new(
       player_id: player_id,
       table_id: available.first.id,
@@ -106,6 +110,7 @@ class Club < ApplicationRecord
     { success: false, error: 'An unexpected error occurred' }
   end
 
+  # Lấy danh sách các bàn còn trống trong khoảng thời gian chỉ định
   def available_tables(start_time, end_time)
     tables.where.not(
       id: reservations
@@ -117,6 +122,7 @@ class Club < ApplicationRecord
 
   private
 
+  # Kiểm tra tính hợp lệ của ảnh đại diện (main_image)
   def acceptable_main_image
     return unless main_image.attached?
 
@@ -129,6 +135,7 @@ class Club < ApplicationRecord
     end
   end
 
+  # Kiểm tra tính hợp lệ của các ảnh phụ (sub_images)
   def acceptable_sub_images
     return unless sub_images.attached?
 

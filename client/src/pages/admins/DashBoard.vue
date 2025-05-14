@@ -196,27 +196,35 @@
 </template>
 
 <script setup>
+// Import các hàm cần thiết từ Vue và module axios đã được cấu hình
 import { ref, onMounted } from "vue";
 import axios from "../../axios.js";
 
+// Khởi tạo biến reactive stats để lưu trữ dữ liệu thống kê dashboard
+// Các giá trị mặc định được thiết lập để tránh lỗi khi render trước khi dữ liệu được tải
 const stats = ref({
-  total_players: 0,
-  total_clubs: 0,
-  active_clubs: 0,
-  total_reservations: 0,
-  recent_players: [],
-  recent_clubs: [],
+  total_players: 0,        // Tổng số người chơi
+  total_clubs: 0,          // Tổng số câu lạc bộ
+  active_clubs: 0,         // Số câu lạc bộ đang hoạt động
+  total_reservations: 0,   // Tổng số đặt chỗ
+  recent_players: [],      // Danh sách người chơi gần đây
+  recent_clubs: [],        // Danh sách câu lạc bộ gần đây
 });
 
+// Hàm gọi API để lấy dữ liệu thống kê cho dashboard
 const fetchDashboardStats = async () => {
   try {
+    // Gửi request GET đến API endpoint của admin dashboard
     const response = await axios.get("/api/admin/dashboard");
+    // Cập nhật biến stats với dữ liệu nhận được từ API
     stats.value = response.data;
   } catch (error) {
+    // Xử lý lỗi nếu có, ghi log lỗi ra console
     console.error("Error fetching dashboard stats:", error);
   }
 };
 
+// Gọi hàm fetchDashboardStats khi component được mount vào DOM
 onMounted(() => {
   fetchDashboardStats();
 });

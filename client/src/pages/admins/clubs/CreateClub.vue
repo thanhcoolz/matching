@@ -79,22 +79,29 @@ import { ref, reactive, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import apiClient from '../../../axios';
 
+// Khởi tạo router để điều hướng sau khi tạo club thành công
 const router = useRouter();
+
 const districts = ref([]);
+
 const streets = ref([]);
+
 const isSubmitting = ref(false);
+
 const errors = ref([]);
 
+// Đối tượng reactive lưu trữ dữ liệu form tạo club
 const form = reactive({
-  name: '',
-  email: '',
-  address: '',
-  description: '',
-  district_id: '',
-  street_id: '',
-  active: false
+  name: '',     
+  email: '',      
+  address: '',     
+  description: '',  
+  district_id: '',  
+  street_id: '',  
+  active: false    
 });
 
+// Hàm lấy dữ liệu quận/huyện và đường/phố khi component được mount
 const fetchData = async () => {
   try {
     const response = await apiClient.get('/api/admin/clubs/new');
@@ -106,6 +113,7 @@ const fetchData = async () => {
   }
 };
 
+// Hàm lấy danh sách đường/phố khi thay đổi quận/huyện
 const fetchStreets = async (districtId) => {
   if (!districtId) return;
 
@@ -117,16 +125,20 @@ const fetchStreets = async (districtId) => {
   }
 };
 
+// Hàm xử lý submit form tạo club
 const handleSubmit = async () => {
   if (isSubmitting.value) return;
 
   try {
     isSubmitting.value = true;
-    errors.value = []; // Clear previous errors
+    errors.value = [];
+    // Gửi dữ liệu form lên server để tạo club mới
     await apiClient.post('/api/admin/clubs', { club: form });
+    // Điều hướng về trang danh sách club sau khi tạo thành công
     router.push('/admin/clubs');
   } catch (error) {
     console.error('Error creating club:', error);
+    // Xử lý lỗi trả về từ server
     if (error.response && error.response.data && error.response.data.errors) {
       errors.value = error.response.data.errors;
     } else {
@@ -137,12 +149,12 @@ const handleSubmit = async () => {
   }
 };
 
-// Watch for district changes to update streets
+// Theo dõi thay đổi của district_id để cập nhật lại danh sách street và reset street_id
 watch(() => form.district_id, (newDistrictId) => {
-  form.street_id = ''; // Reset street when district changes
+  form.street_id = ''; // Reset street khi thay đổi quận/huyện
   fetchStreets(newDistrictId);
 });
 
-// Fetch data when component is mounted
+// Gọi hàm fetchData khi component được mount để lấy dữ liệu ban đầu
 fetchData();
 </script>
